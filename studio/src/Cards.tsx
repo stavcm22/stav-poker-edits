@@ -1,4 +1,8 @@
-import React from 'react';
+import React, {createContext, useContext} from 'react';
+import {Img, staticFile} from 'remotion';
+
+// which card art to draw: our own, or the No Limit deck from public/cards
+export const DeckContext = createContext<string | undefined>(undefined);
 
 export const YELLOW = '#FFC21A';
 const RED = '#E3262E';
@@ -29,6 +33,14 @@ type CardProps = {
 };
 
 const Face: React.FC<{card: string; w: number; h: number}> = ({card, w, h}) => {
+  const deck = useContext(DeckContext);
+  if (deck === 'nolimit') {
+    return (
+      <div style={{position: 'absolute', inset: 0, background: '#fff', borderRadius: w * 0.09, overflow: 'hidden', boxShadow: '0 6px 18px rgba(0,0,0,0.45)'}}>
+        <Img src={staticFile(`cards/${card[0].toUpperCase()}${card[1].toUpperCase()}.png`)} style={{position: 'absolute', left: '4%', top: '3%', width: '92%', height: '94%', objectFit: 'contain'}} />
+      </div>
+    );
+  }
   const r = card[0] === 'T' ? '10' : card[0];
   const s = card[1];
   const color = s === 'h' || s === 'd' ? RED : '#121212';
@@ -65,7 +77,18 @@ const Face: React.FC<{card: string; w: number; h: number}> = ({card, w, h}) => {
   );
 };
 
-const Back: React.FC<{w: number; h: number}> = ({w, h}) => (
+const Back: React.FC<{w: number; h: number}> = ({w, h}) => {
+  const deck = useContext(DeckContext);
+  if (deck === 'nolimit') {
+    return (
+      <div style={{position: 'absolute', inset: 0, borderRadius: w * 0.09, overflow: 'hidden', background: '#fff', boxShadow: '0 6px 18px rgba(0,0,0,0.45)'}}>
+        <Img src={staticFile('cards/back.png')} style={{position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover'}} />
+      </div>
+    );
+  }
+  return <BackChip w={w} h={h} />;
+};
+const BackChip: React.FC<{w: number; h: number}> = ({w, h}) => (
   <div
     style={{
       position: 'absolute',

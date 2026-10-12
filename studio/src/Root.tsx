@@ -6,6 +6,7 @@ import rafiFlush from '../jobs/rafi-flush.json';
 import rafiAq from '../jobs/rafi-aq.json';
 import wsopFull from '../jobs/rafi-wsop-fullhouse.json';
 import wsopQueens from '../jobs/rafi-wsop-queens.json';
+import maniRit2 from '../jobs/mani-run-it-twice.json';
 
 const reel = (id: string, job: Job) => {
   return (
@@ -70,6 +71,7 @@ export const Root: React.FC = () => (
     {reel('RafiAQ', rafiAq as unknown as Job)}
     {reel('WsopFullHouse', wsopFull as unknown as Job)}
     {reel('WsopQueens', wsopQueens as unknown as Job)}
+    {reel('ManiRunItTwice', maniRit2 as unknown as Job)}
     {cold('WsopFullHouse', wsopFull as unknown as Job)}
     {cold('WsopQueens', wsopQueens as unknown as Job)}
     <Composition

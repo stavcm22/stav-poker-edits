@@ -11,7 +11,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from 'remotion';
-import {Card, Chip, YELLOW} from './Cards';
+import {Card, Chip, DeckContext, YELLOW} from './Cards';
 import {loadFonts} from './fonts';
 
 loadFonts();
@@ -32,7 +32,7 @@ export type Job = {
   title?: string;
   layout?: 'top' | 'full'; // full = vertical frame
   // for a 16:9 source in the full layout: what each stretch of the source shows, and where to crop
-  modes?: [number, number, 'face' | 'table' | 'broll', number?][]; // from, to, mode, crop centre x (source px)
+  modes?: [number, number, 'face' | 'table' | 'broll' | 'wide', number?][]; // from, to, mode, crop centre x (source px)
   pip?: {x: number; y: number; w: number; h: number}; // face-cam window inside the source's table shots
   segments: Seg[];
   words: Word[];
@@ -56,6 +56,11 @@ export type Job = {
   stamp?: {at: number; text: string; sub?: string}; // red stamp, e.g. ELIMINATED
   bustAt?: number; // villain's seat gets a red X on the seat map
   event?: string; // e.g. WSOP 2026 · LAS VEGAS
+  deck?: string; // 'nolimit' = the No Limit card art
+  handle?: string; // shown on the end card
+  headline?: {lines: [string, string]; hl?: string; until: number}; // big title at the top while the reel opens
+  speaker?: {name: string; sub?: string; at: number; until: number}; // name tag with a yellow underline
+  prompt?: {at: number; until: number; question: string; yes: string; no: string; picked: 'yes' | 'no'; pickAt: number};
 };
 
 export const HOOK_SEC = 2.3;
@@ -143,10 +148,11 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
     const left = 540 - cx * (H / 1080) + shakeX;
     const top = (1920 - H) / 2 + shakeY;
     const grade = `contrast(1.07) saturate(1.12) brightness(${1.02 + 0.25 * kick}) blur(${(7 * kick).toFixed(2)}px)`;
-    if (mode === 'table' && job.pip) {
-      const pw = 920;
-      const sc = pw / job.pip.w;
-      const ph = job.pip.h * sc;
+    if ((mode === 'table' && job.pip) || mode === 'wide') {
+      const rect = mode === 'wide' ? {x: 0, y: 0, w: 1920, h: 1080} : job.pip!;
+      const pw = mode === 'wide' ? 1010 : 920;
+      const sc = pw / rect.w;
+      const ph = rect.h * sc;
       const pz = 1 + drift * 0.6;
       const enter = spring({frame: Math.round((m ? t - m[0] : 99) * fps), fps, config: {damping: 14, stiffness: 150}});
       return (
@@ -159,7 +165,7 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
             style={{
               position: 'absolute',
               left: (1080 - pw) / 2 + shakeX * 0.5,
-              top: 250 + shakeY * 0.5 + (1 - enter) * 60,
+              top: (mode === 'wide' ? 330 : 250) + shakeY * 0.5 + (1 - enter) * 60,
               opacity: Math.min(1, enter * 1.4),
               transform: `scale(${0.88 + 0.12 * enter}) rotate(${(1 - enter) * -2}deg)`,
               width: pw,
@@ -174,7 +180,7 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
               muted
               src={src}
               trimBefore={trim}
-              style={{position: 'absolute', width: 1920 * sc * pz, height: 1080 * sc * pz, left: -job.pip.x * sc * pz - (pw * (pz - 1)) / 2, top: -job.pip.y * sc * pz - (ph * (pz - 1)) / 2, filter: grade}}
+              style={{position: 'absolute', width: 1920 * sc * pz, height: 1080 * sc * pz, left: -rect.x * sc * pz - (pw * (pz - 1)) / 2, top: -rect.y * sc * pz - (ph * (pz - 1)) / 2, filter: grade}}
             />
           </div>
         </AbsoluteFill>
@@ -272,7 +278,8 @@ const Captions: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({
         right: 40,
         display: 'flex',
         justifyContent: 'center',
-        gap: 18,
+        columnGap: 30,
+        rowGap: 4,
         direction: 'rtl',
         flexWrap: 'wrap',
         transform: `translateY(${(1 - pIn) * 18}px) scale(${0.94 + 0.06 * pIn})`,
@@ -294,7 +301,7 @@ const Captions: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({
               color: w.hl ? YELLOW : '#fff',
               textShadow: active ? '0 0 26px rgba(255,194,26,0.35), 0 4px 14px rgba(0,0,0,0.9)' : '0 4px 14px rgba(0,0,0,0.9)',
               opacity: on ? 1 : 0.28,
-              transform: `scale(${on ? 0.9 + (w.hl ? 0.16 : 0.1) * p + (active ? 0.06 : 0) : 0.9}) rotate(${tilt}deg)`,
+              transform: `scale(${on ? 0.93 + 0.07 * p + (active ? 0.03 : 0) : 0.93}) rotate(${tilt}deg)`,
               display: 'inline-block',
               WebkitTextStroke: '1px rgba(0,0,0,0.35)',
             }}
@@ -572,9 +579,9 @@ const EquityBox: React.FC<{job: Job; t: number; frame: number; fps: number}> = (
           return (
             <div key={label} style={{width: 190, textAlign: 'center', opacity: p, transform: `translateY(${(1 - p) * 22}px)`}}>
               <div style={{fontFamily: 'Barlow', fontWeight: 700, fontSize: 38, color: '#b9c0c4', letterSpacing: 2}}>{label}</div>
-              <div style={{fontFamily: 'Barlow', fontWeight: 800, fontSize: 84, color: final ? YELLOW : '#fff', lineHeight: 1.05, fontVariantNumeric: 'tabular-nums'}}>{Math.round(n)}%</div>
+              <div style={{fontFamily: 'Barlow', fontWeight: 800, fontSize: 84, color: final ? (v === 0 ? '#ff3b4d' : YELLOW) : '#fff', lineHeight: 1.05, fontVariantNumeric: 'tabular-nums'}}>{Math.round(n)}%</div>
               <div style={{margin: '14px auto 0', width: 150, height: 6, borderRadius: 3, background: '#2b3034'}}>
-                <div style={{width: `${n}%`, height: '100%', borderRadius: 3, background: final ? YELLOW : '#e9eef0'}} />
+                <div style={{width: `${n}%`, height: '100%', borderRadius: 3, background: final ? (v === 0 ? '#ff3b4d' : YELLOW) : '#e9eef0'}} />
               </div>
             </div>
           );
@@ -701,8 +708,15 @@ const EndCard: React.FC<{job: Job; sec: number}> = ({job, sec}) => {
     <AbsoluteFill style={{background: `rgba(0,0,0,${p})`, alignItems: 'center', justifyContent: 'center', gap: 26}}>
       {sparkles}
       <div style={{opacity: p, transform: `scale(${0.92 + 0.08 * p})`, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24}}>
-        <Chip size={110} />
-        <div style={{fontFamily: 'Barlow', fontWeight: 800, fontSize: 110, letterSpacing: 10, color: '#fff'}}>{job.brand}</div>
+        {job.brand === 'NOLIMIT' ? (
+          <NoLimitLogo size={2.6} opacity={1} />
+        ) : (
+          <>
+            <Chip size={110} />
+            <div style={{fontFamily: 'Barlow', fontWeight: 800, fontSize: 110, letterSpacing: 10, color: '#fff'}}>{job.brand}</div>
+          </>
+        )}
+        {job.handle && <div style={{display: 'flex', alignItems: 'center', gap: 14, fontFamily: 'Barlow', fontWeight: 700, fontSize: 44, color: '#fff'}}><Chip size={40} />{job.handle}</div>}
         {job.event && <div style={{fontFamily: 'Barlow', fontWeight: 700, fontSize: 40, letterSpacing: 10, color: YELLOW, textShadow: '0 0 24px rgba(255,194,26,0.6)'}}>{job.event}</div>}
         {job.credit && <div style={{fontFamily: 'Heebo', fontWeight: 700, fontSize: 38, color: '#9aa4a8', direction: 'rtl'}}>{job.credit}</div>}
       </div>
@@ -973,6 +987,77 @@ const Stamp: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job
   );
 };
 
+
+// ---------- No Limit pieces: logo, headline, speaker tag, run-it-twice prompt ----------
+export const NoLimitLogo: React.FC<{size?: number; opacity?: number}> = ({size = 1, opacity = 0.92}) => (
+  <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', opacity}}>
+    <div style={{display: 'flex', alignItems: 'center', fontFamily: 'Barlow', fontWeight: 800, fontSize: 44 * size, letterSpacing: 2 * size, color: '#fff', lineHeight: 1}}>
+      N<span style={{display: 'inline-flex', margin: `0 ${2 * size}px`, transform: `translateY(${1 * size}px)`}}><Chip size={36 * size} /></span>LIMIT
+    </div>
+    <div style={{fontFamily: 'Barlow', fontWeight: 700, fontSize: 12 * size, letterSpacing: 5 * size, color: '#fff', opacity: 0.85, marginTop: 3 * size}}>POKER PODCAST</div>
+  </div>
+);
+
+const Headline: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, t, frame, fps}) => {
+  const h = job.headline;
+  if (!h || t > h.until) return null;
+  const at = job.segments[0].from;
+  const p = spring({frame: frame - Math.round(at * fps), fps, config: {damping: 14, stiffness: 150}});
+  const out = interpolate(t, [h.until - 0.35, h.until], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  const line = (s: string) => s.split(' ').map((w, i) => <span key={i} style={{color: h.hl && w.replace(/[.,?!:]/g, '') === h.hl ? '#ff8a1f' : '#fff'}}>{w} </span>);
+  return (
+    <div style={{position: 'absolute', top: 170, left: 50, right: 50, textAlign: 'center', direction: 'rtl', fontFamily: 'Heebo', fontWeight: 900, fontSize: 84, lineHeight: 1.12, textShadow: '0 4px 16px rgba(0,0,0,0.85)', WebkitTextStroke: '1px rgba(0,0,0,0.4)', opacity: Math.min(1, p * 1.4) * out, transform: `translateY(${(1 - p) * -30}px)`}}>
+      {line(h.lines[0])}
+      <br />
+      {line(h.lines[1])}
+    </div>
+  );
+};
+
+const SpeakerTag: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, t, frame, fps}) => {
+  const sp = job.speaker;
+  if (!sp || t < sp.at || t > sp.until) return null;
+  const p = spring({frame: frame - Math.round(sp.at * fps), fps, config: {damping: 16, stiffness: 140}});
+  const out = interpolate(t, [sp.until - 0.3, sp.until], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  return (
+    <div style={{position: 'absolute', top: 760, right: 70, direction: 'rtl', textAlign: 'right', opacity: Math.min(1, p * 1.4) * out, transform: `translateX(${(1 - p) * 40}px)`}}>
+      <div style={{fontFamily: 'Heebo', fontWeight: 800, fontSize: 48, color: '#fff', textShadow: '0 3px 12px rgba(0,0,0,0.8)'}}>{sp.name}</div>
+      <div style={{height: 6, background: YELLOW, width: `${p * 100}%`, marginTop: 2}} />
+      {sp.sub && <div style={{fontFamily: 'Heebo', fontWeight: 700, fontSize: 30, color: '#e6e6e6', marginTop: 6, textShadow: '0 3px 10px rgba(0,0,0,0.8)'}}>{sp.sub}</div>}
+    </div>
+  );
+};
+
+const Prompt: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, t, frame, fps}) => {
+  const q = job.prompt;
+  if (!q || t < q.at || t > q.until) return null;
+  const p = spring({frame: frame - Math.round(q.at * fps), fps, config: {damping: 13, stiffness: 170}});
+  const pick = t >= q.pickAt ? spring({frame: frame - Math.round(q.pickAt * fps), fps, config: {damping: 9, stiffness: 220}}) : 0;
+  const out = interpolate(t, [q.until - 0.3, q.until], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  const btn = (label: string, kind: 'yes' | 'no') => {
+    const chosen = q.picked === kind;
+    const c = kind === 'yes' ? YELLOW : '#ff2a3d';
+    const lit = chosen ? pick : 0;
+    const dim = !chosen && pick > 0 ? 0.35 : 1;
+    return (
+      <div style={{width: 380, height: 120, borderRadius: 18, border: `4px solid ${c}`, background: lit ? (kind === 'yes' ? `rgba(255,194,26,${0.9 * lit})` : `rgba(255,42,61,${0.9 * lit})`) : 'rgba(12,14,16,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, opacity: dim, transform: `scale(${1 + 0.1 * Math.sin(Math.PI * Math.min(1, lit))})`, boxShadow: lit ? `0 0 40px ${c}` : 'none'}}>
+        <span style={{fontFamily: 'Barlow', fontWeight: 800, fontSize: 56, color: lit ? '#111' : c}}>{kind === 'yes' ? 'YES' : 'NO'}</span>
+        <span style={{fontFamily: 'Heebo', fontWeight: 800, fontSize: 40, color: lit ? '#111' : '#fff', direction: 'rtl'}}>{label}</span>
+      </div>
+    );
+  };
+  const shake = pick > 0 && pick < 1 ? Math.sin(t * 90) * 8 * (1 - pick) : 0;
+  return (
+    <div style={{position: 'absolute', left: 0, right: 0, top: 470, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 26, opacity: Math.min(1, p * 1.5) * out, transform: `translateX(${shake}px) scale(${0.85 + 0.15 * p})`}}>
+      <div style={{fontFamily: 'Barlow', fontWeight: 800, fontSize: 96, color: '#fff', letterSpacing: 4, textShadow: '0 6px 20px rgba(0,0,0,0.85)', WebkitTextStroke: '3px #111', paintOrder: 'stroke fill'}}>{q.question}</div>
+      <div style={{display: 'flex', gap: 40, direction: 'ltr'}}>
+        {btn(q.yes, 'yes')}
+        {btn(q.no, 'no')}
+      </div>
+    </div>
+  );
+};
+
 // ---------- sound design ----------
 type Sfx = {at: number; file: string; vol: number; dur: number};
 const buildSfx = (job: Job, hookSec: number, withHook: boolean): Sfx[] => {
@@ -995,6 +1080,10 @@ const buildSfx = (job: Job, hookSec: number, withHook: boolean): Sfx[] => {
   if (job.win) list.push({at: o(job.win.at), file: 'win.wav', vol: 0.22, dur: 1.4});
   for (const [at] of job.callouts ?? []) list.push({at: o(at), file: 'impact.wav', vol: 0.3, dur: 0.9});
   if (job.stamp) list.push({at: o(job.stamp.at), file: 'impact.wav', vol: 0.42, dur: 0.9});
+  if (job.prompt) {
+    list.push({at: o(job.prompt.at), file: 'whoosh.wav', vol: 0.3, dur: 0.6});
+    list.push({at: o(job.prompt.pickAt), file: 'impact.wav', vol: 0.32, dur: 0.9});
+  }
   return list;
 };
 
@@ -1035,6 +1124,7 @@ export const HandReel: React.FC<{job: Job; withHook: boolean; showEnd?: boolean;
   const sfx = sfxOn ? buildSfx(job, hookSec, withHook) : [];
 
   return (
+    <DeckContext.Provider value={job.deck}>
     <AbsoluteFill style={{background: '#000'}}>
       <Footage job={job} offsetOut={hookSec} punch={punch} shakeX={shakeX} shakeY={shakeY} />
       {inContent && (
@@ -1045,6 +1135,9 @@ export const HandReel: React.FC<{job: Job; withHook: boolean; showEnd?: boolean;
           <Hud job={job} t={t} frame={sf} fps={fps} />
           <EquityBox job={job} t={t} frame={sf} fps={fps} />
           <SeatMap job={job} t={t} frame={sf} fps={fps} />
+          <Headline job={job} t={t} frame={sf} fps={fps} />
+          <SpeakerTag job={job} t={t} frame={sf} fps={fps} />
+          <Prompt job={job} t={t} frame={sf} fps={fps} />
           <Meter job={job} t={t} />
           <ChipFlights job={job} t={t} />
           <Callouts job={job} t={t} frame={sf} fps={fps} />
@@ -1052,9 +1145,14 @@ export const HandReel: React.FC<{job: Job; withHook: boolean; showEnd?: boolean;
           <Stamp job={job} t={t} frame={sf} fps={fps} />
         </AbsoluteFill>
       )}
-      {job.brand && inContent && (
+      {job.brand && inContent && job.brand !== 'NOLIMIT' && (
         <div style={{position: 'absolute', right: 44, top: L(job).brandTop, fontFamily: 'Barlow', fontWeight: 800, fontSize: 30, letterSpacing: 4, color: 'rgba(255,255,255,0.75)'}}>
           {job.brand}
+        </div>
+      )}
+      {job.brand === 'NOLIMIT' && inContent && (
+        <div style={{position: 'absolute', right: 40, top: 118}}>
+          <NoLimitLogo size={1} />
         </div>
       )}
       {flash > 0 && <AbsoluteFill style={{background: '#fff', opacity: flash}} />}
@@ -1067,6 +1165,7 @@ export const HandReel: React.FC<{job: Job; withHook: boolean; showEnd?: boolean;
       ))}
       {lastFade > 0 && <AbsoluteFill style={{background: '#000', opacity: lastFade}} />}
     </AbsoluteFill>
+    </DeckContext.Provider>
   );
 };
 
