@@ -71,7 +71,6 @@ job = {
   'potPos': 'bottom',
   'segments': segs,
   'words': caps,
-  'headline': {'lines': ['ביקשתי לרוץ פעמיים', 'והוא סירב...'], 'hl': 'סירב', 'until': segs[1]['from'] + 1.6},
   'speaker': {'name': 'מני מלכה', 'at': segs[0]['from'] + 0.2, 'until': segs[1]['from'] + 2.2},
   'hudFrom': segs[0]['from'] + 0.1,
   'pot': [[T(7), 75], [T(19), 150], [T(20), 225], [T(23), 675], [T(30), 1050], [T(121), 2000], [T(125), 2850]],
