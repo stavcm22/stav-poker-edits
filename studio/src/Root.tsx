@@ -1,7 +1,7 @@
 import React from 'react';
 import {Composition} from 'remotion';
 import {ManiReel, FPS, SRC_FRAMES, NOHOOK_START} from './ManiReel';
-import {HandReel, Job, reelFrames} from './HandReel';
+import {DoubleReel, HandReel, Job, doubleFrames, reelFrames} from './HandReel';
 import rafiFlush from '../jobs/rafi-flush.json';
 import rafiAq from '../jobs/rafi-aq.json';
 
@@ -52,5 +52,14 @@ export const Root: React.FC = () => (
     />
     {reel('RafiFlush', rafiFlush as unknown as Job)}
     {reel('RafiAQ', rafiAq as unknown as Job)}
+    <Composition
+      id="RafiDouble"
+      component={DoubleReel}
+      width={1080}
+      height={1920}
+      fps={FPS}
+      durationInFrames={doubleFrames(rafiFlush as unknown as Job, rafiAq as unknown as Job, true)}
+      defaultProps={{first: rafiFlush as unknown as Job, second: rafiAq as unknown as Job, withHook: true, bridge: 'והיד הבאה...'}}
+    />
   </>
 );

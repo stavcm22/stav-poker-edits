@@ -638,7 +638,7 @@ const buildSfx = (job: Job, hookSec: number, withHook: boolean): Sfx[] => {
 };
 
 // ---------- the reel ----------
-export const HandReel: React.FC<{job: Job; withHook: boolean}> = ({job, withHook}) => {
+export const HandReel: React.FC<{job: Job; withHook: boolean; showEnd?: boolean}> = ({job, withHook, showEnd = true}) => {
   const frame = useCurrentFrame();
   const {fps, durationInFrames} = useVideoConfig();
   const hookSec = withHook && job.hook ? HOOK_SEC : 0;
@@ -668,7 +668,7 @@ export const HandReel: React.FC<{job: Job; withHook: boolean}> = ({job, withHook
     }
   }
   const endSec = o - (hookSec + content);
-  const lastFade = interpolate(frame, [durationInFrames - 10, durationInFrames - 1], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  const lastFade = showEnd ? interpolate(frame, [durationInFrames - 10, durationInFrames - 1], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}) : 0;
   const sfx = buildSfx(job, hookSec, withHook);
 
   return (
@@ -690,7 +690,7 @@ export const HandReel: React.FC<{job: Job; withHook: boolean}> = ({job, withHook
       )}
       {flash > 0 && <AbsoluteFill style={{background: '#fff', opacity: flash}} />}
       {hookSec > 0 && o < hookSec + 0.1 && <Hook job={job} o={o} frame={frame} fps={fps} />}
-      {endSec >= 0 && job.brand && <EndCard job={job} sec={endSec} />}
+      {endSec >= 0 && job.brand && showEnd && <EndCard job={job} sec={endSec} />}
       {sfx.map((s, i) => (
         <Sequence key={i} from={Math.max(0, Math.round(s.at * fps))} durationInFrames={Math.round(s.dur * fps) + 2} layout="none">
           <Audio src={staticFile('sfx/' + s.file)} volume={s.vol} />
@@ -701,5 +701,42 @@ export const HandReel: React.FC<{job: Job; withHook: boolean}> = ({job, withHook
   );
 };
 
-export const reelFrames = (job: Job, withHook: boolean) =>
-  Math.round((outDuration(job) + (withHook && job.hook ? HOOK_SEC : 0) + (job.brand ? END_SEC : 0)) * FPS);
+export const reelFrames = (job: Job, withHook: boolean, showEnd = true) =>
+  Math.round((outDuration(job) + (withHook && job.hook ? HOOK_SEC : 0) + (job.brand && showEnd ? END_SEC : 0)) * FPS);
+
+// two hands back to back: the first opens with its hook, a short bridge card, the second closes with the end card
+const BRIDGE_SEC = 1.2;
+export const DoubleReel: React.FC<{first: Job; second: Job; withHook: boolean; bridge: string}> = ({first, second, withHook, bridge}) => {
+  const {fps} = useVideoConfig();
+  const a = reelFrames(first, withHook, false);
+  const b = Math.round(BRIDGE_SEC * fps);
+  return (
+    <AbsoluteFill style={{background: '#000'}}>
+      <Sequence durationInFrames={a}>
+        <HandReel job={first} withHook={withHook} showEnd={false} />
+      </Sequence>
+      <Sequence from={a} durationInFrames={b}>
+        <Bridge text={bridge} />
+      </Sequence>
+      <Sequence from={a + b}>
+        <HandReel job={second} withHook={false} />
+      </Sequence>
+    </AbsoluteFill>
+  );
+};
+const Bridge: React.FC<{text: string}> = ({text}) => {
+  const f = useCurrentFrame();
+  const {fps, durationInFrames} = useVideoConfig();
+  const p = spring({frame: f, fps, config: {damping: 14, stiffness: 160}});
+  const out = interpolate(f, [durationInFrames - 8, durationInFrames], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  return (
+    <AbsoluteFill style={{background: '#000', alignItems: 'center', justifyContent: 'center'}}>
+      <Sequence layout="none"><Audio src={staticFile('sfx/whoosh.wav')} volume={0.5} /></Sequence>
+      <div style={{fontFamily: 'Heebo', fontWeight: 900, fontSize: 120, color: '#fff', direction: 'rtl', opacity: p * out, transform: `scale(${1.3 - 0.3 * p})`}}>
+        {text.split(' ').map((w, i) => <span key={i} style={{color: i === 1 ? YELLOW : '#fff'}}>{w} </span>)}
+      </div>
+    </AbsoluteFill>
+  );
+};
+export const doubleFrames = (first: Job, second: Job, withHook: boolean) =>
+  reelFrames(first, withHook, false) + Math.round(BRIDGE_SEC * FPS) + reelFrames(second, false);
