@@ -254,6 +254,7 @@
   ]
  ],
  "potPos": "bottom",
+ "chipRain": false,
  "segments": [
   {
    "from": 1.06,
@@ -905,15 +906,6 @@
     "KINGS"
    ]
   ]
- },
- "prompt": {
-  "at": 58.62,
-  "until": 67.39999999999999,
-  "question": "RUN IT TWICE?",
-  "yes": "מני",
-  "no": "הוא",
-  "picked": "no",
-  "pickAt": 64.82
  },
  "win": {
   "at": 73.0,

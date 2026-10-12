@@ -34,6 +34,7 @@ export type Job = {
   // for a 16:9 source in the full layout: what each stretch of the source shows, and where to crop
   modes?: [number, number, 'face' | 'table' | 'broll' | 'wide', number?][]; // from, to, mode, crop centre x (source px)
   potPos?: 'top' | 'bottom' | 'center'; // where the pot box sits (default top-left)
+  chipRain?: boolean; // false turns off the chips raining down on the winner
   shift?: number; // push the wide frame, captions and HUD down (px) to clear a headline above
   pip?: {x: number; y: number; w: number; h: number}; // face-cam window inside the source's table shots
   segments: Seg[];
@@ -786,7 +787,7 @@ const ChipFlights: React.FC<{job: Job; t: number}> = ({job, t}) => {
 };
 
 const ChipRain: React.FC<{job: Job; t: number}> = ({job, t}) => {
-  if (!job.win) return null;
+  if (!job.win || job.chipRain === false) return null;
   const dt = t - job.win.at;
   if (dt < 0 || dt > 2.6) return null;
   const chips: React.ReactNode[] = [];

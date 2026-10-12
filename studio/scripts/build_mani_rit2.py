@@ -69,6 +69,7 @@ job = {
   'layout': 'full',
   'modes': MODES,
   'potPos': 'bottom',
+  'chipRain': False,
   'segments': segs,
   'words': caps,
   'speaker': {'name': 'מני מלכה', 'at': segs[0]['from'] + 0.2, 'until': segs[1]['from'] + 2.2},
@@ -88,7 +89,6 @@ job = {
     'mani': [[0, 'JACKS'], [T(161), 'JACKS · LOSES']],
     'vil': [[0, ''], [T(155), 'KINGS']],
   },
-  'prompt': {'at': T(133), 'until': T(149) + 0.1, 'question': 'RUN IT TWICE?', 'yes': 'מני', 'no': 'הוא', 'picked': 'no', 'pickAt': T(146)},
   'win': {'at': T(161), 'player': 'vil', 'cards': ['Kd', 'Ks', 'Ac', 'Jc', 'Tc']},
   'equity': {'player': 'מני', 'values': [['PRE', 68], ['FLOP', 86], ['TURN', 2], ['RIVER', 0]], 'at': T(216) + 0.2},
 }
