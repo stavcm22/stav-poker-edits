@@ -626,21 +626,21 @@ const buildSfx = (job: Job, hookSec: number, withHook: boolean): Sfx[] => {
     list.push({at: 0.35, file: 'impact.wav', vol: 0.75, dur: 0.9});
     list.push({at: HOOK_SEC - 0.5, file: 'whoosh.wav', vol: 0.5, dur: 0.6});
   }
-  (job.boardAt ?? []).forEach((t) => list.push({at: o(t), file: 'card.wav', vol: 0.55, dur: 0.3}));
+  (job.boardAt ?? []).forEach((t) => list.push({at: o(t), file: 'card.wav', vol: 0.32, dur: 0.3}));
   for (const acts of Object.values(job.actions ?? {}))
     for (const [t, label] of acts)
-      if (/BET|RAISE|CALL|ALL-IN/.test(label)) list.push({at: o(t), file: 'chips.wav', vol: 0.45, dur: 0.5});
+      if (/BET|RAISE|CALL|ALL-IN/.test(label)) list.push({at: o(t), file: 'chips.wav', vol: 0.26, dur: 0.5});
   for (const p of job.players ?? [])
     if (p.hiddenUntil !== undefined && p.hiddenUntil < 1e4) {
-      list.push({at: o(p.hiddenUntil), file: 'impact.wav', vol: 0.45, dur: 0.9});
-      list.push({at: o(p.hiddenUntil), file: 'flip.wav', vol: 0.6, dur: 0.2});
+      list.push({at: o(p.hiddenUntil), file: 'impact.wav', vol: 0.26, dur: 0.9});
+      list.push({at: o(p.hiddenUntil), file: 'flip.wav', vol: 0.36, dur: 0.2});
     }
-  if (job.win) list.push({at: o(job.win.at), file: 'win.wav', vol: 0.4, dur: 1.4});
+  if (job.win) list.push({at: o(job.win.at), file: 'win.wav', vol: 0.22, dur: 1.4});
   return list;
 };
 
 // ---------- the reel ----------
-export const HandReel: React.FC<{job: Job; withHook: boolean; showEnd?: boolean}> = ({job, withHook, showEnd = true}) => {
+export const HandReel: React.FC<{job: Job; withHook: boolean; showEnd?: boolean; sfx?: boolean}> = ({job, withHook, showEnd = true, sfx: sfxOn = true}) => {
   const frame = useCurrentFrame();
   const {fps, durationInFrames} = useVideoConfig();
   const hookSec = withHook && job.hook ? HOOK_SEC : 0;
@@ -671,7 +671,7 @@ export const HandReel: React.FC<{job: Job; withHook: boolean; showEnd?: boolean}
   }
   const endSec = o - (hookSec + content);
   const lastFade = showEnd ? interpolate(frame, [durationInFrames - 10, durationInFrames - 1], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}) : 0;
-  const sfx = buildSfx(job, hookSec, withHook);
+  const sfx = sfxOn ? buildSfx(job, hookSec, withHook) : [];
 
   return (
     <AbsoluteFill style={{background: '#000'}}>
