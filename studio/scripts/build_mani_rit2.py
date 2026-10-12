@@ -51,13 +51,14 @@ MODES = []
 hosts = [(18.0, 18.75), (25.0, 26.0), (28.25, 29.75), (30.75, 32.0), (33.75, 34.75), (51.25, 52.25), (54.5, 55.5), (61.5, 63.25),
          (64.25, 65.25), (72.5, 74.75), (75.0, 75.5), (77.25, 78.25), (79.5, 81.5), (85.5, 86.5), (87.75, 88.75), (90.25, 91.25),
          (92.25, 93.25), (96.0, 97.0), (98.0, 98.75), (100.75, 101.0)]
+# full screen all the time: on a two-shot only one host fits, so crop on whoever is reacting (source x of his face)
+HOST_X = {18.0: 1450, 51.25: 1340, 54.5: 1340, 64.25: 1390, 72.5: 1360, 75.0: 1290, 92.25: 540, 96.0: 1380, 98.0: 600, 100.75: 1540}
 t = 0.0
 for a, b in hosts:
     if a > t: MODES.append([t, a, 'face', 1010])
-    MODES.append([a, b, 'wide'])
+    MODES.append([a, b, 'face', HOST_X.get(a, 1340)])
     t = b
 MODES.append([t, 103.0, 'face', 1010])
-MODES = [[0.0, 103.0, 'wide']]  # the whole frame, uncropped, all the way through
 
 job = {
   'src': 'input/noamdor-src.mp4',
@@ -67,7 +68,6 @@ job = {
   'deck': 'nolimit',
   'layout': 'full',
   'modes': MODES,
-  'shift': 100,
   'potPos': 'bottom',
   'segments': segs,
   'words': caps,
