@@ -1081,7 +1081,7 @@ const buildSfx = (job: Job, hookSec: number, withHook: boolean): Sfx[] => {
   for (const [at] of job.callouts ?? []) list.push({at: o(at), file: 'impact.wav', vol: 0.3, dur: 0.9});
   if (job.stamp) list.push({at: o(job.stamp.at), file: 'impact.wav', vol: 0.42, dur: 0.9});
   if (job.prompt) {
-    list.push({at: o(job.prompt.at), file: 'whoosh.wav', vol: 0.3, dur: 0.6});
+    list.push({at: o(job.prompt.at), file: 'whoosh.wav', vol: 0.12, dur: 0.6});
     list.push({at: o(job.prompt.pickAt), file: 'impact.wav', vol: 0.32, dur: 0.9});
   }
   return list;
