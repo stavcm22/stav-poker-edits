@@ -50,7 +50,7 @@ MODES = [[0, 7.25, 'face', 1000], [7.25, 16.25, 'table'], [16.25, 18.25, 'face',
          [142.5, 147.5, 'face', 1040], [147.5, 193.75, 'table'], [193.75, 205.25, 'broll', 760], [205.25, 211.5, 'table'],
          [211.5, 217.0, 'face', 780]]
 PIP = {'x': 1310, 'y': 30, 'w': 590, 'h': 332}
-COMMON = {'src': 'input/new-src.mp4', 'brand': 'RAFIVEGAS', 'credit': 'עריכה: @stavcm', 'layout': 'full', 'modes': MODES, 'pip': PIP}
+COMMON = {'event': 'WSOP 2026 · LAS VEGAS', 'src': 'input/new-src.mp4', 'brand': 'RAFIVEGAS', 'credit': 'עריכה: @stavcm', 'layout': 'full', 'modes': MODES, 'pip': PIP}
 
 # ---------------- hand 1: 10-10, set, river full house vs A-J bluff ----------------
 R1 = [(35, 57), (71, 107), (108, 124), (125, 162), (163, 171), (215, 221), (222, 263), (264, 267), (268, 275), (276, 295)]
@@ -67,7 +67,7 @@ job1.update({
   'title': 'Rafi Vegas - WSOP 2026: down-bet on a full house',
   'segments': segs1,
   'words': caps(R1, F1, hl=H1),
-  'tag': {'text': 'רפי וגאס', 'sub': 'WSOP 2026 · פריז-אאוט', 'at': segs1[0]['from'], 'until': segs1[0]['from'] + 2.3},
+  'tag': {'text': 'רפי וגאס', 'sub': 'WSOP 2026 · LAS VEGAS', 'at': segs1[0]['from'], 'until': segs1[0]['from'] + 2.3},
   'hudFrom': segs1[0]['from'] + 0.1,
   'pot': [[T(35), 700], [T(50), 1200], [T(54), 3100], [T(57), 4600], [T(121), 6300], [T(124), 8000], [T(159), 12500], [T(162), 17000],
           [T(262), 22500], [T(265), 49200], [T(267), 70400]],
@@ -89,9 +89,10 @@ job1.update({
   },
   'seats': {'hero': 'SB', 'villain': 'BTN', 'heroName': 'רפי', 'villainName': 'BUTTON'},
   'teaser': [segs1[[g['from'] for g in segs1].index(113.08)]['from'], segs1[[g['from'] for g in segs1].index(113.08)]['to']],
+  'bustAt': T(276),
   'callouts': [[T(167) + 0.15, 'FULL HOUSE!'], [T(265), 'ALL-IN!'], [T(270) + 0.05, 'BLUFF!']],
   'win': {'at': T(270) + 0.6, 'player': 'rafi', 'cards': ['Th', 'Tc', 'Ts', '6h', '6c']},
-  'equity': {'player': 'רפי', 'values': [['PRE', 57], ['FLOP', 83], ['TURN', 75], ['RIVER', 100]], 'at': T(276), 'gain': 'POT 70,400'},
+  'equity': {'player': 'רפי', 'values': [['PRE', 57], ['FLOP', 83], ['TURN', 75], ['RIVER', 100]], 'at': T(276) + 0.4, 'gain': 'POT 70,400'},
   'hook': {'stat': 'FULL HOUSE', 'statLabel': 'בריבר, מול שחקן שיודע לבלף', 'head': ['הימרתי קטן', 'והוא דחף אול-אין'], 'hlWord': 'אול-אין', 'show': ['Th', 'Tc', 'Ts', '6h', '6c']},
 })
 
@@ -108,7 +109,7 @@ job2.update({
   'title': 'Rafi Vegas - WSOP 2026: queens all-in against a monster draw',
   'segments': segs2,
   'words': caps(R2, F2, hl=H2),
-  'tag': {'text': 'רפי וגאס', 'sub': 'WSOP 2026 · ביג בליינד', 'at': segs2[0]['from'], 'until': segs2[0]['from'] + 2.3},
+  'tag': {'text': 'רפי וגאס', 'sub': 'WSOP 2026 · LAS VEGAS', 'at': segs2[0]['from'], 'until': segs2[0]['from'] + 2.3},
   'hudFrom': segs2[0]['from'] + 0.1,
   'pot': [[T(333), 29500], [T(340), 41500], [T(345), 53500], [T(366), 96500], [T(371), 123500]],
   'board': ['8s', 'Td', '4d', '7d', 'As'],
@@ -128,9 +129,9 @@ job2.update({
   'seats': {'hero': 'BB', 'villain': 'UTG', 'heroName': 'רפי', 'villainName': 'UTG'},
   'teaser': [next(g for g in segs2 if g['from'] > 189)['from'], next(g for g in segs2 if g['from'] > 189)['to']],
   'meter': {'from': T(379) + 0.2, 'to': T(386), 'points': [[T(379) + 0.2, 61], [T(384), 100]]},
+  'bustAt': T(384) + 0.6,
   'callouts': [[T(366), 'ALL-IN!'], [T(379) + 0.05, 'COMBO DRAW'], [T(384) + 0.05, 'SAFE!']],
   'win': {'at': T(384) + 0.5, 'player': 'rafi', 'cards': ['Qh', 'Qc', 'As', 'Td', '8s']},
-  'equity': {'player': 'רפי', 'values': [['PRE', 81], ['FLOP', 84], ['TURN', 61], ['RIVER', 100]], 'at': T(386), 'gain': 'POT 123,500'},
   'hook': {'stat': '39%', 'statLabel': 'הסיכוי שלו לנצח בטרן', 'head': ['אול-אין עם קווינס', 'מול דרואו מפלצתי'], 'hlWord': 'מפלצתי', 'show': ['Qh', 'Qc', '8s', 'Td', '4d']},
 })
 

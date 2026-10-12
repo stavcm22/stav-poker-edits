@@ -1,4 +1,5 @@
 {
+ "event": "WSOP 2026 · LAS VEGAS",
  "src": "input/new-src.mp4",
  "brand": "RAFIVEGAS",
  "credit": "עריכה: @stavcm",
@@ -553,7 +554,7 @@
  ],
  "tag": {
   "text": "רפי וגאס",
-  "sub": "WSOP 2026 · ביג בליינד",
+  "sub": "WSOP 2026 · LAS VEGAS",
   "at": 147.26,
   "until": 149.56
  },
@@ -734,6 +735,7 @@
    ]
   ]
  },
+ "bustAt": 210.32,
  "callouts": [
   [
    190.54,
@@ -758,29 +760,6 @@
    "Td",
    "8s"
   ]
- },
- "equity": {
-  "player": "רפי",
-  "values": [
-   [
-    "PRE",
-    81
-   ],
-   [
-    "FLOP",
-    84
-   ],
-   [
-    "TURN",
-    61
-   ],
-   [
-    "RIVER",
-    100
-   ]
-  ],
-  "at": 211.12,
-  "gain": "POT 123,500"
  },
  "hook": {
   "stat": "39%",

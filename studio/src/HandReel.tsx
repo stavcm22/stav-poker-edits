@@ -53,6 +53,9 @@ export type Job = {
   callouts?: [number, string][]; // big slam text at a moment (source time)
   seats?: {hero: string; villain: string; heroName: string; villainName: string}; // positions, e.g. SB / BTN
   meter?: {from: number; to: number; points: [number, number][]}; // live equity bar: [time, hero %]
+  stamp?: {at: number; text: string; sub?: string}; // red stamp, e.g. ELIMINATED
+  bustAt?: number; // villain's seat gets a red X on the seat map
+  event?: string; // e.g. WSOP 2026 · LAS VEGAS
 };
 
 export const HOOK_SEC = 2.3;
@@ -606,6 +609,11 @@ const Hook: React.FC<{job: Job; o: number; frame: number; fps: number}> = ({job,
           alignItems: 'center',
         }}
       >
+        {job.event && (
+          <div style={{position: 'absolute', top: 420, fontFamily: 'Barlow', fontWeight: 700, fontSize: 40, letterSpacing: 10, color: YELLOW, opacity: a(0.0), textShadow: '0 0 20px rgba(255,194,26,0.5)'}}>
+            {job.event}
+          </div>
+        )}
         <div style={{position: 'absolute', top: 520, display: 'flex', gap: 14}}>
           {h.show.map((c, i) => {
             const p = a(0.04 + i * 0.07, 13);
@@ -683,11 +691,19 @@ const Hook: React.FC<{job: Job; o: number; frame: number; fps: number}> = ({job,
 
 const EndCard: React.FC<{job: Job; sec: number}> = ({job, sec}) => {
   const p = interpolate(sec, [0, 0.5], [0, 1], {extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic)});
+  const sparkles = Array.from({length: 26}, (_, k) => {
+    const x = Math.abs((Math.sin(k * 91.7) * 4375.85) % 1) * 1080;
+    const y = 500 + Math.abs((Math.sin(k * 17.3) * 1531.2) % 1) * 900;
+    const tw = Math.max(0, Math.sin(sec * 5 + k * 1.3));
+    return <div key={k} style={{position: 'absolute', left: x, top: y, width: 8, height: 8, borderRadius: 4, background: k % 3 ? YELLOW : '#fff', opacity: p * tw * 0.9, boxShadow: `0 0 ${10 + tw * 14}px ${YELLOW}`, transform: `scale(${0.6 + tw})`}} />;
+  });
   return (
     <AbsoluteFill style={{background: `rgba(0,0,0,${p})`, alignItems: 'center', justifyContent: 'center', gap: 26}}>
+      {sparkles}
       <div style={{opacity: p, transform: `scale(${0.92 + 0.08 * p})`, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24}}>
         <Chip size={110} />
         <div style={{fontFamily: 'Barlow', fontWeight: 800, fontSize: 110, letterSpacing: 10, color: '#fff'}}>{job.brand}</div>
+        {job.event && <div style={{fontFamily: 'Barlow', fontWeight: 700, fontSize: 40, letterSpacing: 10, color: YELLOW, textShadow: '0 0 24px rgba(255,194,26,0.6)'}}>{job.event}</div>}
         {job.credit && <div style={{fontFamily: 'Heebo', fontWeight: 700, fontSize: 38, color: '#9aa4a8', direction: 'rtl'}}>{job.credit}</div>}
       </div>
     </AbsoluteFill>
@@ -789,6 +805,7 @@ const POS = ['BTN', 'SB', 'BB', 'UTG', 'UTG+1', 'MP', 'LJ', 'HJ', 'CO'];
 const SeatMap: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, t, frame, fps}) => {
   const st = job.seats;
   if (!st || job.hudFrom === undefined || t < job.hudFrom) return null;
+  if (job.equity && t >= job.equity.at - 0.2) return null;
   const at = job.hudFrom;
   const appear = spring({frame: frame - Math.round(at * fps), fps, config: {damping: 15, stiffness: 140}});
   // big in the middle first, then docks in the top-right corner
@@ -821,6 +838,7 @@ const SeatMap: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({j
         const isHero = pos === st.hero;
         const isVil = pos === st.villain;
         const on = isHero || isVil;
+        const bust = isVil && job.bustAt !== undefined && t >= job.bustAt ? spring({frame: frame - Math.round(job.bustAt * fps), fps, config: {damping: 12}}) : 0;
         const pulse = on ? 1 + 0.08 * Math.sin((t - at) * 6 + (isHero ? 0 : 1.5)) : 1;
         return (
           <div key={pos} style={{position: 'absolute', left: x - 26, top: y - 26, width: 52, height: 52, transform: `scale(${pulse})`}}>
@@ -843,6 +861,11 @@ const SeatMap: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({j
             >
               {pos}
             </div>
+            {bust > 0 && (
+              <div style={{position: 'absolute', inset: -6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Barlow', fontWeight: 800, fontSize: 64, color: '#ff2a3d', textShadow: '0 0 12px rgba(255,42,61,0.8)', transform: `scale(${2 - bust})`, opacity: Math.min(1, bust * 1.5)}}>
+                ✕
+              </div>
+            )}
             {on && (
               <div
                 style={{
@@ -916,6 +939,40 @@ const Meter: React.FC<{job: Job; t: number}> = ({job, t}) => {
   );
 };
 
+
+// ---------- red stamp: ELIMINATED ----------
+const Stamp: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, t, frame, fps}) => {
+  const st = job.stamp;
+  if (!st || t < st.at || t > st.at + 2.2) return null;
+  const p = spring({frame: frame - Math.round(st.at * fps), fps, config: {damping: 10, stiffness: 230}});
+  const out = interpolate(t - st.at, [1.8, 2.2], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  const d = (t - st.at) * fps;
+  const shake = d < 12 ? Math.sin(d * 2.4) * 14 * (1 - d / 12) : 0;
+  const red = '#ff2a3d';
+  return (
+    <AbsoluteFill style={{alignItems: 'center', pointerEvents: 'none'}}>
+      <AbsoluteFill style={{background: `rgba(120,0,10,${0.35 * Math.max(0, 1 - d / 14)})`}} />
+      <div
+        style={{
+          position: 'absolute',
+          top: 520,
+          padding: '14px 40px 10px',
+          border: `10px solid ${red}`,
+          borderRadius: 18,
+          transform: `translate(${shake}px, ${shake * 0.5}px) rotate(-11deg) scale(${2.6 - 1.6 * p})`,
+          opacity: Math.min(1, p * 2) * out,
+          textAlign: 'center',
+          background: 'rgba(10,0,2,0.35)',
+          boxShadow: `0 0 50px rgba(255,42,61,0.45)`,
+        }}
+      >
+        <div style={{fontFamily: 'Barlow', fontWeight: 800, fontSize: 150, letterSpacing: 8, color: red, lineHeight: 1, textShadow: '0 0 30px rgba(255,42,61,0.6)'}}>{st.text}</div>
+        {st.sub && <div style={{fontFamily: 'Barlow', fontWeight: 700, fontSize: 40, letterSpacing: 6, color: '#fff', marginTop: 6}}>{st.sub}</div>}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
 // ---------- sound design ----------
 type Sfx = {at: number; file: string; vol: number; dur: number};
 const buildSfx = (job: Job, hookSec: number, withHook: boolean): Sfx[] => {
@@ -937,6 +994,7 @@ const buildSfx = (job: Job, hookSec: number, withHook: boolean): Sfx[] => {
     }
   if (job.win) list.push({at: o(job.win.at), file: 'win.wav', vol: 0.22, dur: 1.4});
   for (const [at] of job.callouts ?? []) list.push({at: o(at), file: 'impact.wav', vol: 0.3, dur: 0.9});
+  if (job.stamp) list.push({at: o(job.stamp.at), file: 'impact.wav', vol: 0.42, dur: 0.9});
   return list;
 };
 
@@ -956,6 +1014,7 @@ export const HandReel: React.FC<{job: Job; withHook: boolean; showEnd?: boolean;
   for (const p of job.players ?? []) if (p.hiddenUntil !== undefined && p.hiddenUntil < 1e4) moments.push(p.hiddenUntil);
   if (job.win) moments.push(job.win.at);
   for (const [at] of job.callouts ?? []) moments.push(at);
+  if (job.stamp) moments.push(job.stamp.at);
   let punch = 1;
   let shakeX = 0;
   let shakeY = 0;
@@ -990,6 +1049,7 @@ export const HandReel: React.FC<{job: Job; withHook: boolean; showEnd?: boolean;
           <ChipFlights job={job} t={t} />
           <Callouts job={job} t={t} frame={sf} fps={fps} />
           <ChipRain job={job} t={t} />
+          <Stamp job={job} t={t} frame={sf} fps={fps} />
         </AbsoluteFill>
       )}
       {job.brand && inContent && (
