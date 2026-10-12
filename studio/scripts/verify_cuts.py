@@ -11,10 +11,13 @@ def env(path):
     x = np.frombuffer(pcm, np.int16).astype(float) / 32768
     n = len(x) // 160
     return 20 * np.log10(np.sqrt(np.mean(x[:n * 160].reshape(n, 160) ** 2, 1)) + 1e-9)
-S, O = env('public/' + job['src']), env(out)
+envs = {}
+O = env(out)
 acc_f = round(hook * FPS); ok = True
 for i, s in enumerate(job['segments']):
-    a_f, d_f = round(s['from'] * FPS), round((s['to'] - s['from']) * FPS)   # what Remotion actually plays
+    sp = s.get('src', job['src'])
+    S = envs.setdefault(sp, env('public/' + sp)) if sp not in envs else envs[sp]
+    a_f, d_f = round((s['from'] + s.get('srcOffset', 0)) * FPS), round((s['to'] - s['from']) * FPS)   # what Remotion actually plays
     a, d, o0 = a_f / FPS, d_f / FPS, acc_f / FPS
     src = S[int(a * 100):int((a + d) * 100)]
     best = (-2, 0)
