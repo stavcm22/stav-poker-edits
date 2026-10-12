@@ -57,6 +57,7 @@ for a, b in hosts:
     MODES.append([a, b, 'wide'])
     t = b
 MODES.append([t, 103.0, 'face', 1010])
+MODES = [[0.0, 103.0, 'wide']]  # the whole frame, uncropped, all the way through
 
 job = {
   'src': 'input/noamdor-src.mp4',
@@ -66,6 +67,8 @@ job = {
   'deck': 'nolimit',
   'layout': 'full',
   'modes': MODES,
+  'shift': 100,
+  'potPos': 'bottom',
   'segments': segs,
   'words': caps,
   'headline': {'lines': ['ביקשתי לרוץ פעמיים', 'והוא סירב...'], 'hl': 'סירב', 'until': segs[1]['from'] + 1.6},
@@ -87,7 +90,6 @@ job = {
     'vil': [[0, ''], [T(155), 'KINGS']],
   },
   'prompt': {'at': T(133), 'until': T(149) + 0.1, 'question': 'RUN IT TWICE?', 'yes': 'מני', 'no': 'הוא', 'picked': 'no', 'pickAt': T(146)},
-  'callouts': [[T(161) + 0.05, 'BAD BEAT']],
   'win': {'at': T(161), 'player': 'vil', 'cards': ['Kd', 'Ks', 'Ac', 'Jc', 'Tc']},
   'equity': {'player': 'מני', 'values': [['PRE', 68], ['FLOP', 86], ['TURN', 2], ['RIVER', 0]], 'at': T(216) + 0.2},
 }

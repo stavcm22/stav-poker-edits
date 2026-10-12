@@ -33,6 +33,8 @@ export type Job = {
   layout?: 'top' | 'full'; // full = vertical frame
   // for a 16:9 source in the full layout: what each stretch of the source shows, and where to crop
   modes?: [number, number, 'face' | 'table' | 'broll' | 'wide', number?][]; // from, to, mode, crop centre x (source px)
+  potPos?: 'top' | 'bottom' | 'center'; // where the pot box sits (default top-left)
+  shift?: number; // push the wide frame, captions and HUD down (px) to clear a headline above
   pip?: {x: number; y: number; w: number; h: number}; // face-cam window inside the source's table shots
   segments: Seg[];
   words: Word[];
@@ -106,7 +108,10 @@ const LAYOUT = {
   top: {capTop: VIDEO_H - 190, hudTop: 1150, potTop: 40, tagTop: 52, eqTop: 150, brandTop: VIDEO_H - 70},
   full: {capTop: 930, hudTop: 1170, potTop: 120, tagTop: 132, eqTop: 108, brandTop: 66},
 };
-const L = (job: Job) => LAYOUT[job.layout ?? 'top'];
+const L = (job: Job) => {
+  const l = LAYOUT[job.layout ?? 'top'];
+  return job.shift ? {...l, capTop: l.capTop + job.shift, hudTop: l.hudTop + job.shift} : l;
+};
 
 // ---------- footage with camera motion ----------
 const modeAt = (job: Job, t: number) => {
@@ -165,7 +170,7 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
             style={{
               position: 'absolute',
               left: (1080 - pw) / 2 + shakeX * 0.5,
-              top: (mode === 'wide' ? 330 : 250) + shakeY * 0.5 + (1 - enter) * 60,
+              top: (mode === 'wide' ? 330 + (job.shift ?? 0) : 250) + shakeY * 0.5 + (1 - enter) * 60,
               opacity: Math.min(1, enter * 1.4),
               transform: `scale(${0.88 + 0.12 * enter}) rotate(${(1 - enter) * -2}deg)`,
               width: pw,
@@ -492,21 +497,44 @@ const Hud: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, 
   );
 };
 
+// centre of the pot box, where the chips fly to
+const potSpot = (job: Job) => {
+  if (job.potPos === 'bottom') return {x: 540, y: L(job).hudTop + 470, w: 400};
+  if (job.potPos === 'center') return {x: 540, y: L(job).hudTop + 300, w: 210};
+  return {x: 120, y: L(job).potTop + 43, w: 0};
+};
+
 const Pot: React.FC<{job: Job; t: number}> = ({job, t}) => {
   if (!job.pot || job.hudFrom === undefined || t < job.hudFrom) return null;
-  if (job.layout === 'full' && job.equity && t >= job.equity.at) return null;
+  if (job.layout === 'full' && (job.potPos ?? 'top') === 'top' && job.equity && t >= job.equity.at) return null;
   const {cur, prev} = latest(job.pot, t);
   if (!cur) return null;
   const p = interpolate(t - cur[0], [0, 0.5], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic)});
   const from = prev ? prev[1] : cur[1];
   const v = from + (cur[1] - from) * p;
   const pulse = 1 + 0.09 * Math.sin(Math.PI * p) * (prev ? 1 : 0);
+  const pos = potSpot(job);
+  if (job.potPos === 'center') {
+    return (
+      <div style={{position: 'absolute', left: pos.x - 105, top: pos.y - 62, width: 210, height: 124, background: 'rgba(14,19,22,0.9)', border: '1px solid rgba(255,194,26,0.45)', borderRadius: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 ${24 * (pulse - 1) * 10}px rgba(255,194,26,${(pulse - 1) * 3})`}}>
+        <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+          <div style={{transform: `rotate(${p * 360 * (prev ? 1 : 0)}deg)`}}>
+            <Chip size={30} />
+          </div>
+          <div style={{fontFamily: 'Barlow', fontWeight: 600, fontSize: 26, color: '#9aa4a8', letterSpacing: 4}}>POT</div>
+        </div>
+        <div style={{fontFamily: 'Barlow', fontWeight: 800, fontSize: 56, lineHeight: 1, color: '#fff', transform: `scale(${pulse})`, fontVariantNumeric: 'tabular-nums'}}>
+          {Math.round(v).toLocaleString('en-US')}
+        </div>
+      </div>
+    );
+  }
   return (
     <div
       style={{
         position: 'absolute',
-        left: 40,
-        top: L(job).potTop,
+        ...(job.potPos === 'bottom' ? {left: '50%', marginLeft: -pos.w / 2, width: pos.w, justifyContent: 'center', boxSizing: 'border-box'} : {left: 40}),
+        top: pos.y - 43,
         height: 86,
         padding: '0 24px',
         background: 'rgba(14,19,22,0.9)',
@@ -729,8 +757,7 @@ const EndCard: React.FC<{job: Job; sec: number}> = ({job, sec}) => {
 const ChipFlights: React.FC<{job: Job; t: number}> = ({job, t}) => {
   if (!job.players || !job.pot || job.hudFrom === undefined || t < job.hudFrom) return null;
   const top = L(job).hudTop;
-  const potX = 120;
-  const potY = L(job).potTop + 43;
+  const {x: potX, y: potY} = potSpot(job);
   const flights: React.ReactNode[] = [];
   job.players.forEach((pl) => {
     for (const [at, label] of job.actions?.[pl.id] ?? []) {

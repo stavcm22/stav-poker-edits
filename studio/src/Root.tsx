@@ -29,6 +29,15 @@ const reel = (id: string, job: Job) => {
         durationInFrames={reelFrames(job, false)}
         defaultProps={{job, withHook: false}}
       />
+      <Composition
+        id={`${id}-noend`}
+        component={HandReel}
+        width={1080}
+        height={1920}
+        fps={FPS}
+        durationInFrames={reelFrames(job, false, false)}
+        defaultProps={{job, withHook: false, showEnd: false}}
+      />
     </React.Fragment>
   );
 };
