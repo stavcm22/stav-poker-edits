@@ -222,7 +222,7 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
   );
 };
 
-const Footage: React.FC<{job: Job; offsetOut: number; punch: number; shakeX: number; shakeY: number}> = ({job, offsetOut, punch, shakeX, shakeY}) => {
+const Footage: React.FC<{job: Job; offsetOut: number; punch: number; shakeX: number; shakeY: number; shade?: number}> = ({job, offsetOut, punch, shakeX, shakeY, shade = 1}) => {
   const {fps} = useVideoConfig();
   let acc = offsetOut;
   return (
@@ -247,6 +247,7 @@ const Footage: React.FC<{job: Job; offsetOut: number; punch: number; shakeX: num
               right: 0,
               top: 800,
               bottom: 0,
+              opacity: shade,
               background: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 28%, rgba(0,0,0,0.9) 58%, #000 72%)',
             }}
           />
@@ -1150,6 +1151,10 @@ export const HandReel: React.FC<{job: Job; withHook: boolean; showEnd?: boolean;
       }
     }
   }
+  // the dark floor under the cards only comes in with the cards; before that a light one keeps the captions readable
+  const shade = job.layout === 'full' && job.hudFrom !== undefined && inContent
+    ? interpolate(t, [job.hudFrom - 0.2, job.hudFrom + 0.5], [0.3, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})
+    : 1;
   const endSec = o - (hookSec + content);
   const lastFade = showEnd ? interpolate(frame, [durationInFrames - 10, durationInFrames - 1], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}) : 0;
   const sfx = sfxOn ? buildSfx(job, hookSec, withHook) : [];
@@ -1157,7 +1162,7 @@ export const HandReel: React.FC<{job: Job; withHook: boolean; showEnd?: boolean;
   return (
     <DeckContext.Provider value={job.deck}>
     <AbsoluteFill style={{background: '#000'}}>
-      <Footage job={job} offsetOut={hookSec} punch={punch} shakeX={shakeX} shakeY={shakeY} />
+      <Footage job={job} offsetOut={hookSec} punch={punch} shakeX={shakeX} shakeY={shakeY} shade={shade} />
       {inContent && (
         <AbsoluteFill style={{transform: `translate(${shakeX * 0.4}px, ${shakeY * 0.4}px)`}}>
           <Captions job={job} t={t} frame={sf} fps={fps} />
