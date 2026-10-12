@@ -5,14 +5,16 @@ SRC = os.path.join(ROOT, 'public/input/noamdor-src.mp4')
 words = [w for s in json.load(open(os.path.join(ROOT, 'scripts/data/mani_rit2_transcript.json'))) for w in s['words']]
 T = lambda i: round(words[i]['s'], 3)
 
-pcm = subprocess.run(['ffmpeg', '-v', 'error', '-i', SRC, '-vn', '-ac', '1', '-ar', '16000', '-f', 's16le', '-'], capture_output=True).stdout
-x = np.frombuffer(pcm, np.int16).astype(float) / 32768
-n = len(x) // 160
-db = 20 * np.log10(np.sqrt(np.mean(x[:n * 160].reshape(n, 160) ** 2, 1)) + 1e-12)
-sm = np.convolve(db, np.ones(3) / 3, 'same')
+def envelope(path):
+    pcm = subprocess.run(['ffmpeg', '-v', 'error', '-i', path, '-vn', '-ac', '1', '-ar', '16000', '-f', 's16le', '-'], capture_output=True).stdout
+    x = np.frombuffer(pcm, np.int16).astype(float) / 32768
+    n = len(x) // 160
+    db = 20 * np.log10(np.sqrt(np.mean(x[:n * 160].reshape(n, 160) ** 2, 1)) + 1e-12)
+    return np.convolve(db, np.ones(3) / 3, 'same')
+sm = envelope(SRC)
 fr = lambda t: int(round(t * 100))
 
-def quiet(lo, hi, prefer):
+def quiet(lo, hi, prefer, sm=sm):
     lo, hi = max(0, lo), min(len(sm) / 100 - 0.01, hi)
     seg = sm[fr(lo):fr(hi) + 1]
     if len(seg) == 0: return lo
@@ -46,6 +48,29 @@ for i0, i1 in R:
         w = FIX.get(i, words[i]['w'].strip())
         if w: caps.append({'t': T(i), 'w': w, **({'hl': True} if i in HL else {})})
 
+# the opening comes from the part of the episode just before (context-src): Mani sets the story up
+CTX = 'input/context-src.mp4'
+OFF = 1000.0  # context parts run on their own clock: reel time = source time - OFF, so they sit before everything else
+csm = envelope(os.path.join(ROOT, 'public', CTX))
+cw = [w for s in json.load(open(os.path.join(ROOT, 'scripts/data/mani_rit2_context_transcript.json'))) for w in s['words']]
+CR = [(83, 91), (124, 129), (130, 134)]  # "I'll tell you a hand from a few days ago" / "the tilt hand of my life" / "I've got jacks in the small"
+CFIX = {87: 'יד', 125: 'יד', 132: "ג'קים", 133: '', 134: 'בסמול.'}
+CHL = {87, 126, 128, 132}
+intro, icaps = [], []
+for a, b in CR:
+    s0, e1 = cw[a]['s'], cw[b]['e']
+    pe = cw[a - 1]['e']
+    ns = cw[b + 1]['s']
+    cin = {124: 51.44}.get(a) or quiet(max(pe, s0 - 0.6), s0 + 0.02, 'late', csm)  # 124: dip between "אחי," and "זה", after the camera cut
+    cout = quiet(e1, min(ns, e1 + 0.45), 'early', csm)
+    intro.append({'from': round(cin - OFF, 3), 'to': round(cout + 0.04 - OFF, 3), 'src': CTX, 'srcOffset': OFF})
+    for i in range(a, b + 1):
+        w = CFIX.get(i, cw[i]['w'].strip())
+        if w: icaps.append({'t': round(cw[i]['s'] - OFF, 3), 'w': w, **({'hl': True} if i in CHL else {})})
+segs = intro + segs
+caps = icaps + caps
+HUD_FROM = round(cw[130]['s'] - OFF - 0.1, 3)  # the cards come in on "I've got jacks"
+
 # what the camera shows: Mani alone (crop on him) or the hosts' two-shot (shown whole in a frame)
 MODES = []
 hosts = [(18.0, 18.75), (25.0, 26.0), (28.25, 29.75), (30.75, 32.0), (33.75, 34.75), (51.25, 52.25), (54.5, 55.5), (61.5, 63.25),
@@ -59,6 +84,8 @@ for a, b in hosts:
     MODES.append([a, b, 'face', HOST_X.get(a, 1340)])
     t = b
 MODES.append([t, 103.0, 'face', 1010])
+# context camera: hosts still laughing at the last story until the cut at 33.35, then Mani
+MODES = [[-OFF, 33.35 - OFF, 'face', 540], [33.35 - OFF, -900.0, 'face', 1000]] + MODES
 
 job = {
   'src': 'input/noamdor-src.mp4',
@@ -72,8 +99,8 @@ job = {
   'chipRain': False,
   'segments': segs,
   'words': caps,
-  'speaker': {'name': 'מני מלכה', 'at': segs[0]['from'] + 0.2, 'until': segs[1]['from'] + 2.2},
-  'hudFrom': segs[0]['from'] + 0.1,
+  'speaker': {'name': 'מני מלכה', 'at': 33.45 - OFF, 'until': segs[1]['to'] - 0.2},
+  'hudFrom': HUD_FROM,
   'pot': [[T(7), 75], [T(19), 150], [T(20), 225], [T(23), 675], [T(30), 1050], [T(121), 2000], [T(125), 2850]],
   'board': ['Ac', '9d', '3h', 'Ks', 'Tc'],
   'boardAt': [T(106), T(107), T(108), T(150), T(152)],
@@ -86,7 +113,7 @@ job = {
     'vil': [[0, ''], [T(6), 'BET 75'], [T(30), 'CALL 450'], [T(100), ''], [T(121), 'ALL-IN 950', True], [T(149), ''], [T(161), 'WINS 2,850', True]],
   },
   'strength': {
-    'mani': [[0, 'JACKS'], [T(161), 'JACKS · LOSES']],
+    'mani': [[HUD_FROM + 0.6, 'JACKS'], [T(161), 'JACKS · LOSES']],
     'vil': [[0, ''], [T(155), 'KINGS']],
   },
   'win': {'at': T(161), 'player': 'vil', 'cards': ['Kd', 'Ks', 'Ac', 'Jc', 'Tc']},
@@ -95,4 +122,6 @@ job = {
 json.dump(job, open(os.path.join(ROOT, 'jobs/mani-run-it-twice.json'), 'w'), ensure_ascii=False, indent=1)
 d = sum(s['to'] - s['from'] for s in segs)
 print(f'{len(segs)} parts, {d:.1f}s')
-for s in segs: print(f"  {s['from']:7.2f}-{s['to']:7.2f}  in {sm[fr(s['from'])]:6.1f} dB  out {sm[fr(s['to']) - 1]:6.1f} dB")
+for s in segs:
+    e, o = (csm, OFF) if s.get('src') else (sm, 0)
+    print(f"  {s['from'] + o:7.2f}-{s['to'] + o:7.2f}  in {e[fr(s['from'] + o)]:6.1f} dB  out {e[fr(s['to'] + o) - 1]:6.1f} dB  {s.get('src', '')}")

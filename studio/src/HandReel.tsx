@@ -17,7 +17,8 @@ import {loadFonts} from './fonts';
 loadFonts();
 
 // ---------- job format (all times are seconds in the SOURCE video) ----------
-export type Seg = {from: number; to: number; cropX?: number; zoom?: number};
+// src/srcOffset: a part taken from another file; its times are kept on their own (negative) clock, source time = from + srcOffset
+export type Seg = {from: number; to: number; cropX?: number; zoom?: number; src?: string; srcOffset?: number};
 export type Word = {t: number; w: string; hl?: boolean};
 export type Act = [number, string, boolean?]; // time, label, hot
 export type Player = {
@@ -134,8 +135,8 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
   const base = (seg.zoom ?? 1) * (index % 2 === 0 ? 1.0 : 1.08);
   const drift = interpolate(f, [0, dur], [0, 0.045], {extrapolateRight: 'clamp'});
   const z = (base + drift) * punch;
-  const trim = Math.round(seg.from * fps);
-  const src = staticFile(job.src);
+  const trim = Math.round((seg.from + (seg.srcOffset ?? 0)) * fps);
+  const src = staticFile(seg.src ?? job.src);
   // sound runs on its own track so picture changes never touch it
   const audio = (
     <Audio src={src} trimBefore={trim} volume={(vf) => Math.max(0, Math.min(1, (vf + 1) / 3, (dur - vf) / 3))} />
