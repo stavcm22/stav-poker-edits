@@ -175,7 +175,7 @@ const Captions: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({
               display: 'inline-block',
             }}
           >
-            {w.w}
+            {w.w.replace(/[.,:]+$/, '')}
           </span>
         );
       })}
@@ -452,9 +452,10 @@ const Hook: React.FC<{job: Job; o: number; frame: number; fps: number}> = ({job,
             top: 720,
             fontFamily: 'Barlow',
             fontWeight: 800,
-            fontSize: 270,
+            fontSize: isNum ? 270 : 190,
             color: '#fff',
             lineHeight: 1,
+            whiteSpace: 'nowrap',
             opacity: a(0.3),
             transform: `scale(${0.92 + 0.08 * a(0.3)})`,
           }}
