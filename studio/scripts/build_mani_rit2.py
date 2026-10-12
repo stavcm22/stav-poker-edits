@@ -55,7 +55,7 @@ csm = envelope(os.path.join(ROOT, 'public', CTX))
 cw = [w for s in json.load(open(os.path.join(ROOT, 'scripts/data/mani_rit2_context_transcript.json'))) for w in s['words']]
 # "I'll tell you a hand from a few days ago" / who the player was + "the tilt hand of my life" / jacks in the small, limps, didn't notice it was his turn
 CR = [(83, 91), (104, 129), (130, 153)]
-CFIX = {87: 'יד', 108: 'שמות.', 125: 'יד', 132: "ג'קים", 133: '', 134: 'בסמול.'}
+CFIX = {87: 'יד', 104: 'ישב', 105: 'מולי...', 108: 'שמות.', 125: 'יד', 132: "ג'קים", 133: '', 134: 'בסמול.'}
 CHL = {87, 110, 117, 121, 126, 128, 132, 138, 144, 148, 149, 150}
 intro, icaps = [], []
 for a, b in CR:
