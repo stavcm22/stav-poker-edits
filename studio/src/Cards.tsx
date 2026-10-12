@@ -24,6 +24,7 @@ type CardProps = {
   flip?: number; // 0 = back, 1 = face
   glow?: number; // 0..1 winning highlight
   dim?: number; // 0..1
+  shine?: number; // 0..1 light sweep across the face
   style?: React.CSSProperties;
 };
 
@@ -82,7 +83,7 @@ const Back: React.FC<{w: number; h: number}> = ({w, h}) => (
   </div>
 );
 
-export const Card: React.FC<CardProps> = ({card, w, h, flip = 1, glow = 0, dim = 0, style}) => {
+export const Card: React.FC<CardProps> = ({card, w, h, flip = 1, glow = 0, dim = 0, shine = 0, style}) => {
   const angle = (1 - flip) * 180;
   const showFace = card !== null && angle < 90;
   return (
@@ -99,6 +100,21 @@ export const Card: React.FC<CardProps> = ({card, w, h, flip = 1, glow = 0, dim =
         }}
       >
         {showFace ? <Face card={card as string} w={w} h={h} /> : <Back w={w} h={h} />}
+        {showFace && shine > 0 && shine < 1 && (
+          <div style={{position: 'absolute', inset: 0, borderRadius: w * 0.09, overflow: 'hidden', pointerEvents: 'none'}}>
+            <div
+              style={{
+                position: 'absolute',
+                top: -h * 0.2,
+                bottom: -h * 0.2,
+                width: w * 0.55,
+                left: -w * 0.6 + shine * w * 1.9,
+                transform: 'rotate(18deg)',
+                background: 'linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.85), rgba(255,255,255,0))',
+              }}
+            />
+          </div>
+        )}
         {dim > 0 && (
           <div
             style={{

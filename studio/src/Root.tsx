@@ -1,11 +1,11 @@
 import React from 'react';
 import {Composition} from 'remotion';
 import {ManiReel, FPS, SRC_FRAMES, NOHOOK_START} from './ManiReel';
-import {HandReel, HOOK_SEC, Job, outDuration} from './HandReel';
+import {HandReel, Job, reelFrames} from './HandReel';
 import rafiFlush from '../jobs/rafi-flush.json';
+import rafiAq from '../jobs/rafi-aq.json';
 
 const reel = (id: string, job: Job) => {
-  const content = Math.round(outDuration(job) * FPS);
   return (
     <React.Fragment key={id}>
       <Composition
@@ -14,7 +14,7 @@ const reel = (id: string, job: Job) => {
         width={1080}
         height={1920}
         fps={FPS}
-        durationInFrames={content + (job.hook ? Math.round(HOOK_SEC * FPS) : 0)}
+        durationInFrames={reelFrames(job, true)}
         defaultProps={{job, withHook: true}}
       />
       <Composition
@@ -23,7 +23,7 @@ const reel = (id: string, job: Job) => {
         width={1080}
         height={1920}
         fps={FPS}
-        durationInFrames={content}
+        durationInFrames={reelFrames(job, false)}
         defaultProps={{job, withHook: false}}
       />
     </React.Fragment>
@@ -51,5 +51,6 @@ export const Root: React.FC = () => (
       defaultProps={{withHook: false}}
     />
     {reel('RafiFlush', rafiFlush as unknown as Job)}
+    {reel('RafiAQ', rafiAq as unknown as Job)}
   </>
 );
