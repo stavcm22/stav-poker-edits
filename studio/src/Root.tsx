@@ -1,9 +1,11 @@
 import React from 'react';
 import {Composition} from 'remotion';
 import {ManiReel, FPS, SRC_FRAMES, NOHOOK_START} from './ManiReel';
-import {DoubleReel, HandReel, Job, doubleFrames, reelFrames} from './HandReel';
+import {ColdOpenReel, DoubleReel, HandReel, Job, coldOpenFrames, doubleFrames, reelFrames} from './HandReel';
 import rafiFlush from '../jobs/rafi-flush.json';
 import rafiAq from '../jobs/rafi-aq.json';
+import wsopFull from '../jobs/rafi-wsop-fullhouse.json';
+import wsopQueens from '../jobs/rafi-wsop-queens.json';
 
 const reel = (id: string, job: Job) => {
   return (
@@ -30,6 +32,20 @@ const reel = (id: string, job: Job) => {
   );
 };
 
+const cold = (id: string, job: Job & {teaser?: [number, number]}) =>
+  job.teaser ? (
+    <Composition
+      key={id + '-cold'}
+      id={`${id}-cold`}
+      component={ColdOpenReel}
+      width={1080}
+      height={1920}
+      fps={FPS}
+      durationInFrames={coldOpenFrames(job, job.teaser[0], job.teaser[1])}
+      defaultProps={{job, teaser: job.teaser}}
+    />
+  ) : null;
+
 export const Root: React.FC = () => (
   <>
     <Composition
@@ -52,6 +68,10 @@ export const Root: React.FC = () => (
     />
     {reel('RafiFlush', rafiFlush as unknown as Job)}
     {reel('RafiAQ', rafiAq as unknown as Job)}
+    {reel('WsopFullHouse', wsopFull as unknown as Job)}
+    {reel('WsopQueens', wsopQueens as unknown as Job)}
+    {cold('WsopFullHouse', wsopFull as unknown as Job)}
+    {cold('WsopQueens', wsopQueens as unknown as Job)}
     <Composition
       id="RafiDouble"
       component={DoubleReel}

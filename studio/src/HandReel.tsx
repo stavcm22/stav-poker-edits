@@ -30,7 +30,10 @@ export type Player = {
 export type Job = {
   src: string;
   title?: string;
-  layout?: 'top' | 'full'; // full = 9:16 source filling the frame
+  layout?: 'top' | 'full'; // full = vertical frame
+  // for a 16:9 source in the full layout: what each stretch of the source shows, and where to crop
+  modes?: [number, number, 'face' | 'table' | 'broll', number?][]; // from, to, mode, crop centre x (source px)
+  pip?: {x: number; y: number; w: number; h: number}; // face-cam window inside the source's table shots
   segments: Seg[];
   words: Word[];
   tag?: {text: string; sub?: string; at: number; until: number};
@@ -47,6 +50,9 @@ export type Job = {
   hook?: {stat: string; statLabel: string; head: [string, string]; hlWord?: string; show: string[]};
   brand?: string;
   credit?: string;
+  callouts?: [number, string][]; // big slam text at a moment (source time)
+  seats?: {hero: string; villain: string; heroName: string; villainName: string}; // positions, e.g. SB / BTN
+  meter?: {from: number; to: number; points: [number, number][]}; // live equity bar: [time, hero %]
 };
 
 export const HOOK_SEC = 2.3;
@@ -90,11 +96,16 @@ const soft = (frame: number, fps: number, at: number, damping = 18) =>
 const VIDEO_H = 1080;
 const LAYOUT = {
   top: {capTop: VIDEO_H - 190, hudTop: 1150, potTop: 40, tagTop: 52, eqTop: 150, brandTop: VIDEO_H - 70},
-  full: {capTop: 930, hudTop: 1170, potTop: 120, tagTop: 132, eqTop: 330, brandTop: 66},
+  full: {capTop: 930, hudTop: 1170, potTop: 120, tagTop: 132, eqTop: 108, brandTop: 66},
 };
 const L = (job: Job) => LAYOUT[job.layout ?? 'top'];
 
 // ---------- footage with camera motion ----------
+const modeAt = (job: Job, t: number) => {
+  for (const m of job.modes ?? []) if (t >= m[0] && t < m[1]) return m;
+  return null;
+};
+
 const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch: number; shakeX: number; shakeY: number}> = ({
   job,
   seg,
@@ -106,10 +117,74 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
 }) => {
   const f = useCurrentFrame();
   const {fps} = useVideoConfig();
-  // alternate framing on every cut, with a slow push-in inside the shot
-  const base = (seg.zoom ?? 1) * (index % 2 === 0 ? 1.0 : 1.1);
+  const base = (seg.zoom ?? 1) * (index % 2 === 0 ? 1.0 : 1.08);
   const drift = interpolate(f, [0, dur], [0, 0.045], {extrapolateRight: 'clamp'});
   const z = (base + drift) * punch;
+  const trim = Math.round(seg.from * fps);
+  const src = staticFile(job.src);
+  // sound runs on its own track so picture changes never touch it
+  const audio = (
+    <Audio src={src} trimBefore={trim} volume={(vf) => Math.max(0, Math.min(1, (vf + 1) / 3, (dur - vf) / 3))} />
+  );
+
+  if (job.layout === 'full' && job.modes) {
+    const t = seg.from + f / fps;
+    const m = modeAt(job, t);
+    const mode = m ? m[2] : 'face';
+    const cx = (m && m[3]) ?? 960;
+    // punch-in with a quick blur on every cut and every change of shot
+    const since = Math.min(index > 0 ? f / fps : 99, m ? t - m[0] : 99);
+    const kick = since < 0.4 ? Math.exp(-since * fps / 2.6) : 0;
+    const H = 1920 * z * (1 + 0.08 * kick);
+    const W = (H * 16) / 9;
+    const left = 540 - cx * (H / 1080) + shakeX;
+    const top = (1920 - H) / 2 + shakeY;
+    const grade = `contrast(1.07) saturate(1.12) brightness(${1.02 + 0.25 * kick}) blur(${(7 * kick).toFixed(2)}px)`;
+    if (mode === 'table' && job.pip) {
+      const pw = 920;
+      const sc = pw / job.pip.w;
+      const ph = job.pip.h * sc;
+      const pz = 1 + drift * 0.6;
+      const enter = spring({frame: Math.round((m ? t - m[0] : 99) * fps), fps, config: {damping: 14, stiffness: 150}});
+      return (
+        <AbsoluteFill>
+          {audio}
+          <div style={{position: 'absolute', inset: 0, overflow: 'hidden'}}>
+            <OffthreadVideo muted src={src} trimBefore={trim} style={{position: 'absolute', width: W * 1.1, height: H * 1.1, left: 540 - 960 * (H * 1.1 / 1080), top: (1920 - H * 1.1) / 2, filter: 'blur(26px) brightness(0.42) saturate(1.2)'}} />
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              left: (1080 - pw) / 2 + shakeX * 0.5,
+              top: 250 + shakeY * 0.5 + (1 - enter) * 60,
+              opacity: Math.min(1, enter * 1.4),
+              transform: `scale(${0.88 + 0.12 * enter}) rotate(${(1 - enter) * -2}deg)`,
+              width: pw,
+              height: ph,
+              borderRadius: 34,
+              overflow: 'hidden',
+              border: '3px solid rgba(255,194,26,0.75)',
+              boxShadow: '0 24px 70px rgba(0,0,0,0.6), 0 0 40px rgba(255,194,26,0.18)',
+            }}
+          >
+            <OffthreadVideo
+              muted
+              src={src}
+              trimBefore={trim}
+              style={{position: 'absolute', width: 1920 * sc * pz, height: 1080 * sc * pz, left: -job.pip.x * sc * pz - (pw * (pz - 1)) / 2, top: -job.pip.y * sc * pz - (ph * (pz - 1)) / 2, filter: grade}}
+            />
+          </div>
+        </AbsoluteFill>
+      );
+    }
+    return (
+      <AbsoluteFill style={{overflow: 'hidden'}}>
+        {audio}
+        <OffthreadVideo muted src={src} trimBefore={trim} style={{position: 'absolute', width: W, height: H, left, top, filter: grade}} />
+      </AbsoluteFill>
+    );
+  }
+
   const full = job.layout === 'full';
   const boxW = 1080;
   const boxH = full ? 1920 : VIDEO_H;
@@ -119,8 +194,8 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
   return (
     <div style={{position: 'absolute', left: 0, top: 0, width: boxW, height: boxH, overflow: 'hidden'}}>
       <OffthreadVideo
-        src={staticFile(job.src)}
-        trimBefore={Math.round(seg.from * fps)}
+        src={src}
+        trimBefore={trim}
         // short fades at every cut so speech never clicks or jumps
         volume={(vf) => Math.max(0, Math.min(1, (vf + 1) / 3, (dur - vf) / 3))}
         style={{position: 'absolute', width: w, height: h, left: -(w - boxW) * cropX + shakeX, top: -(h - boxH) / 2 + shakeY}}
@@ -157,6 +232,7 @@ const Footage: React.FC<{job: Job; offsetOut: number; punch: number; shakeX: num
               background: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 28%, rgba(0,0,0,0.9) 58%, #000 72%)',
             }}
           />
+          <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 38%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.45) 100%)', pointerEvents: 'none'}} />
         </>
       ) : (
         <div style={{position: 'absolute', left: 0, right: 0, top: VIDEO_H - 260, height: 262, background: 'linear-gradient(to bottom, rgba(0,0,0,0), #000)'}} />
@@ -202,8 +278,9 @@ const Captions: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({
     >
       {chunk.map((w, i) => {
         const on = t >= w.t;
-        const p = spring({frame: frame - Math.round(w.t * fps), fps, config: {damping: 11, stiffness: 220}});
+        const p = spring({frame: frame - Math.round(w.t * fps), fps, config: w.hl ? {damping: 7, stiffness: 260} : {damping: 11, stiffness: 220}});
         const active = i === activeIdx;
+        const tilt = w.hl && on ? (1 - Math.min(1, p)) * -8 : 0;
         return (
           <span
             key={i}
@@ -214,7 +291,7 @@ const Captions: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({
               color: w.hl ? YELLOW : '#fff',
               textShadow: active ? '0 0 26px rgba(255,194,26,0.35), 0 4px 14px rgba(0,0,0,0.9)' : '0 4px 14px rgba(0,0,0,0.9)',
               opacity: on ? 1 : 0.28,
-              transform: `scale(${on ? 0.9 + 0.1 * p + (active ? 0.06 : 0) : 0.9})`,
+              transform: `scale(${on ? 0.9 + (w.hl ? 0.16 : 0.1) * p + (active ? 0.06 : 0) : 0.9}) rotate(${tilt}deg)`,
               display: 'inline-block',
               WebkitTextStroke: '1px rgba(0,0,0,0.35)',
             }}
@@ -407,6 +484,7 @@ const Hud: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, 
 
 const Pot: React.FC<{job: Job; t: number}> = ({job, t}) => {
   if (!job.pot || job.hudFrom === undefined || t < job.hudFrom) return null;
+  if (job.layout === 'full' && job.equity && t >= job.equity.at) return null;
   const {cur, prev} = latest(job.pot, t);
   if (!cur) return null;
   const p = interpolate(t - cur[0], [0, 0.5], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic)});
@@ -549,7 +627,7 @@ const Hook: React.FC<{job: Job; o: number; frame: number; fps: number}> = ({job,
             top: 720,
             fontFamily: 'Barlow',
             fontWeight: 800,
-            fontSize: 250,
+            fontSize: h.stat.length > 7 ? 170 : 250,
             color: '#fff',
             lineHeight: 1,
             whiteSpace: 'nowrap',
@@ -616,6 +694,228 @@ const EndCard: React.FC<{job: Job; sec: number}> = ({job, sec}) => {
   );
 };
 
+
+// ---------- effects: chips into the pot, chip rain, slam callouts ----------
+const ChipFlights: React.FC<{job: Job; t: number}> = ({job, t}) => {
+  if (!job.players || !job.pot || job.hudFrom === undefined || t < job.hudFrom) return null;
+  const top = L(job).hudTop;
+  const potX = 120;
+  const potY = L(job).potTop + 43;
+  const flights: React.ReactNode[] = [];
+  job.players.forEach((pl) => {
+    for (const [at, label] of job.actions?.[pl.id] ?? []) {
+      if (!/BET|RAISE|CALL|ALL-IN/.test(label)) continue;
+      const dt = t - at;
+      if (dt < 0 || dt > 1.0) continue;
+      const big = /ALL-IN/.test(label);
+      const fromX = pl.side === 'left' ? 360 : 720;
+      const fromY = top + 320;
+      const count = big ? 12 : 6;
+      for (let k = 0; k < count; k++) {
+        const p = Math.min(1, Math.max(0, (dt - k * 0.035) / 0.55));
+        if (p <= 0 || p >= 1) continue;
+        const e = 1 - Math.pow(1 - p, 3);
+        const x = fromX + (potX - fromX) * e + Math.sin(k * 1.7) * 30 * (1 - e);
+        const y = fromY + (potY - fromY) * e - Math.sin(Math.PI * e) * (260 + k * 12);
+        flights.push(
+          <div key={`${pl.id}-${at}-${k}`} style={{position: 'absolute', left: x - 26, top: y - 26, transform: `rotate(${e * 540 + k * 40}deg) scale(${1 - 0.35 * e})`, opacity: p < 0.85 ? 1 : (1 - p) / 0.15, filter: 'drop-shadow(0 6px 10px rgba(0,0,0,0.5))'}}>
+            <Chip size={52} />
+          </div>,
+        );
+      }
+    }
+  });
+  return <>{flights}</>;
+};
+
+const ChipRain: React.FC<{job: Job; t: number}> = ({job, t}) => {
+  if (!job.win) return null;
+  const dt = t - job.win.at;
+  if (dt < 0 || dt > 2.6) return null;
+  const chips: React.ReactNode[] = [];
+  for (let k = 0; k < 34; k++) {
+    const r1 = (Math.sin(k * 12.9898) * 43758.5453) % 1;
+    const r2 = (Math.sin(k * 78.233) * 12543.123) % 1;
+    const x = Math.abs(r1) * 1080;
+    const delay = Math.abs(r2) * 0.8;
+    const p = (dt - delay) / 1.7;
+    if (p <= 0 || p >= 1) continue;
+    const y = -80 + p * p * 2100;
+    chips.push(
+      <div key={k} style={{position: 'absolute', left: x - 30, top: y, transform: `rotate(${p * 720 * (k % 2 ? 1 : -1)}deg) rotateX(${p * 540}deg)`, opacity: p > 0.85 ? (1 - p) / 0.15 : 1}}>
+        <Chip size={44 + (k % 4) * 10} />
+      </div>,
+    );
+  }
+  return <AbsoluteFill style={{pointerEvents: 'none'}}>{chips}</AbsoluteFill>;
+};
+
+const Callouts: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, t, frame, fps}) => {
+  const cur = (job.callouts ?? []).find(([at]) => t >= at && t < at + 1.25);
+  if (!cur) return null;
+  const [at, text] = cur;
+  const p = spring({frame: frame - Math.round(at * fps), fps, config: {damping: 9, stiffness: 210}});
+  const out = interpolate(t - at, [0.95, 1.25], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  const d = (t - at) * fps;
+  const shake = d < 10 ? Math.sin(d * 2.1) * 12 * (1 - d / 10) : 0;
+  return (
+    <AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', pointerEvents: 'none'}}>
+      <div
+        style={{
+          position: 'absolute',
+          top: 560,
+          fontFamily: 'Barlow',
+          fontWeight: 800,
+          fontSize: text.length > 9 ? 150 : 190,
+          letterSpacing: 4,
+          color: YELLOW,
+          WebkitTextStroke: '6px #111',
+          paintOrder: 'stroke fill',
+          textShadow: '0 0 40px rgba(255,194,26,0.55), 0 12px 30px rgba(0,0,0,0.7)',
+          whiteSpace: 'nowrap',
+          opacity: Math.min(1, p * 2) * out,
+          transform: `translate(${shake}px, ${shake * 0.4}px) scale(${2.4 - 1.4 * p}) rotate(-6deg)`,
+        }}
+      >
+        {text}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+
+// ---------- seat map: where everyone sits ----------
+const POS = ['BTN', 'SB', 'BB', 'UTG', 'UTG+1', 'MP', 'LJ', 'HJ', 'CO'];
+const SeatMap: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, t, frame, fps}) => {
+  const st = job.seats;
+  if (!st || job.hudFrom === undefined || t < job.hudFrom) return null;
+  const at = job.hudFrom;
+  const appear = spring({frame: frame - Math.round(at * fps), fps, config: {damping: 15, stiffness: 140}});
+  // big in the middle first, then docks in the top-right corner
+  const dock = interpolate(t - at, [2.2, 2.9], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.inOut(Easing.cubic)});
+  const W = 420;
+  const Hh = 250;
+  const big = {x: 540, y: 640, s: 1.55};
+  const small = {x: 1080 - 40 - (W * 0.62) / 2, y: 210, s: 0.62};
+  const cx = big.x + (small.x - big.x) * dock;
+  const cy = big.y + (small.y - big.y) * dock;
+  const sc = (big.s + (small.s - big.s) * dock) * (0.7 + 0.3 * appear);
+  const hi = POS.indexOf(st.hero);
+  const seats = POS.map((pos, i) => {
+    const ang = Math.PI / 2 + (((i - hi + 9) % 9) * 2 * Math.PI) / 9;
+    return {pos, x: W / 2 + Math.cos(ang) * (W / 2 + 6), y: Hh / 2 + Math.sin(ang) * (Hh / 2 + 6)};
+  });
+  const btn = seats[0];
+  return (
+    <div style={{position: 'absolute', left: cx - W / 2, top: cy - Hh / 2, width: W, height: Hh, transform: `scale(${sc})`, opacity: Math.min(1, appear * 1.5)}}>
+      {dock < 1 && (
+        <div style={{position: 'absolute', left: -60, right: -60, top: -78, textAlign: 'center', fontFamily: 'Barlow', fontWeight: 800, fontSize: 34, letterSpacing: 6, color: '#fff', opacity: 1 - dock}}>
+          WHERE THEY SIT
+        </div>
+      )}
+      <div style={{position: 'absolute', inset: 0, borderRadius: Hh, background: 'radial-gradient(ellipse at 50% 40%, #1f7a4a, #0d3a24)', border: `7px solid #3a2a12`, boxShadow: `0 0 0 3px ${YELLOW}55, 0 18px 40px rgba(0,0,0,0.6)`}} />
+      <div style={{position: 'absolute', left: W / 2 - 34, top: Hh / 2 - 34, opacity: 0.5}}>
+        <Chip size={68} />
+      </div>
+      {seats.map(({pos, x, y}, i) => {
+        const isHero = pos === st.hero;
+        const isVil = pos === st.villain;
+        const on = isHero || isVil;
+        const pulse = on ? 1 + 0.08 * Math.sin((t - at) * 6 + (isHero ? 0 : 1.5)) : 1;
+        return (
+          <div key={pos} style={{position: 'absolute', left: x - 26, top: y - 26, width: 52, height: 52, transform: `scale(${pulse})`}}>
+            <div
+              style={{
+                width: 52,
+                height: 52,
+                borderRadius: 26,
+                background: isHero ? YELLOW : isVil ? '#f2f4f5' : '#2a2f33',
+                border: on ? '3px solid #111' : '2px solid #4a5156',
+                boxShadow: isHero ? '0 0 22px rgba(255,194,26,0.8)' : isVil ? '0 0 16px rgba(255,255,255,0.5)' : 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontFamily: 'Barlow',
+                fontWeight: 800,
+                fontSize: pos.length > 3 ? 13 : 17,
+                color: on ? '#111' : '#8a9297',
+              }}
+            >
+              {pos}
+            </div>
+            {on && (
+              <div
+                style={{
+                  position: 'absolute',
+                  left: '50%',
+                  top: y > Hh / 2 ? 58 : -40,
+                  transform: 'translateX(-50%)',
+                  whiteSpace: 'nowrap',
+                  fontFamily: /[א-ת]/.test(isHero ? st.heroName : st.villainName) ? 'Heebo' : 'Barlow',
+                  fontWeight: 800,
+                  fontSize: 26,
+                  color: isHero ? YELLOW : '#fff',
+                  textShadow: '0 2px 8px rgba(0,0,0,0.8)',
+                }}
+              >
+                {isHero ? st.heroName : st.villainName}
+              </div>
+            )}
+          </div>
+        );
+      })}
+      <div
+        style={{
+          position: 'absolute',
+          left: btn.x + (W / 2 - btn.x) * 0.28 - 15,
+          top: btn.y + (Hh / 2 - btn.y) * 0.28 - 15,
+          width: 30,
+          height: 30,
+          borderRadius: 15,
+          background: '#fff',
+          border: '2px solid #111',
+          fontFamily: 'Barlow',
+          fontWeight: 800,
+          fontSize: 18,
+          color: '#111',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        D
+      </div>
+    </div>
+  );
+};
+
+// ---------- live equity tug-of-war ----------
+const Meter: React.FC<{job: Job; t: number}> = ({job, t}) => {
+  const m = job.meter;
+  if (!m || t < m.from || t > m.to) return null;
+  let v = m.points[0][1];
+  for (let i = 0; i < m.points.length; i++) {
+    const [pt, pv] = m.points[i];
+    if (t >= pt) {
+      const prev = i > 0 ? m.points[i - 1][1] : pv;
+      v = prev + (pv - prev) * interpolate(t - pt, [0, 0.5], [0, 1], {extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic)});
+    }
+  }
+  const pIn = interpolate(t - m.from, [0, 0.3], [0, 1], {extrapolateRight: 'clamp'});
+  const out = interpolate(t, [m.to - 0.3, m.to], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  return (
+    <div style={{position: 'absolute', left: 70, right: 70, top: 812, opacity: pIn * out}}>
+      <div style={{display: 'flex', justifyContent: 'space-between', fontFamily: 'Barlow', fontWeight: 800, fontSize: 52, color: '#fff', textShadow: '0 3px 10px rgba(0,0,0,0.8)'}}>
+        <span style={{color: YELLOW}}>{Math.round(v)}%</span>
+        <span>{Math.round(100 - v)}%</span>
+      </div>
+      <div style={{height: 22, borderRadius: 11, background: 'rgba(255,255,255,0.18)', overflow: 'hidden', border: '2px solid rgba(0,0,0,0.6)', marginTop: 6}}>
+        <div style={{width: `${v}%`, height: '100%', background: `linear-gradient(90deg, ${YELLOW}, #ffe27a)`, boxShadow: '0 0 20px rgba(255,194,26,0.7)'}} />
+      </div>
+    </div>
+  );
+};
+
 // ---------- sound design ----------
 type Sfx = {at: number; file: string; vol: number; dur: number};
 const buildSfx = (job: Job, hookSec: number, withHook: boolean): Sfx[] => {
@@ -636,6 +936,7 @@ const buildSfx = (job: Job, hookSec: number, withHook: boolean): Sfx[] => {
       list.push({at: o(p.hiddenUntil), file: 'flip.wav', vol: 0.36, dur: 0.2});
     }
   if (job.win) list.push({at: o(job.win.at), file: 'win.wav', vol: 0.22, dur: 1.4});
+  for (const [at] of job.callouts ?? []) list.push({at: o(at), file: 'impact.wav', vol: 0.3, dur: 0.9});
   return list;
 };
 
@@ -654,6 +955,7 @@ export const HandReel: React.FC<{job: Job; withHook: boolean; showEnd?: boolean;
   const moments: number[] = [];
   for (const p of job.players ?? []) if (p.hiddenUntil !== undefined && p.hiddenUntil < 1e4) moments.push(p.hiddenUntil);
   if (job.win) moments.push(job.win.at);
+  for (const [at] of job.callouts ?? []) moments.push(at);
   let punch = 1;
   let shakeX = 0;
   let shakeY = 0;
@@ -683,6 +985,11 @@ export const HandReel: React.FC<{job: Job; withHook: boolean; showEnd?: boolean;
           <Tag job={job} t={t} frame={sf} fps={fps} />
           <Hud job={job} t={t} frame={sf} fps={fps} />
           <EquityBox job={job} t={t} frame={sf} fps={fps} />
+          <SeatMap job={job} t={t} frame={sf} fps={fps} />
+          <Meter job={job} t={t} />
+          <ChipFlights job={job} t={t} />
+          <Callouts job={job} t={t} frame={sf} fps={fps} />
+          <ChipRain job={job} t={t} />
         </AbsoluteFill>
       )}
       {job.brand && inContent && (
@@ -742,3 +1049,51 @@ const Bridge: React.FC<{text: string}> = ({text}) => {
 };
 export const doubleFrames = (first: Job, second: Job, withHook: boolean) =>
   reelFrames(first, withHook, false) + Math.round(BRIDGE_SEC * FPS) + reelFrames(second, false);
+
+
+// ---------- cold open: the climax first, a rewind, then the whole hand ----------
+const REWIND_SEC = 1.1;
+const coldTeaser = (job: Job, from: number, to: number): Job => ({...job, segments: [{from, to}], hook: undefined});
+export const coldOpenFrames = (job: Job, from: number, to: number) =>
+  reelFrames(coldTeaser(job, from, to), false, false) + Math.round(REWIND_SEC * FPS) + reelFrames(job, false);
+const Rewind: React.FC = () => {
+  const f = useCurrentFrame();
+  const {fps, durationInFrames} = useVideoConfig();
+  const p = f / durationInFrames;
+  const lines = Array.from({length: 14}, (_, i) => i);
+  return (
+    <AbsoluteFill style={{background: '#050505', overflow: 'hidden'}}>
+      <Sequence layout="none"><Audio src={staticFile('sfx/rewind.wav')} volume={0.6} /></Sequence>
+      {lines.map((i) => {
+        const y = ((i * 137 + f * 47) % 1920) - 40;
+        return <div key={i} style={{position: 'absolute', left: 0, right: 0, top: y, height: 6 + (i % 3) * 5, background: i % 2 ? 'rgba(255,194,26,0.35)' : 'rgba(255,255,255,0.18)', transform: `translateX(${Math.sin(i + f) * 40}px)`}} />;
+      })}
+      <AbsoluteFill style={{alignItems: 'center', justifyContent: 'center'}}>
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, transform: `scale(${1.25 - 0.25 * Math.min(1, p * 3)}) translateX(${Math.sin(f * 1.7) * 6}px)`}}>
+          <div style={{fontFamily: 'Barlow', fontWeight: 800, fontSize: 150, color: YELLOW, letterSpacing: -10, textShadow: '6px 0 0 rgba(255,0,60,0.6), -6px 0 0 rgba(0,200,255,0.6)'}}>◀◀</div>
+          <div style={{fontFamily: 'Heebo', fontWeight: 900, fontSize: 88, color: '#fff', direction: 'rtl', textShadow: '4px 0 0 rgba(255,0,60,0.5), -4px 0 0 rgba(0,200,255,0.5)'}}>איך הגענו לזה?</div>
+        </div>
+      </AbsoluteFill>
+      <AbsoluteFill style={{background: '#fff', opacity: interpolate(f, [0, 3], [0.6, 0], {extrapolateRight: 'clamp'})}} />
+    </AbsoluteFill>
+  );
+};
+export const ColdOpenReel: React.FC<{job: Job; teaser: [number, number]}> = ({job, teaser}) => {
+  const {fps} = useVideoConfig();
+  const tj = coldTeaser(job, teaser[0], teaser[1]);
+  const a = reelFrames(tj, false, false);
+  const r = Math.round(REWIND_SEC * fps);
+  return (
+    <AbsoluteFill style={{background: '#000'}}>
+      <Sequence durationInFrames={a}>
+        <HandReel job={tj} withHook={false} showEnd={false} />
+      </Sequence>
+      <Sequence from={a} durationInFrames={r}>
+        <Rewind />
+      </Sequence>
+      <Sequence from={a + r}>
+        <HandReel job={job} withHook={false} />
+      </Sequence>
+    </AbsoluteFill>
+  );
+};
