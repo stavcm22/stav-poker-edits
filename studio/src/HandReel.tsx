@@ -35,6 +35,8 @@ export type Job = {
   // for a 16:9 source in the full layout: what each stretch of the source shows, and where to crop
   modes?: [number, number, 'face' | 'table' | 'broll' | 'wide', number?][]; // from, to, mode, crop centre x (source px)
   potPos?: 'top' | 'bottom' | 'center'; // where the pot box sits (default top-left)
+  logo?: boolean; // false hides the brand logo in the corner
+  calm?: boolean; // no punch-in on the source's own camera changes, only on our cuts
   chipRain?: boolean; // false turns off the chips raining down on the winner
   shift?: number; // push the wide frame, captions and HUD down (px) to clear a headline above
   pip?: {x: number; y: number; w: number; h: number}; // face-cam window inside the source's table shots
@@ -148,7 +150,7 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
     const mode = m ? m[2] : 'face';
     const cx = (m && m[3]) ?? 960;
     // punch-in with a quick blur on every cut and every change of shot
-    const since = Math.min(index > 0 ? f / fps : 99, m ? t - m[0] : 99);
+    const since = Math.min(index > 0 ? f / fps : 99, m && !job.calm ? t - m[0] : 99);
     const kick = since < 0.4 ? Math.exp(-since * fps / 2.6) : 0;
     const H = 1920 * z * (1 + 0.08 * kick);
     const W = (H * 16) / 9;
@@ -1179,7 +1181,7 @@ export const HandReel: React.FC<{job: Job; withHook: boolean; showEnd?: boolean;
           {job.brand}
         </div>
       )}
-      {job.brand === 'NOLIMIT' && inContent && (
+      {job.brand === 'NOLIMIT' && job.logo !== false && inContent && (
         <div style={{position: 'absolute', right: 40, top: 118}}>
           <NoLimitLogo size={1} />
         </div>

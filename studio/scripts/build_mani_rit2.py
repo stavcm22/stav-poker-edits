@@ -30,8 +30,8 @@ def passage(i0, i1):
     cout = quiet(b, min(next_s, b + 0.45), 'early')
     return {'from': cin, 'to': round(min(cout + 0.04, len(sm) / 100 - 0.05), 3)}
 
-R = [(3, 7), (19, 34), (94, 129), (130, 135), (146, 169), (216, 245)]
-FIX = {96: '', 97: '', 99: 'משנה,', 19: 'משלם,', 20: 'משלם,', 23: '450.', 109: 'מה', 111: 'בזה?', 115: "צ'ק.", 116: '', 120: 'דוחף', 147: 'רוצה',
+R = [(3, 34), (94, 129), (130, 135), (146, 169), (216, 245)]
+FIX = {13: 'היד.', 96: '', 97: '', 99: 'משנה,', 19: 'משלם,', 20: 'משלם,', 23: '450.', 109: 'מה', 111: 'בזה?', 115: "צ'ק.", 116: '', 120: 'דוחף', 147: 'רוצה',
        149: 'שורף,', 150: 'קינג.', 151: 'שורף,', 152: '10.', 156: "ג'ק.", 157: '', 165: 'טילט', 169: '',
        216: 'איזה', 217: 'מעצבן,', 219: 'אחי,', 222: 'אותי,', 226: "ג'ק", 227: '', 229: "ג'קים?", 230: '', 235: 'לקרות,', 240: 'אותך,', 242: 'המצב,'}
 HL = {7, 23, 27, 34, 103, 106, 107, 108, 115, 120, 121, 124, 127, 134, 135, 147, 148, 150, 152, 155, 156, 161, 165, 167, 168, 217, 221, 229, 242, 244}
@@ -53,15 +53,16 @@ CTX = 'input/context-src.mp4'
 OFF = 1000.0  # context parts run on their own clock: reel time = source time - OFF, so they sit before everything else
 csm = envelope(os.path.join(ROOT, 'public', CTX))
 cw = [w for s in json.load(open(os.path.join(ROOT, 'scripts/data/mani_rit2_context_transcript.json'))) for w in s['words']]
-CR = [(83, 91), (124, 129), (130, 134)]  # "I'll tell you a hand from a few days ago" / "the tilt hand of my life" / "I've got jacks in the small"
-CFIX = {87: 'יד', 125: 'יד', 132: "ג'קים", 133: '', 134: 'בסמול.'}
-CHL = {87, 126, 128, 132}
+# "I'll tell you a hand from a few days ago" / who the player was + "the tilt hand of my life" / jacks in the small, limps, didn't notice it was his turn
+CR = [(83, 91), (104, 129), (130, 153)]
+CFIX = {87: 'יד', 108: 'שמות.', 125: 'יד', 132: "ג'קים", 133: '', 134: 'בסמול.'}
+CHL = {87, 110, 117, 121, 126, 128, 132, 138, 144, 148, 149, 150}
 intro, icaps = [], []
 for a, b in CR:
     s0, e1 = cw[a]['s'], cw[b]['e']
     pe = cw[a - 1]['e']
     ns = cw[b + 1]['s']
-    cin = {124: 51.44}.get(a) or quiet(max(pe, s0 - 0.6), s0 + 0.02, 'late', csm)  # 124: dip between "אחי," and "זה", after the camera cut
+    cin = {104: 40.75}.get(a) or quiet(max(pe, s0 - 0.6), s0 + 0.02, 'late', csm)  # 104: speech starts right on a camera cut, so open on the hosts listening  # 124: dip between "אחי," and "זה", after the camera cut
     cout = quiet(e1, min(ns, e1 + 0.45), 'early', csm)
     intro.append({'from': round(cin - OFF, 3), 'to': round(cout + 0.04 - OFF, 3), 'src': CTX, 'srcOffset': OFF})
     for i in range(a, b + 1):
@@ -85,7 +86,8 @@ for a, b in hosts:
     t = b
 MODES.append([t, 103.0, 'face', 1010])
 # context camera: hosts still laughing at the last story until the cut at 33.35, then Mani
-MODES = [[-OFF, 33.35 - OFF, 'face', 540], [33.35 - OFF, -900.0, 'face', 1000]] + MODES
+CTX_SHOTS = [(0, 540), (33.35, 1000), (40.07, 600), (41.35, 1000), (42.55, 1380), (43.75, 1000), (45.95, 600), (48.67, 1040), (49.95, 600), (51.15, 1000), (100, None)]  # cut time, face x
+MODES = [[a - OFF, b - OFF, 'face', x] for (a, x), (b, _) in zip(CTX_SHOTS, CTX_SHOTS[1:])] + MODES
 
 job = {
   'src': 'input/noamdor-src.mp4',
@@ -96,10 +98,11 @@ job = {
   'layout': 'full',
   'modes': MODES,
   'potPos': 'bottom',
+  'logo': False,
+  'calm': True,
   'chipRain': False,
   'segments': segs,
   'words': caps,
-  'speaker': {'name': 'מני מלכה', 'at': 33.45 - OFF, 'until': segs[1]['to'] - 0.2},
   'hudFrom': HUD_FROM,
   'pot': [[T(7), 75], [T(19), 150], [T(20), 225], [T(23), 675], [T(30), 1050], [T(121), 2000], [T(125), 2850]],
   'board': ['Ac', '9d', '3h', 'Ks', 'Tc'],
@@ -109,7 +112,7 @@ job = {
     {'id': 'vil', 'name': 'VILLAIN', 'cards': ['Kd', 'Jc'], 'hiddenUntil': T(155), 'side': 'right'},
   ],
   'actions': {
-    'mani': [[0, ''], [T(23), 'RAISE 450'], [T(100), ''], [T(114), 'CHECK'], [T(124), 'CALL', True], [T(149), '']],
+    'mani': [[round(cw[147]['s'] - OFF, 3), 'LIMP'], [T(23), 'RAISE 450'], [T(100), ''], [T(114), 'CHECK'], [T(124), 'CALL', True], [T(149), '']],
     'vil': [[0, ''], [T(6), 'BET 75'], [T(30), 'CALL 450'], [T(100), ''], [T(121), 'ALL-IN 950', True], [T(149), ''], [T(161), 'WINS 2,850', True]],
   },
   'strength': {
