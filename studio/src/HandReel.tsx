@@ -121,6 +121,8 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
       <OffthreadVideo
         src={staticFile(job.src)}
         trimBefore={Math.round(seg.from * fps)}
+        // short fades at every cut so speech never clicks or jumps
+        volume={(vf) => Math.max(0, Math.min(1, (vf + 1) / 3, (dur - vf) / 3))}
         style={{position: 'absolute', width: w, height: h, left: -(w - boxW) * cropX + shakeX, top: -(h - boxH) / 2 + shakeY}}
       />
     </div>
