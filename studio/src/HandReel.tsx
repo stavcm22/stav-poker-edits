@@ -27,6 +27,7 @@ export type Player = {
   cards: [string, string];
   hiddenUntil?: number; // face down until this time
   side: 'left' | 'right';
+  row?: number; // 0 = first row of players, 1 = a second row under it (three-way pots)
 };
 export type Job = {
   src: string;
@@ -38,6 +39,8 @@ export type Job = {
   eqScale?: number;
   faceAt?: number; // with a face y in the mode: keep the face centre at this height (px) so captions clear the chin
   potPos?: 'top' | 'bottom' | 'center'; // where the pot box sits (default top-left)
+  vertical?: boolean; // the source is already 9:16: fill the frame with it instead of cropping a 16:9 shot
+  floorTop?: number; // solid floor under the HUD from this height (hides a broadcast's own graphics)
   logo?: boolean; // false hides the brand logo in the corner
   calm?: boolean; // no punch-in on the source's own camera changes, only on our cuts
   punches?: number[]; // camera punch-in moments with no text, to land a beat
@@ -148,6 +151,22 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
     <Audio src={src} trimBefore={trim} volume={(vf) => Math.max(0, Math.min(1, (vf + 1) / 3, (dur - vf) / 3))} />
   );
 
+  if (job.layout === 'full' && job.vertical) {
+    const t = (trim + f) / fps - (seg.srcOffset ?? 0);
+    const since = index > 0 ? f / fps : 99;
+    const kick = since < 0.4 ? Math.exp(-since * fps / 2.6) : 0;
+    const s = Math.max(1080 / 1080, 1920 / 1910) * z * (1 + 0.06 * kick);
+    const W = 1080 * s;
+    const H = 1910 * s;
+    const grade = `contrast(1.06) saturate(1.1) brightness(${1.02 + 0.2 * kick}) blur(${(6 * kick).toFixed(2)}px)`;
+    void t;
+    return (
+      <AbsoluteFill style={{overflow: 'hidden'}}>
+        {audio}
+        <OffthreadVideo muted src={src} trimBefore={trim} style={{position: 'absolute', width: W, height: H, left: (1080 - W) / 2 + shakeX, top: (1920 - H) * 0.3 + shakeY, filter: grade}} />
+      </AbsoluteFill>
+    );
+  }
   if (job.layout === 'full' && job.modes) {
     // same clock the picture runs on (the trim is whole frames), so a crop changes on the exact frame the shot does
     const t = (trim + f) / fps - (seg.srcOffset ?? 0);
@@ -274,6 +293,9 @@ const Footage: React.FC<{job: Job; offsetOut: number; punch: number; shakeX: num
             }}
           />
           <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 38%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.45) 100%)', pointerEvents: 'none'}} />
+          {job.floorTop !== undefined && (
+            <div style={{position: 'absolute', left: 0, right: 0, top: job.floorTop - 220, bottom: 0, background: `linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0.85) 150px, #000 220px)`}} />
+          )}
         </>
       ) : (
         <div style={{position: 'absolute', left: 0, right: 0, top: VIDEO_H - 260, height: 262, background: 'linear-gradient(to bottom, rgba(0,0,0,0), #000)'}} />
@@ -453,6 +475,7 @@ const Hud: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, 
       })}
       {job.players.map((pl) => {
         const left = pl.side === 'left';
+        const rowY = (pl.row ?? 0) * 168;
         const isWinner = job.win?.player === pl.id;
         const heb = /[א-ת]/.test(pl.name);
         const st = latest(job.strength?.[pl.id] ?? [], t).cur;
@@ -477,7 +500,7 @@ const Hud: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, 
                   glow={isWinner && winSet.has(c) ? win : 0}
                   dim={win && !isWinner ? win : 0}
                   shine={isWinner && winSet.has(c) ? shine : 0}
-                  style={{position: 'absolute', left: (left ? 60 : 820) + k * 104, top: top + 228, transform: `translateY(${lift}px)`}}
+                  style={{position: 'absolute', left: (left ? 60 : 820) + k * 104, top: top + 228 + rowY, transform: `translateY(${lift}px)`}}
                 />
               );
             })}
@@ -485,7 +508,7 @@ const Hud: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, 
               style={{
                 position: 'absolute',
                 [left ? 'left' : 'right']: 276,
-                top: top + 226,
+                top: top + 226 + rowY,
                 display: 'flex',
                 flexDirection: left ? 'row' : 'row-reverse',
                 alignItems: 'center',
@@ -514,7 +537,7 @@ const Hud: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, 
                 </div>
               )}
             </div>
-            <div style={{position: 'absolute', [left ? 'left' : 'right']: 276, top: top + 296, width: 300}}>
+            <div style={{position: 'absolute', [left ? 'left' : 'right']: 276, top: top + 296 + rowY, width: 300}}>
               <Label acts={job.actions?.[pl.id] ?? []} t={t} frame={frame} fps={fps} align={left ? 'left' : 'right'} />
             </div>
           </React.Fragment>
@@ -526,7 +549,7 @@ const Hud: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, 
 
 // centre of the pot box, where the chips fly to
 const potSpot = (job: Job) => {
-  if (job.potPos === 'bottom') return {x: 540, y: L(job).hudTop + 470, w: 400};
+  if (job.potPos === 'bottom') return {x: 540, y: L(job).hudTop + (job.players?.some((p) => p.row) ? 590 : 470), w: 400};
   if (job.potPos === 'center') return {x: 540, y: L(job).hudTop + 300, w: 210};
   return {x: 120, y: L(job).potTop + 43, w: 0};
 };
