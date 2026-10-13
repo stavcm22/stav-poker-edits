@@ -1233,16 +1233,18 @@ const Prompt: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({jo
 type Sfx = {at: number; file: string; vol: number; dur: number};
 const buildSfx = (job: Job, hookSec: number, withHook: boolean): Sfx[] => {
   const o = (t: number) => hookSec + srcToOut(job, t);
+  // a moment that falls in a part that was cut away makes no sound (it would otherwise pile up on the next part's start)
+  const kept = (t: number) => job.segments.some((s) => t >= s.from && t <= s.to);
   const list: Sfx[] = [];
   if (withHook && job.hook) {
     list.push({at: 0.05, file: 'card.wav', vol: 0.5, dur: 0.3});
     list.push({at: 0.35, file: 'impact.wav', vol: 0.75, dur: 0.9});
     list.push({at: HOOK_SEC - 0.5, file: 'whoosh.wav', vol: 0.5, dur: 0.6});
   }
-  (job.boardAt ?? []).forEach((t) => list.push({at: o(t), file: 'card.wav', vol: 0.32, dur: 0.3}));
+  (job.boardAt ?? []).forEach((t) => kept(t) && list.push({at: o(t), file: 'card.wav', vol: 0.32, dur: 0.3}));
   for (const acts of Object.values(job.actions ?? {}))
     for (const [t, label] of acts)
-      if (/BET|RAISE|CALL|ALL-IN/.test(label)) list.push({at: o(t), file: 'chips.wav', vol: 0.26, dur: 0.5});
+      if (/BET|RAISE|CALL|ALL-IN/.test(label) && kept(t)) list.push({at: o(t), file: 'chips.wav', vol: 0.26, dur: 0.5});
   for (const p of job.players ?? [])
     if (p.hiddenUntil !== undefined && p.hiddenUntil < 1e4) {
       list.push({at: o(p.hiddenUntil), file: 'impact.wav', vol: 0.26, dur: 0.9});
