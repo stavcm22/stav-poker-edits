@@ -33,7 +33,9 @@ export type Job = {
   title?: string;
   layout?: 'top' | 'full'; // full = vertical frame
   // for a 16:9 source in the full layout: what each stretch of the source shows, and where to crop
-  modes?: [number, number, 'face' | 'table' | 'broll' | 'wide', number?, number?][]; // from, to, mode, face x and y (source px)
+  modes?: [number, number, 'face' | 'table' | 'broll' | 'wide', number?, number?, [number, number, number][]?][]; // from, to, mode, face x and y (source px), optional face track [t, x, y] for someone who moves
+  eqTop?: number; // equity box position / size overrides
+  eqScale?: number;
   faceAt?: number; // with a face y in the mode: keep the face centre at this height (px) so captions clear the chin
   potPos?: 'top' | 'bottom' | 'center'; // where the pot box sits (default top-left)
   logo?: boolean; // false hides the brand logo in the corner
@@ -150,12 +152,22 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
     const t = (trim + f) / fps - (seg.srcOffset ?? 0);
     const m = modeAt(job, t);
     const mode = m ? m[2] : 'face';
-    const cx = (m && m[3]) ?? 960;
+    let cx = (m && m[3]) ?? 960;
+    let cy = m && m[4];
+    const track = m && m[5];
+    if (track && track.length > 1) {
+      // follow a face that moves: interpolate its (already smoothed) path
+      const i = Math.max(0, Math.min(track.length - 2, track.findIndex((p) => p[0] > t) - 1));
+      const [t0, x0, y0] = track[i];
+      const [t1, x1, y1] = track[i + 1];
+      const k = Math.max(0, Math.min(1, (t - t0) / (t1 - t0 || 1)));
+      cx = x0 + (x1 - x0) * k;
+      cy = y0 + (y1 - y0) * k;
+    }
     // punch-in with a quick blur on every cut and every change of shot
     const since = Math.min(index > 0 ? f / fps : 99, m && !job.calm ? t - m[0] : 99);
     const kick = since < 0.4 ? Math.exp(-since * fps / 2.6) : 0;
     let H = 1920 * z * (1 + 0.08 * kick);
-    const cy = m && m[4];
     let top = (1920 - H) / 2;
     if (cy && job.faceAt) {
       // put the face at faceAt; grow the picture just enough that it still fills the frame
@@ -595,14 +607,15 @@ const EquityBox: React.FC<{job: Job; t: number; frame: number; fps: number}> = (
       style={{
         position: 'absolute',
         left: 84,
-        top: L(job).eqTop,
+        top: job.eqTop ?? L(job).eqTop,
         width: 912,
         height: 320,
+        transformOrigin: '50% 0',
         background: 'rgba(12,14,16,0.9)',
         border: '1px solid rgba(255,194,26,0.25)',
         borderRadius: 18,
         opacity: Math.min(1, pIn * 1.3),
-        transform: `translateY(${(1 - pIn) * -30}px) scale(${0.96 + 0.04 * pIn})`,
+        transform: `translateY(${(1 - pIn) * -30}px) scale(${(0.96 + 0.04 * pIn) * (job.eqScale ?? 1)})`,
         boxShadow: '0 18px 50px rgba(0,0,0,0.55)',
       }}
     >

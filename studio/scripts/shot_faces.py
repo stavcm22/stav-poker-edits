@@ -35,7 +35,8 @@ for a, b in zip(cuts, cuts[1:]):
         if len(tr) < max(2, len(ts) * 0.3): continue
         mv = [np.mean(np.abs(p1[4] - p0[4])) for p0, p1 in zip(tr, tr[1:]) if p0[4] is not None and p1[4] is not None]
         faces.append({'x': round(float(np.median([e[1] for e in tr])) * SX), 'y': round(float(np.median([e[2] for e in tr])) * SX),
-                      'w': round(float(np.median([e[3] for e in tr])) * SX), 'talk': round(float(np.mean(mv)) if mv else 0, 2), 'n': len(tr)})
+                      'w': round(float(np.median([e[3] for e in tr])) * SX), 'talk': round(float(np.mean(mv)) if mv else 0, 2), 'n': len(tr),
+                      'track': [[round(float(e[0]), 2), round(float(e[1]) * SX), round(float(e[2]) * SX)] for e in tr]})
     faces.sort(key=lambda f: f['x'])
     out.append({'from': a, 'to': b, 'faces': faces})
 print(json.dumps(out))

@@ -83,7 +83,14 @@ def shot_modes(path, grid, off=0.0, pick=None):
     out = []
     for i, sh in enumerate(json.load(open(os.path.join(ROOT, path)))):
         f = sh['faces'][pick[i]] if pick and i in pick else max(sh['faces'], key=lambda f: f['talk'])
-        out.append([round(snap(sh['from']) - off, 3), round(snap(sh['to']) - off, 3), 'face', f['x'], f['y']])
+        m = [round(snap(sh['from']) - off, 3), round(snap(sh['to']) - off, 3), 'face', f['x'], f['y']]
+        xs = [p[1] for p in f['track']]
+        if max(xs) - min(xs) > 160:  # someone moving a lot in this shot: follow the face along a smoothed path
+            tr = np.array(f['track'], float)
+            k = np.ones(5) / 5
+            pad = lambda v: np.convolve(np.pad(v, 2, mode='edge'), k, 'valid')
+            m.append([[round(t - off, 2), int(x), int(y)] for t, x, y in zip(tr[:, 0], pad(tr[:, 1]), pad(tr[:, 2]))])
+        out.append(m)
     out[0][0] = round(-off if off else 0.0, 3)
     out[-1][1] = round(-900.0 if off else 103.0, 3)
     return out
@@ -99,6 +106,8 @@ job = {
   'modes': MODES,
   'potPos': 'bottom',
   'faceAt': 600,
+  'eqTop': 56,
+  'eqScale': 0.78,
   'logo': False,
   'calm': True,
   'chipRain': False,
