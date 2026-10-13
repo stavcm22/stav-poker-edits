@@ -1,7 +1,7 @@
 """Build jobs/mani-run-it-twice.json: Mani's jacks vs K-J, asked to run it twice, villain refused, king on the turn."""
 import json, os, subprocess, numpy as np
 ROOT = os.path.join(os.path.dirname(__file__), '..')
-SRC = os.path.join(ROOT, 'public/input/noamdor-src.mp4')
+SRC = os.path.join(ROOT, 'public/input/noamdor-long.mp4')  # same clip as noamdor-src, same timing, runs on past 102s
 words = [w for s in json.load(open(os.path.join(ROOT, 'scripts/data/mani_rit2_transcript.json'))) for w in s['words']]
 T = lambda i: round(words[i]['s'], 3)
 
@@ -38,7 +38,7 @@ FIX = {13: 'היד.', 15: 'מסתכל,', 147: 'רצים', 195: 'ככה.', 94: ''
 HL = {7, 23, 27, 34, 103, 106, 107, 108, 115, 120, 121, 124, 127, 134, 135, 147, 148, 150, 152, 155, 156, 161, 165, 167, 168, 187, 190, 217, 221, 229, 242, 244}
 
 CUT_IN = {94: 36.91, 184: 80.08, 216: 91.59}  # measured pauses where the recogniser's word edges run together
-CUT_OUT = {184: 82.46}  # Dor's line runs straight into crosstalk; the dip after "לא ככה"
+CUT_OUT = {184: 82.46, 216: 105.88}  # 184: Dor's line runs straight into crosstalk, the dip after "לא ככה"; 216: Dor's last line, before the laugh
 segs = []
 for a, b in R:
     g = passage(a, b)
@@ -50,6 +50,9 @@ for i0, i1 in R:
     for i in range(i0, i1 + 1):
         w = '' if i in FILLER else FIX.get(i, words[i]['w'].strip())
         if w: caps.append({'t': T(i), 'w': w, **({'hl': True} if i in HL else {})})
+# Dor closes it (past the end of the first file): "אתה יושב כזה ואומר, איזה שולחן טוב, שולחן טוב, ואתה במינוס."
+tail = [w for w in json.load(open(os.path.join(ROOT, 'scripts/data/mani_rit2_tail.json'))) if 102.5 < w['s'] < 105.8]
+caps += [{'t': w['s'], 'w': w['w'].strip(), **({'hl': True} if w['w'].strip().rstrip(',.') in ('שולחן', 'במינוס') else {})} for w in tail]
 
 # the opening comes from the part of the episode just before (context-src): Mani sets the story up
 CTX = 'input/context-src.mp4'
@@ -92,12 +95,12 @@ def shot_modes(path, grid, off=0.0, pick=None):
             m.append([[round(t - off, 2), int(x), int(y)] for t, x, y in zip(tr[:, 0], pad(tr[:, 1]), pad(tr[:, 2]))])
         out.append(m)
     out[0][0] = round(-off if off else 0.0, 3)
-    out[-1][1] = round(-900.0 if off else 103.0, 3)
+    out[-1][1] = round(-900.0 if off else 151.0, 3)
     return out
 MODES = shot_modes('scripts/data/mani_rit2_ctx_shots.json', 0.0333, OFF) + shot_modes('scripts/data/mani_rit2_shots.json', 0.025)
 
 job = {
-  'src': 'input/noamdor-src.mp4',
+  'src': 'input/noamdor-long.mp4',
   'title': 'No Limit - Mani: asked to run it twice, he said no',
   'brand': 'NOLIMIT',
   'handle': '@nolimit__podcast',
