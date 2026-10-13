@@ -40,6 +40,7 @@ export type Job = {
   potPos?: 'top' | 'bottom' | 'center'; // where the pot box sits (default top-left)
   logo?: boolean; // false hides the brand logo in the corner
   calm?: boolean; // no punch-in on the source's own camera changes, only on our cuts
+  punches?: number[]; // camera punch-in moments with no text, to land a beat
   chipRain?: boolean; // false turns off the chips raining down on the winner
   shift?: number; // push the wide frame, captions and HUD down (px) to clear a headline above
   pip?: {x: number; y: number; w: number; h: number}; // face-cam window inside the source's table shots
@@ -1157,6 +1158,7 @@ export const HandReel: React.FC<{job: Job; withHook: boolean; showEnd?: boolean;
   for (const p of job.players ?? []) if (p.hiddenUntil !== undefined && p.hiddenUntil < 1e4) moments.push(p.hiddenUntil);
   if (job.win) moments.push(job.win.at);
   for (const [at] of job.callouts ?? []) moments.push(at);
+  for (const at of job.punches ?? []) moments.push(at);
   if (job.stamp) moments.push(job.stamp.at);
   let punch = 1;
   let shakeX = 0;
