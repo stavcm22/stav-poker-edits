@@ -146,7 +146,8 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
   );
 
   if (job.layout === 'full' && job.modes) {
-    const t = seg.from + f / fps;
+    // same clock the picture runs on (the trim is whole frames), so a crop changes on the exact frame the shot does
+    const t = (trim + f) / fps - (seg.srcOffset ?? 0);
     const m = modeAt(job, t);
     const mode = m ? m[2] : 'face';
     const cx = (m && m[3]) ?? 960;

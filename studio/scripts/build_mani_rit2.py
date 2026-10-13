@@ -38,7 +38,7 @@ FIX = {13: 'היד.', 15: 'מסתכל,', 195: 'ככה.', 94: '', 95: '', 96: '',
 HL = {7, 23, 27, 34, 103, 106, 107, 108, 115, 120, 121, 124, 127, 134, 135, 147, 148, 150, 152, 155, 156, 161, 165, 167, 168, 187, 190, 217, 221, 229, 242, 244}
 
 CUT_IN = {94: 36.91, 184: 80.08, 216: 91.59}  # measured pauses where the recogniser's word edges run together
-CUT_OUT = {184: 82.42}  # Dor's line runs straight into crosstalk; the dip after "לא ככה"
+CUT_OUT = {184: 82.46}  # Dor's line runs straight into crosstalk; the dip after "לא ככה"
 segs = []
 for a, b in R:
     g = passage(a, b)
@@ -77,15 +77,17 @@ HUD_FROM = round(cw[130]['s'] - OFF - 0.1, 3)  # the cards come in on "I've got 
 
 # what the camera shows, shot by shot (exact cuts, faces found by scripts/shot_faces.py): full screen on one face,
 # on a two-shot the one who is talking (most mouth movement)
-def shot_modes(path, off=0.0, pick=None):
+def shot_modes(path, grid, off=0.0, pick=None):
+    # cut times are snapped onto the file's frame timestamps (grid + k/25), the instant the new shot's first frame shows
+    snap = lambda t: round(round((t - grid) * 25) / 25 + grid + 0.002, 3)
     out = []
     for i, sh in enumerate(json.load(open(os.path.join(ROOT, path)))):
         f = sh['faces'][pick[i]] if pick and i in pick else max(sh['faces'], key=lambda f: f['talk'])
-        out.append([round(sh['from'] - off, 3), round(sh['to'] - off, 3), 'face', f['x'], f['y']])
+        out.append([round(snap(sh['from']) - off, 3), round(snap(sh['to']) - off, 3), 'face', f['x'], f['y']])
     out[0][0] = round(-off if off else 0.0, 3)
     out[-1][1] = round(-900.0 if off else 103.0, 3)
     return out
-MODES = shot_modes('scripts/data/mani_rit2_ctx_shots.json', OFF) + shot_modes('scripts/data/mani_rit2_shots.json')
+MODES = shot_modes('scripts/data/mani_rit2_ctx_shots.json', 0.0333, OFF) + shot_modes('scripts/data/mani_rit2_shots.json', 0.025)
 
 job = {
   'src': 'input/noamdor-src.mp4',
