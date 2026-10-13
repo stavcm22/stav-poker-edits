@@ -18,7 +18,7 @@ loadFonts();
 
 // ---------- job format (all times are seconds in the SOURCE video) ----------
 // src/srcOffset: a part taken from another file; its times are kept on their own (negative) clock, source time = from + srcOffset
-export type Seg = {from: number; to: number; cropX?: number; zoom?: number; src?: string; srcOffset?: number};
+export type Seg = {from: number; to: number; cropX?: number; zoom?: number; src?: string; srcOffset?: number; join?: boolean; vy?: number}; // join: continues the previous part's sound with no cut; vy: (vertical sources) source row placed at the top of the frame
 export type Word = {t: number; w: string; hl?: boolean};
 export type Act = [number, string, boolean?]; // time, label, hot
 export type Player = {
@@ -130,9 +130,10 @@ const modeAt = (job: Job, t: number) => {
   return null;
 };
 
-const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch: number; shakeX: number; shakeY: number}> = ({
+const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch: number; shakeX: number; shakeY: number; joinOut?: boolean}> = ({
   job,
   seg,
+  joinOut,
   index,
   dur,
   punch,
@@ -148,12 +149,12 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
   const src = staticFile(seg.src ?? job.src);
   // sound runs on its own track so picture changes never touch it
   const audio = (
-    <Audio src={src} trimBefore={trim} volume={(vf) => Math.max(0, Math.min(1, (vf + 1) / 3, (dur - vf) / 3))} />
+    <Audio src={src} trimBefore={trim} volume={(vf) => Math.max(0, Math.min(1, seg.join ? 1 : (vf + 1) / 3, joinOut ? 1 : (dur - vf) / 3))} />
   );
 
   if (job.layout === 'full' && job.vertical) {
     const t = (trim + f) / fps - (seg.srcOffset ?? 0);
-    const since = index > 0 ? f / fps : 99;
+    const since = index > 0 && !seg.join ? f / fps : 99;
     const kick = since < 0.4 ? Math.exp(-since * fps / 2.6) : 0;
     const s = Math.max(1080 / 1080, 1920 / 1910) * z * (1 + 0.06 * kick);
     const W = 1080 * s;
@@ -163,7 +164,7 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
     return (
       <AbsoluteFill style={{overflow: 'hidden'}}>
         {audio}
-        <OffthreadVideo muted src={src} trimBefore={trim} style={{position: 'absolute', width: W, height: H, left: (1080 - W) / 2 + shakeX, top: (1920 - H) * 0.3 + shakeY, filter: grade}} />
+        <OffthreadVideo muted src={src} trimBefore={trim} style={{position: 'absolute', width: W, height: H, left: (1080 - W) / 2 + shakeX, top: (seg.vy !== undefined ? Math.max(1920 - H, -seg.vy * s) : (1920 - H) * 0.3) + shakeY, filter: grade}} />
       </AbsoluteFill>
     );
   }
@@ -274,7 +275,7 @@ const Footage: React.FC<{job: Job; offsetOut: number; punch: number; shakeX: num
         acc += s.to - s.from;
         return (
           <Sequence key={i} from={from} durationInFrames={dur} layout="none">
-            <SegVideo job={job} seg={s} index={i} dur={dur} punch={punch} shakeX={shakeX} shakeY={shakeY} />
+            <SegVideo job={job} seg={s} index={i} dur={dur} punch={punch} shakeX={shakeX} shakeY={shakeY} joinOut={!!job.segments[i + 1]?.join} />
           </Sequence>
         );
       })}

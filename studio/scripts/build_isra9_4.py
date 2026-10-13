@@ -37,6 +37,14 @@ PARTS = [
 segs = []
 for (a0, a1), (b0, b1) in PARTS:
     segs.append({'from': quiet(a0, a1, 'late'), 'to': round(min(quiet(b0, b1, 'early') + 0.04, 137.1), 3)})
+# the reveal: the show's overhead shot (122.92-126.16) carries its logo, so that stretch is reframed below the logo
+# (on Meni's flipped cards and the board) while the sound runs on; the split points sit on whole output frames
+last = segs.pop()
+last['from'] = round(round(last['from'] * 30) / 30, 4)
+A, B = 3688 / 30, 3785 / 30   # 122.933 / 126.167: just after the shot's first and last frames
+segs += [{'from': last['from'], 'to': round(A, 4)},
+         {'from': round(A, 4), 'to': round(B, 4), 'join': True, 'zoom': 1.3, 'vy': 375},
+         {'from': round(B, 4), 'to': last['to'], 'join': True}]
 
 # captions: (time, word, highlight)
 W = [
