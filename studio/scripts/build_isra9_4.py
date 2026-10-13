@@ -86,8 +86,7 @@ def make(parts, out, title, captions_only=False):
     last['from'] = round(round(last['from'] * 30) / 30, 4)
     A, B = 3688 / 30, 3785 / 30
     segs += [{'from': last['from'], 'to': round(A, 4)},
-             # captions only: no equity box to sit over the logo, so the shot is reframed below it instead
-             {'from': round(A, 4), 'to': round(B, 4), 'join': True, **({'zoom': 1.3, 'vy': 375, 'cover': [1660, 1920]} if captions_only else {'cover': [1628, 1920]})},
+             {'from': round(A, 4), 'to': round(B, 4), 'join': True, 'cover': [1628, 1920]},
              {'from': round(B, 4), 'to': last['to'], 'join': True}]
     S = segs
     h = next(i for i, s in enumerate(S) if s['from'] > 84)   # first hand part ("הכי חשוב להיות בפוקוס")
@@ -133,9 +132,9 @@ def make(parts, out, title, captions_only=False):
         'eqScale': 0.96,
     }
     if captions_only:
-        # just the cut and the captions: the show's own graphics stay, no cards, sounds or punches of ours
-        for k in ('hudBox', 'pot', 'board', 'boardAt', 'players', 'actions', 'strength', 'win', 'punches', 'equity', 'eqTop', 'eqScale', 'hudFrom'):
-            job.pop(k, None)
+        # the same reel without our hand panels (the show's own graphics already show the hand);
+        # sounds, punches and the equity box stay as they were
+        job['hideHud'] = True
     json.dump(job, open(os.path.join(ROOT, out), 'w'), ensure_ascii=False, indent=1)
     d = sum(s['to'] - s['from'] for s in segs)
     print(f'{out}: {len(segs)} parts, {d:.1f}s')

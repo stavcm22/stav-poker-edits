@@ -40,6 +40,7 @@ export type Job = {
   faceAt?: number; // with a face y in the mode: keep the face centre at this height (px) so captions clear the chin
   potPos?: 'top' | 'bottom' | 'center'; // where the pot box sits (default top-left)
   rowGap?: number; // px between player rows
+  hideHud?: boolean; // keep everything else (sounds, punches, equity) but draw none of the hand panels
   hudStyle?: 'compact'; // compact panels laid exactly over a broadcast's own graphics, no dark floor
   hudBox?: {x: number; y: number; w: number; rowH: number; gap: number; bx: number; by: number; bw: number; bh: number}; // compact layout: player rows at left, board+pot box at right
   vertical?: boolean; // the source is already 9:16: fill the frame with it instead of cropping a 16:9 shot
@@ -426,7 +427,7 @@ const STREETS = ['PREFLOP', 'FLOP', 'TURN', 'RIVER'];
 // compact HUD: one panel per player stacked at the left, the board and pot in a panel at the right,
 // each sitting exactly over a broadcast's own graphics so they never show, with the rest of the picture left clear
 const HudCompact: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, t, frame, fps}) => {
-  if (!job.players || !job.hudBox || job.hudFrom === undefined || t < job.hudFrom) return null;
+  if (job.hideHud || !job.players || !job.hudBox || job.hudFrom === undefined || t < job.hudFrom) return null;
   const b = job.hudBox;
   const enter = soft(frame, fps, job.hudFrom, 20);
   const win = job.win && t >= job.win.at ? soft(frame, fps, job.win.at, 22) : 0;
@@ -897,6 +898,7 @@ const EndCard: React.FC<{job: Job; sec: number}> = ({job, sec}) => {
 
 // ---------- effects: chips into the pot, chip rain, slam callouts ----------
 const ChipFlights: React.FC<{job: Job; t: number}> = ({job, t}) => {
+  if (job.hideHud) return null;
   if (!job.players || !job.pot || job.hudFrom === undefined || t < job.hudFrom) return null;
   const top = L(job).hudTop;
   const {x: potX, y: potY} = potSpot(job);
