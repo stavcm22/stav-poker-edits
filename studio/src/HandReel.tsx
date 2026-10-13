@@ -18,7 +18,7 @@ loadFonts();
 
 // ---------- job format (all times are seconds in the SOURCE video) ----------
 // src/srcOffset: a part taken from another file; its times are kept on their own (negative) clock, source time = from + srcOffset
-export type Seg = {from: number; to: number; cropX?: number; zoom?: number; src?: string; srcOffset?: number; join?: boolean; vy?: number}; // join: continues the previous part's sound with no cut; vy: (vertical sources) source row placed at the top of the frame
+export type Seg = {from: number; to: number; cropX?: number; zoom?: number; src?: string; srcOffset?: number; join?: boolean; vy?: number; cover?: [number, number]}; // join: continues the previous part's sound with no cut; vy: (vertical sources) source row placed at the top of the frame
 export type Word = {t: number; w: string; hl?: boolean};
 export type Act = [number, string, boolean?]; // time, label, hot
 export type Player = {
@@ -39,6 +39,9 @@ export type Job = {
   eqScale?: number;
   faceAt?: number; // with a face y in the mode: keep the face centre at this height (px) so captions clear the chin
   potPos?: 'top' | 'bottom' | 'center'; // where the pot box sits (default top-left)
+  rowGap?: number; // px between player rows
+  hudStyle?: 'compact'; // compact panels laid exactly over a broadcast's own graphics, no dark floor
+  hudBox?: {x: number; y: number; w: number; rowH: number; gap: number; bx: number; by: number; bw: number; bh: number}; // compact layout: player rows at left, board+pot box at right
   vertical?: boolean; // the source is already 9:16: fill the frame with it instead of cropping a 16:9 shot
   floorTop?: number; // solid floor under the HUD from this height (hides a broadcast's own graphics)
   logo?: boolean; // false hides the brand logo in the corner
@@ -156,7 +159,9 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
     const t = (trim + f) / fps - (seg.srcOffset ?? 0);
     const since = index > 0 && !seg.join ? f / fps : 99;
     const kick = since < 0.4 ? Math.exp(-since * fps / 2.6) : 0;
-    const s = Math.max(1080 / 1080, 1920 / 1910) * z * (1 + 0.06 * kick);
+    // a compact HUD sits on the broadcast's own boxes, so the picture keeps one fixed scale there
+    const fixed = job.hudStyle === 'compact';
+    const s = Math.max(1080 / 1080, 1920 / 1910) * (fixed ? 1 : z * (1 + 0.06 * kick));
     const W = 1080 * s;
     const H = 1910 * s;
     const grade = `contrast(1.06) saturate(1.1) brightness(${1.02 + 0.2 * kick}) blur(${(6 * kick).toFixed(2)}px)`;
@@ -164,7 +169,11 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
     return (
       <AbsoluteFill style={{overflow: 'hidden'}}>
         {audio}
-        <OffthreadVideo muted src={src} trimBefore={trim} style={{position: 'absolute', width: W, height: H, left: (1080 - W) / 2 + shakeX, top: (seg.vy !== undefined ? Math.max(1920 - H, -seg.vy * s) : (1920 - H) * 0.3) + shakeY, filter: grade}} />
+        <OffthreadVideo muted src={src} trimBefore={trim} style={{position: 'absolute', width: W, height: H, left: (1080 - W) / 2 + (fixed ? 0 : shakeX), top: fixed ? 0 : (seg.vy !== undefined ? Math.max(1920 - H, -seg.vy * s) : (1920 - H) * 0.3) + shakeY, filter: grade}} />
+        {seg.cover && (
+          // frosts a band of this shot (an operator screen at the bottom of the show's overhead camera)
+          <div style={{position: 'absolute', left: 0, right: 0, top: seg.cover[0], height: seg.cover[1] - seg.cover[0], backdropFilter: 'blur(26px) brightness(0.55)', WebkitBackdropFilter: 'blur(26px) brightness(0.55)'}} />
+        )}
       </AbsoluteFill>
     );
   }
@@ -289,6 +298,7 @@ const Footage: React.FC<{job: Job; offsetOut: number; punch: number; shakeX: num
               right: 0,
               top: 800,
               bottom: 0,
+              display: job.hudStyle === 'compact' ? 'none' : 'block',
               opacity: shade,
               background: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 28%, rgba(0,0,0,0.9) 58%, #000 72%)',
             }}
@@ -412,7 +422,85 @@ const Label: React.FC<{acts: Act[]; t: number; frame: number; fps: number; align
 
 const STREETS = ['PREFLOP', 'FLOP', 'TURN', 'RIVER'];
 
+
+// compact HUD: one panel per player stacked at the left, the board and pot in a panel at the right,
+// each sitting exactly over a broadcast's own graphics so they never show, with the rest of the picture left clear
+const HudCompact: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, t, frame, fps}) => {
+  if (!job.players || !job.hudBox || job.hudFrom === undefined || t < job.hudFrom) return null;
+  const b = job.hudBox;
+  const enter = soft(frame, fps, job.hudFrom, 20);
+  const win = job.win && t >= job.win.at ? soft(frame, fps, job.win.at, 22) : 0;
+  const shine = job.win ? interpolate(t - job.win.at - 0.25, [0, 0.9], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}) : 0;
+  const winSet = new Set(job.win?.cards ?? []);
+  const board = job.board ?? [];
+  const at = job.boardAt ?? [];
+  const panel: React.CSSProperties = {position: 'absolute', background: 'rgba(12,14,16,0.985)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 18, boxShadow: '0 10px 30px rgba(0,0,0,0.45)'};
+  const cw = 66;
+  const ch = 94;
+  const pot = job.pot ? latest(job.pot, t) : {cur: undefined, prev: undefined};
+  const pp = pot.cur ? interpolate(t - pot.cur[0], [0, 0.5], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic)}) : 0;
+  const potV = pot.cur ? (pot.prev ? pot.prev[1] : pot.cur[1]) + (pot.cur[1] - (pot.prev ? pot.prev[1] : pot.cur[1])) * pp : 0;
+  const pulse = 1 + 0.08 * Math.sin(Math.PI * pp) * (pot.prev ? 1 : 0);
+  return (
+    <div style={{position: 'absolute', inset: 0, opacity: enter, transform: `translateY(${(1 - enter) * 24}px)`}}>
+      {job.players.map((pl, i) => {
+        const y = b.y + i * (b.rowH + b.gap);
+        const isWinner = job.win?.player === pl.id;
+        const st = latest(job.strength?.[pl.id] ?? [], t).cur;
+        const stP = st ? soft(frame, fps, st[0], 14) : 0;
+        const acts = job.actions?.[pl.id] ?? [];
+        const folded = (latest(acts.map((a) => [a[0], a] as [number, Act]), t).cur?.[1][1] ?? '') === 'FOLD';
+        const heb = /[א-ת]/.test(pl.name);
+        return (
+          <div key={pl.id} style={{...panel, left: b.x, top: y, width: b.w, height: b.rowH,
+            border: isWinner && win ? `2px solid rgba(255,194,26,${0.4 + 0.6 * win})` : panel.border, boxShadow: isWinner && win ? `0 0 ${40 * win}px rgba(255,194,26,0.45)` : panel.boxShadow}}>
+            <div style={{position: 'absolute', inset: 0, opacity: folded ? 0.45 : 1}}>
+            {pl.cards.map((c, k) => (
+              <Card key={c} card={c} w={cw} h={ch} flip={soft(frame, fps, job.hudFrom! + 0.15 + i * 0.12 + k * 0.08, 15)}
+                glow={isWinner && winSet.has(c) ? win : 0} dim={win && !isWinner ? win * 0.6 : 0} shine={isWinner && winSet.has(c) ? shine : 0}
+                style={{position: 'absolute', left: 16 + k * (cw + 6), top: (b.rowH - ch) / 2}} />
+            ))}
+            <div style={{position: 'absolute', left: 16 + 2 * (cw + 6) + 14, top: 14, display: 'flex', alignItems: 'center', gap: 12}}>
+              <div style={{fontFamily: heb ? 'Heebo' : 'Barlow', fontWeight: 800, fontSize: 40, color: '#fff', direction: heb ? 'rtl' : 'ltr', lineHeight: 1}}>{pl.name}</div>
+              {st && st[1] && (
+                <div style={{fontFamily: 'Barlow', fontWeight: 700, fontSize: 22, letterSpacing: 1.5, color: YELLOW, border: `2px solid ${YELLOW}`, borderRadius: 5, padding: '2px 8px', opacity: stP, transform: `scale(${0.8 + 0.2 * stP})`, whiteSpace: 'nowrap'}}>{st[1]}</div>
+              )}
+            </div>
+            <div style={{position: 'absolute', left: 16 + 2 * (cw + 6) + 14, top: b.rowH - 62, width: 330}}>
+              <Label acts={acts} t={t} frame={frame} fps={fps} align="left" />
+            </div>
+            </div>
+          </div>
+        );
+      })}
+      <div style={{...panel, left: b.bx, top: b.by, width: b.bw, height: b.bh}}>
+        {[0, 1, 2, 3, 4].map((k) => {
+          const bcw = Math.min(cw, (b.bw - 28 - 24) / 5);
+          const bch = bcw * 1.42;
+          const x = 14 + k * (bcw + 6);
+          const c = board[k];
+          const a = at[k] ?? 1e9;
+          if (!c || t < a) return <div key={'s' + k} style={{position: 'absolute', left: x, top: 14, width: bcw, height: bch, borderRadius: 8, border: '2px dashed rgba(255,255,255,0.14)'}} />;
+          const p = soft(frame, fps, a, 15);
+          const flip = soft(frame, fps, a + 0.12, 14);
+          const inWin = winSet.has(c);
+          return (
+            <Card key={c} card={c} w={bcw} h={bch} flip={flip} glow={inWin ? win : 0} dim={win && !inWin ? win * 0.6 : 0} shine={inWin ? shine : 0}
+              style={{position: 'absolute', left: x, top: 14, opacity: Math.min(1, p * 1.6), transform: `translateY(${(1 - p) * -40}px) rotate(${(1 - p) * -8}deg)`}} />
+          );
+        })}
+        <div style={{position: 'absolute', left: 14, right: 14, bottom: 14, height: b.bh - Math.min(cw, (b.bw - 52) / 5) * 1.42 - 42, borderRadius: 12, background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14}}>
+          <div style={{transform: `rotate(${pp * 360 * (pot.prev ? 1 : 0)}deg)`}}><Chip size={40} /></div>
+          <div style={{fontFamily: 'Barlow', fontWeight: 600, fontSize: 28, color: '#9aa4a8', letterSpacing: 3}}>POT</div>
+          <div style={{fontFamily: 'Barlow', fontWeight: 800, fontSize: 50, color: '#fff', transform: `scale(${pulse})`, fontVariantNumeric: 'tabular-nums'}}>{Math.round(potV).toLocaleString('en-US')}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Hud: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, t, frame, fps}) => {
+  if (job.hudStyle === 'compact') return <HudCompact job={job} t={t} frame={frame} fps={fps} />;
   if (!job.players || job.hudFrom === undefined || t < job.hudFrom) return null;
   const enter = soft(frame, fps, job.hudFrom, 20);
   const win = job.win && t >= job.win.at ? soft(frame, fps, job.win.at, 22) : 0;
@@ -476,7 +564,7 @@ const Hud: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, 
       })}
       {job.players.map((pl) => {
         const left = pl.side === 'left';
-        const rowY = (pl.row ?? 0) * 168;
+        const rowY = (pl.row ?? 0) * (job.rowGap ?? 168);
         const isWinner = job.win?.player === pl.id;
         const heb = /[א-ת]/.test(pl.name);
         const st = latest(job.strength?.[pl.id] ?? [], t).cur;
@@ -550,12 +638,14 @@ const Hud: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, 
 
 // centre of the pot box, where the chips fly to
 const potSpot = (job: Job) => {
+  if (job.hudStyle === 'compact' && job.hudBox) return {x: job.hudBox.bx + job.hudBox.bw / 2, y: job.hudBox.by + job.hudBox.bh - 50, w: 0};
   if (job.potPos === 'bottom') return {x: 540, y: L(job).hudTop + (job.players?.some((p) => p.row) ? 590 : 470), w: 400};
   if (job.potPos === 'center') return {x: 540, y: L(job).hudTop + 300, w: 210};
   return {x: 120, y: L(job).potTop + 43, w: 0};
 };
 
 const Pot: React.FC<{job: Job; t: number}> = ({job, t}) => {
+  if (job.hudStyle === 'compact') return null;
   if (!job.pot || job.hudFrom === undefined || t < job.hudFrom) return null;
   if (job.layout === 'full' && (job.potPos ?? 'top') === 'top' && job.equity && t >= job.equity.at) return null;
   const {cur, prev} = latest(job.pot, t);
@@ -817,8 +907,10 @@ const ChipFlights: React.FC<{job: Job; t: number}> = ({job, t}) => {
       const dt = t - at;
       if (dt < 0 || dt > 1.0) continue;
       const big = /ALL-IN/.test(label);
-      const fromX = pl.side === 'left' ? 360 : 720;
-      const fromY = top + 320;
+      const pi = job.players!.indexOf(pl);
+      const hb = job.hudStyle === 'compact' ? job.hudBox : undefined;
+      const fromX = hb ? hb.x + 120 : pl.side === 'left' ? 360 : 720;
+      const fromY = hb ? hb.y + pi * (hb.rowH + hb.gap) + hb.rowH / 2 : top + 320;
       const count = big ? 12 : 6;
       for (let k = 0; k < count; k++) {
         const p = Math.min(1, Math.max(0, (dt - k * 0.035) / 0.55));
