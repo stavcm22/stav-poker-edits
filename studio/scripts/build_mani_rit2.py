@@ -30,22 +30,25 @@ def passage(i0, i1):
     cout = quiet(b, min(next_s, b + 0.45), 'early')
     return {'from': cin, 'to': round(min(cout + 0.04, len(sm) / 100 - 0.05), 3)}
 
-R = [(3, 34), (94, 129), (130, 135), (146, 169), (216, 245)]
-FIX = {13: 'היד.', 96: '', 97: '', 99: 'משנה,', 19: 'משלם,', 20: 'משלם,', 23: '450.', 109: 'מה', 111: 'בזה?', 115: "צ'ק.", 116: '', 120: 'דוחף', 147: 'רוצה',
+R = [(3, 34), (94, 129), (130, 135), (146, 169), (184, 195), (216, 245)]
+FILLER = {16, 123, 162, 193, 218, 219, 245}  # "אחי" / "כאילו": kept in the sound, not in the captions
+FIX = {13: 'היד.', 15: 'מסתכל,', 195: 'ככה.', 94: '', 95: '', 96: '', 97: '', 99: 'משנה,', 23: '450.', 109: 'מה', 111: 'בזה?', 115: "צ'ק.", 116: '', 120: 'סחורה?',
        149: 'שורף,', 150: 'קינג.', 151: 'שורף,', 152: '10.', 156: "ג'ק.", 157: '', 165: 'טילט', 169: '',
-       216: 'איזה', 217: 'מעצבן,', 219: 'אחי,', 222: 'אותי,', 226: "ג'ק", 227: '', 229: "ג'קים?", 230: '', 235: 'לקרות,', 240: 'אותך,', 242: 'המצב,'}
-HL = {7, 23, 27, 34, 103, 106, 107, 108, 115, 120, 121, 124, 127, 134, 135, 147, 148, 150, 152, 155, 156, 161, 165, 167, 168, 217, 221, 229, 242, 244}
+       216: 'איזה', 217: 'מעצבן,', 222: 'אותי,', 226: "ג'ק", 227: '', 229: "ג'קים?", 230: '', 235: 'לקרות,', 240: 'אותך,', 242: 'המצב,', 244: 'המצב.'}
+HL = {7, 23, 27, 34, 103, 106, 107, 108, 115, 120, 121, 124, 127, 134, 135, 147, 148, 150, 152, 155, 156, 161, 165, 167, 168, 187, 190, 217, 221, 229, 242, 244}
 
-CUT_IN = {94: 36.91, 216: 91.59}  # measured pauses where the recogniser's word edges run together
+CUT_IN = {94: 36.91, 184: 80.08, 216: 91.59}  # measured pauses where the recogniser's word edges run together
+CUT_OUT = {184: 82.42}  # Dor's line runs straight into crosstalk; the dip after "לא ככה"
 segs = []
 for a, b in R:
     g = passage(a, b)
     if a in CUT_IN: g['from'] = CUT_IN[a]
+    if a in CUT_OUT: g['to'] = CUT_OUT[a]
     segs.append(g)
 caps = []
 for i0, i1 in R:
     for i in range(i0, i1 + 1):
-        w = FIX.get(i, words[i]['w'].strip())
+        w = '' if i in FILLER else FIX.get(i, words[i]['w'].strip())
         if w: caps.append({'t': T(i), 'w': w, **({'hl': True} if i in HL else {})})
 
 # the opening comes from the part of the episode just before (context-src): Mani sets the story up
@@ -55,7 +58,7 @@ csm = envelope(os.path.join(ROOT, 'public', CTX))
 cw = [w for s in json.load(open(os.path.join(ROOT, 'scripts/data/mani_rit2_context_transcript.json'))) for w in s['words']]
 # "I'll tell you a hand from a few days ago" / who the player was + "the tilt hand of my life" / jacks in the small, limps, didn't notice it was his turn
 CR = [(83, 91), (104, 129), (130, 153)]
-CFIX = {87: 'יד', 104: 'ישב', 105: 'מולי...', 108: 'שמות.', 125: 'יד', 132: "ג'קים", 133: '', 134: 'בסמול.'}
+CFIX = {83: '', 87: 'יד', 104: 'ישב', 105: 'מולי...', 108: 'שמות.', 111: 'אמר,', 123: '', 125: 'יד', 128: 'החיים.', 129: '', 132: "ג'קים", 133: '', 134: 'בסמול.'}
 CHL = {87, 110, 117, 121, 126, 128, 132, 138, 144, 148, 149, 150}
 intro, icaps = [], []
 for a, b in CR:
@@ -72,22 +75,17 @@ segs = intro + segs
 caps = icaps + caps
 HUD_FROM = round(cw[130]['s'] - OFF - 0.1, 3)  # the cards come in on "I've got jacks"
 
-# what the camera shows: Mani alone (crop on him) or the hosts' two-shot (shown whole in a frame)
-MODES = []
-hosts = [(18.0, 18.75), (25.0, 26.0), (28.25, 29.75), (30.75, 32.0), (33.75, 34.75), (51.25, 52.25), (54.5, 55.5), (61.5, 63.25),
-         (64.25, 65.25), (72.5, 74.75), (75.0, 75.5), (77.25, 78.25), (79.5, 81.5), (85.5, 86.5), (87.75, 88.75), (90.25, 91.25),
-         (92.25, 93.25), (96.0, 97.0), (98.0, 98.75), (100.75, 101.0)]
-# full screen all the time: on a two-shot only one host fits, so crop on whoever is reacting (source x of his face)
-HOST_X = {18.0: 1450, 51.25: 1340, 54.5: 1340, 64.25: 1390, 72.5: 1360, 75.0: 1290, 92.25: 540, 96.0: 1380, 98.0: 600, 100.75: 1540}
-t = 0.0
-for a, b in hosts:
-    if a > t: MODES.append([t, a, 'face', 1010])
-    MODES.append([a, b, 'face', HOST_X.get(a, 1340)])
-    t = b
-MODES.append([t, 103.0, 'face', 1010])
-# context camera: hosts still laughing at the last story until the cut at 33.35, then Mani
-CTX_SHOTS = [(0, 540), (33.35, 1000), (40.07, 600), (41.35, 1000), (42.55, 1380), (43.75, 1000), (45.95, 600), (48.67, 1040), (49.95, 600), (51.15, 1000), (100, None)]  # cut time, face x
-MODES = [[a - OFF, b - OFF, 'face', x] for (a, x), (b, _) in zip(CTX_SHOTS, CTX_SHOTS[1:])] + MODES
+# what the camera shows, shot by shot (exact cuts, faces found by scripts/shot_faces.py): full screen on one face,
+# on a two-shot the one who is talking (most mouth movement)
+def shot_modes(path, off=0.0, pick=None):
+    out = []
+    for i, sh in enumerate(json.load(open(os.path.join(ROOT, path)))):
+        f = sh['faces'][pick[i]] if pick and i in pick else max(sh['faces'], key=lambda f: f['talk'])
+        out.append([round(sh['from'] - off, 3), round(sh['to'] - off, 3), 'face', f['x'], f['y']])
+    out[0][0] = round(-off if off else 0.0, 3)
+    out[-1][1] = round(-900.0 if off else 103.0, 3)
+    return out
+MODES = shot_modes('scripts/data/mani_rit2_ctx_shots.json', OFF) + shot_modes('scripts/data/mani_rit2_shots.json')
 
 job = {
   'src': 'input/noamdor-src.mp4',
@@ -98,6 +96,7 @@ job = {
   'layout': 'full',
   'modes': MODES,
   'potPos': 'bottom',
+  'faceAt': 600,
   'logo': False,
   'calm': True,
   'chipRain': False,

@@ -33,7 +33,8 @@ export type Job = {
   title?: string;
   layout?: 'top' | 'full'; // full = vertical frame
   // for a 16:9 source in the full layout: what each stretch of the source shows, and where to crop
-  modes?: [number, number, 'face' | 'table' | 'broll' | 'wide', number?][]; // from, to, mode, crop centre x (source px)
+  modes?: [number, number, 'face' | 'table' | 'broll' | 'wide', number?, number?][]; // from, to, mode, face x and y (source px)
+  faceAt?: number; // with a face y in the mode: keep the face centre at this height (px) so captions clear the chin
   potPos?: 'top' | 'bottom' | 'center'; // where the pot box sits (default top-left)
   logo?: boolean; // false hides the brand logo in the corner
   calm?: boolean; // no punch-in on the source's own camera changes, only on our cuts
@@ -152,10 +153,17 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
     // punch-in with a quick blur on every cut and every change of shot
     const since = Math.min(index > 0 ? f / fps : 99, m && !job.calm ? t - m[0] : 99);
     const kick = since < 0.4 ? Math.exp(-since * fps / 2.6) : 0;
-    const H = 1920 * z * (1 + 0.08 * kick);
+    let H = 1920 * z * (1 + 0.08 * kick);
+    const cy = m && m[4];
+    let top = (1920 - H) / 2;
+    if (cy && job.faceAt) {
+      // put the face at faceAt; grow the picture just enough that it still fills the frame
+      H = Math.max(H, ((1920 - job.faceAt) * 1080) / (1080 - cy), (job.faceAt * 1080) / cy);
+      top = Math.min(0, Math.max(1920 - H, job.faceAt - (cy * H) / 1080));
+    }
     const W = (H * 16) / 9;
-    const left = 540 - cx * (H / 1080) + shakeX;
-    const top = (1920 - H) / 2 + shakeY;
+    const left = Math.min(0, Math.max(1080 - W, 540 - cx * (H / 1080))) + shakeX;
+    top += shakeY;
     const grade = `contrast(1.07) saturate(1.12) brightness(${1.02 + 0.25 * kick}) blur(${(7 * kick).toFixed(2)}px)`;
     if ((mode === 'table' && job.pip) || mode === 'wide') {
       const rect = mode === 'wide' ? {x: 0, y: 0, w: 1920, h: 1080} : job.pip!;
