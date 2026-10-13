@@ -33,6 +33,7 @@ TALK = [
     ((57.90, 58.40), (59.56, 59.95)),   # Elad: "הרגעת את החרדה, אתה אומר"
 ]
 HAND = [
+    ((75.20, 75.66), (82.48, 83.00)),   # flop: Elad "צ'ק", Ez "2,500", dealer "בט 2,500", Meni "קול", Elad "קול"
     ((84.60, 85.03), (87.04, 87.60)),   # Elad: "הדבר הכי חשוב להיות בפוקוס ולהיות רגוע"
     ((90.70, 91.20), (94.00, 94.30)),   # turn: "צ'ק. 7. בט 7,000."
     ((94.40, 94.76), (95.25, 95.60)),   # "קול."
@@ -55,6 +56,8 @@ W = [
     (53.72, 'ורק'), (54.32, 'שמתי'), (55.04, 'את'), (55.06, 'הפרק'), (55.52, 'של'), (55.62, 'נו', 1), (55.76, 'לימיט', 1), (55.96, 'איתך.'),
     # Elad
     (58.38, 'הרגעת'), (58.82, 'את'), (58.90, 'החרדה,', 1), (59.40, 'אתה'), (59.54, 'אומר.'),
+    # the flop calls (quiet table talk: these follow the actions the show's graphics confirm)
+    (75.66, "צ'ק."), (76.88, '2,500.', 1), (78.90, 'בט'), (79.00, '2,500.'), (80.00, 'קול.'), (82.02, 'קול.'),
     (85.02, 'הדבר'), (85.48, 'הכי'), (85.86, 'חשוב'), (86.12, 'להיות'), (86.24, 'בפוקוס', 1), (86.78, 'ולהיות'), (87.04, 'רגוע.', 1),
     # the turn and river calls
     (91.20, "צ'ק."), (91.72, '7.', 1), (93.40, 'בט'), (93.62, '7,000.'),
@@ -89,8 +92,8 @@ def make(parts, out, title, captions_only=False):
              {'from': round(A, 4), 'to': round(B, 4), 'join': True, 'cover': [1628, 1920]},
              {'from': round(B, 4), 'to': last['to'], 'join': True}]
     S = segs
-    h = next(i for i, s in enumerate(S) if s['from'] > 84)   # first hand part ("הכי חשוב להיות בפוקוס")
-    turn, river = h + 1, h + 4
+    h = next(i for i, s in enumerate(S) if s['from'] > 75)   # first hand part: the flop
+    turn, river = h + 2, h + 5
     job = {
         'src': 'input/israbluff9-4.mp4',
         'title': title,
@@ -106,7 +109,7 @@ def make(parts, out, title, captions_only=False):
         'words': CAPS,
         'hudFrom': S[0]['from'] + 0.1,
         # blinds 500 / 1K + 1K BB ante; Ez opens 3K, Meni and Elad call; flop: Ez bets 2.5K, both call
-        'pot': [[S[0]['from'], 2500], [34.0, 5500], [46.0, 8500], [59.0, 10500], [84.0, 18000],
+        'pot': [[S[0]['from'], 2500], [34.0, 5500], [46.0, 8500], [59.0, 10500], [76.88, 13000], [80.0, 15500], [82.02, 18000],
                 [91.72, 25000], [94.76, 32000], [98.0, 39000], [105.56, 50000], [113.66, 108300]],
         'board': ['5d', 'Js', 'As', '6h', '3h'],
         'boardAt': [S[h]['from'] + 0.1, S[h]['from'] + 0.22, S[h]['from'] + 0.34, S[turn]['from'] + 0.1, S[river]['from'] + 0.1],
@@ -116,9 +119,9 @@ def make(parts, out, title, captions_only=False):
             {'id': 'ez', 'name': 'עז', 'cards': ['Kc', '9h'], 'side': 'left'},
         ],
         'actions': {
-            'meni': [[46.0, 'CALL 3K'], [84.0, 'CALL 2.5K'], [91.2, ''], [94.76, 'CALL 7K'], [104.56, ''], [113.66, 'ALL-IN 58.3K', True], [120.4, 'WINS 108K', True]],
-            'elad': [[59.0, 'CALL 2K'], [84.0, 'CALL 2.5K'], [91.2, 'CHECK'], [98.0, 'CALL 7K'], [104.56, 'CHECK'], [117.32, 'FOLD']],
-            'ez': [[34.0, 'RAISE 3K'], [84.0, 'BET 2.5K'], [91.72, 'BET 7K'], [105.56, 'BET 11K'], [120.06, 'FOLD']],
+            'meni': [[46.0, 'CALL 3K'], [75.66, ''], [80.0, 'CALL 2.5K'], [91.2, ''], [94.76, 'CALL 7K'], [104.56, ''], [113.66, 'ALL-IN 58.3K', True], [120.4, 'WINS 108K', True]],
+            'elad': [[59.0, 'CALL 2K'], [75.66, 'CHECK'], [82.02, 'CALL 2.5K'], [91.2, 'CHECK'], [98.0, 'CALL 7K'], [104.56, 'CHECK'], [117.32, 'FOLD']],
+            'ez': [[34.0, 'RAISE 3K'], [75.66, ''], [76.88, 'BET 2.5K'], [91.72, 'BET 7K'], [105.56, 'BET 11K'], [120.06, 'FOLD']],
         },
         'strength': {
             'meni': [[S[0]['from'] + 0.6, ''], [S[h]['from'] + 0.6, 'GUTSHOT'], [S[river]['from'] + 0.4, 'KING HIGH'], [121.9, 'BLUFF']],
