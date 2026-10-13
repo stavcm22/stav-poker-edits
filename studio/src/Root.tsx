@@ -9,6 +9,8 @@ import wsopQueens from '../jobs/rafi-wsop-queens.json';
 import maniRit2 from '../jobs/mani-run-it-twice.json';
 import isra94 from '../jobs/isra9-4.json';
 import isra94hand from '../jobs/isra9-4-hand.json';
+import isra94caps from '../jobs/isra9-4-caps.json';
+import isra94handcaps from '../jobs/isra9-4-hand-caps.json';
 
 const reel = (id: string, job: Job) => {
   return (
@@ -85,6 +87,8 @@ export const Root: React.FC = () => (
     {reel('ManiRunItTwice', maniRit2 as unknown as Job)}
     {reel('Isra94', isra94 as unknown as Job)}
     {reel('Isra94Hand', isra94hand as unknown as Job)}
+    {reel('Isra94Caps', isra94caps as unknown as Job)}
+    {reel('Isra94HandCaps', isra94handcaps as unknown as Job)}
     {cold('WsopFullHouse', wsopFull as unknown as Job)}
     {cold('WsopQueens', wsopQueens as unknown as Job)}
     <Composition

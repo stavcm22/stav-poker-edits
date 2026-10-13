@@ -75,7 +75,7 @@ W = [
 CAPS = [{'t': t, 'w': w[0], **({'hl': True} if len(w) > 1 else {})} for t, *w in W]
 
 
-def make(parts, out, title):
+def make(parts, out, title, captions_only=False):
     segs = []
     for (a0, a1), (b0, b1) in parts:
         segs.append({'from': quiet(a0, a1, 'late'), 'to': round(min(quiet(b0, b1, 'early') + 0.04, 137.1), 3)})
@@ -86,7 +86,8 @@ def make(parts, out, title):
     last['from'] = round(round(last['from'] * 30) / 30, 4)
     A, B = 3688 / 30, 3785 / 30
     segs += [{'from': last['from'], 'to': round(A, 4)},
-             {'from': round(A, 4), 'to': round(B, 4), 'join': True, 'cover': [1628, 1920]},
+             # captions only: no equity box to sit over the logo, so the shot is reframed below it instead
+             {'from': round(A, 4), 'to': round(B, 4), 'join': True, **({'zoom': 1.3, 'vy': 375, 'cover': [1660, 1920]} if captions_only else {'cover': [1628, 1920]})},
              {'from': round(B, 4), 'to': last['to'], 'join': True}]
     S = segs
     h = next(i for i, s in enumerate(S) if s['from'] > 84)   # first hand part ("הכי חשוב להיות בפוקוס")
@@ -131,6 +132,10 @@ def make(parts, out, title):
         'eqTop': 84,
         'eqScale': 0.96,
     }
+    if captions_only:
+        # just the cut and the captions: the show's own graphics stay, no cards, sounds or punches of ours
+        for k in ('hudBox', 'pot', 'board', 'boardAt', 'players', 'actions', 'strength', 'win', 'punches', 'equity', 'eqTop', 'eqScale', 'hudFrom'):
+            job.pop(k, None)
     json.dump(job, open(os.path.join(ROOT, out), 'w'), ensure_ascii=False, indent=1)
     d = sum(s['to'] - s['from'] for s in segs)
     print(f'{out}: {len(segs)} parts, {d:.1f}s')
@@ -139,3 +144,5 @@ def make(parts, out, title):
 
 make(TALK + HAND, 'jobs/isra9-4.json', 'Israbluff 9 - Meni shoves king high (with the table talk)')
 make(HAND, 'jobs/isra9-4-hand.json', 'Israbluff 9 - Meni shoves king high (hand only)')
+make(TALK + HAND, 'jobs/isra9-4-caps.json', 'Israbluff 9 - captions only (with the table talk)', captions_only=True)
+make(HAND, 'jobs/isra9-4-hand-caps.json', 'Israbluff 9 - captions only (hand only)', captions_only=True)

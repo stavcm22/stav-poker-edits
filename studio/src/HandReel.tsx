@@ -160,7 +160,7 @@ const SegVideo: React.FC<{job: Job; seg: Seg; index: number; dur: number; punch:
     const since = index > 0 && !seg.join ? f / fps : 99;
     const kick = since < 0.4 ? Math.exp(-since * fps / 2.6) : 0;
     // a compact HUD sits on the broadcast's own boxes, so the picture keeps one fixed scale there
-    const fixed = job.hudStyle === 'compact';
+    const fixed = job.hudStyle === 'compact' && !!job.hudBox;
     const s = Math.max(1080 / 1080, 1920 / 1910) * (fixed ? 1 : z * (1 + 0.06 * kick));
     const W = 1080 * s;
     const H = 1910 * s;
