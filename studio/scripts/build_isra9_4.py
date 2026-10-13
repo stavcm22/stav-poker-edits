@@ -28,15 +28,14 @@ def quiet(lo, hi, prefer):
 
 # (cut-in window, cut-out window): each part starts in the quietest moment of the first and ends in the quietest of the second
 TALK = [
-    ((29.10, 29.18), (48.80, 49.30)),   # Ez about Meni the mental coach / "אני נרדם איתו בלילה" / Dor: the flight from Varna
+    ((29.10, 29.18), (49.38, 49.48)),   # Ez about Meni the mental coach / "אני נרדם איתו בלילה" / Dor: the flight from Varna
     ((53.40, 53.74), (55.96, 56.40)),   # Dor: "ורק שמתי את הפרק של נו לימיט איתך"
     ((57.90, 58.40), (59.56, 59.95)),   # Elad: "הרגעת את החרדה, אתה אומר"
 ]
 HAND = [
     ((75.20, 75.66), (82.48, 83.00)),   # flop: Elad "צ'ק", Ez "2,500", dealer "בט 2,500", Meni "קול", Elad "קול"
     ((84.60, 85.03), (87.04, 87.60)),   # Elad: "הדבר הכי חשוב להיות בפוקוס ולהיות רגוע"
-    ((90.70, 91.20), (94.00, 94.30)),   # turn: "צ'ק. 7. בט 7,000."
-    ((94.40, 94.76), (95.25, 95.60)),   # "קול."
+    ((90.70, 91.30), (95.38, 95.70)),   # turn: check, "7", "בט 7,000", the calls
     ((97.60, 98.00), (99.40, 100.20)),  # "קול. אוף."
     ((104.00, 104.56), (108.44, 109.00)),  # river: "צ'ק. 11. בט 11,000."
     ((112.90, 113.60), (135.58, 135.66)),  # the shove, both fold, the reveal
@@ -93,7 +92,7 @@ def make(parts, out, title, captions_only=False):
              {'from': round(B, 4), 'to': last['to'], 'join': True}]
     S = segs
     h = next(i for i, s in enumerate(S) if s['from'] > 75)   # first hand part: the flop
-    turn, river = h + 2, h + 5
+    turn, river = h + 2, h + 4
     job = {
         'src': 'input/israbluff9-4.mp4',
         'title': title,
