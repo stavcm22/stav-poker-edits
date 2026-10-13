@@ -97,7 +97,7 @@ def shot_modes(path, grid, off=0.0, pick=None):
     out[0][0] = round(-off if off else 0.0, 3)
     out[-1][1] = round(-900.0 if off else 151.0, 3)
     return out
-MODES = shot_modes('scripts/data/mani_rit2_ctx_shots.json', 0.0333, OFF) + shot_modes('scripts/data/mani_rit2_shots.json', 0.025)
+MODES = shot_modes('scripts/data/mani_rit2_ctx_shots.json', 0.0333, OFF) + shot_modes('scripts/data/mani_rit2_shots.json', 0.025, pick={37: 0})  # 37: Dor (left) is the one talking, Noam only laughs
 
 job = {
   'src': 'input/noamdor-long.mp4',
