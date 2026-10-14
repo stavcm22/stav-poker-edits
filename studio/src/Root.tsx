@@ -7,6 +7,7 @@ import rafiAq from '../jobs/rafi-aq.json';
 import wsopFull from '../jobs/rafi-wsop-fullhouse.json';
 import wsopQueens from '../jobs/rafi-wsop-queens.json';
 import maniRit2 from '../jobs/mani-run-it-twice.json';
+import {DjReel, DJ_SEC} from './DjReel';
 import isra94 from '../jobs/isra9-4.json';
 import isra94hand from '../jobs/isra9-4-hand.json';
 import isra94caps from '../jobs/isra9-4-caps.json';
@@ -62,6 +63,7 @@ const cold = (id: string, job: Job & {teaser?: [number, number]}) =>
 
 export const Root: React.FC = () => (
   <>
+    <Composition id="DjIguana" component={DjReel} width={1080} height={1920} fps={30} durationInFrames={Math.round(DJ_SEC * 30)} />
     <Composition
       id="ManiWithHook"
       component={ManiReel}
