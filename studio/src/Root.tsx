@@ -89,6 +89,8 @@ export const Root: React.FC = () => (
     {reel('Isra94Hand', isra94hand as unknown as Job)}
     {reel('Isra94Caps', isra94caps as unknown as Job)}
     {reel('Isra94HandCaps', isra94handcaps as unknown as Job)}
+    {cold('Isra94Caps', isra94caps as unknown as Job)}
+    {cold('Isra94HandCaps', isra94handcaps as unknown as Job)}
     {cold('WsopFullHouse', wsopFull as unknown as Job)}
     {cold('WsopQueens', wsopQueens as unknown as Job)}
     <Composition

@@ -33,10 +33,11 @@ TALK = [
     ((57.90, 58.40), (59.56, 59.95)),   # Elad: "הרגעת את החרדה, אתה אומר"
 ]
 HAND = [
-    ((77.69, 77.74), (79.06, 79.22)),   # flop: "אלפיים וחמש" (the bet)
+    ((75.38, 75.50), (82.70, 83.00)),   # flop: Elad checks, Ez "2,500", the dealer repeats it, Meni "שולם", Elad calls
     ((84.60, 85.03), (87.04, 87.60)),   # Elad: "הדבר הכי חשוב להיות בפוקוס ולהיות רגוע"
-    ((92.40, 92.74), (94.25, 94.45)),   # turn: "שבע. בט שבעת אלפים."
-    ((105.10, 105.48), (108.47, 108.90)),  # river: "צ'ק. 11. בט 11,000."
+    ((90.80, 91.05), (95.40, 95.62)),   # turn: Elad "צ'ק", "7. בט 7,000.", "תודה", Meni "קול"
+    ((97.50, 97.85), (99.10, 99.60)),   # turn: Elad "קול"
+    ((104.80, 105.10), (108.47, 108.90)),  # river: Elad "צ'ק", "11. בט 11,000."
     ((112.90, 113.60), (135.58, 135.66)),  # the shove, both fold, the reveal
 ]
 
@@ -55,11 +56,11 @@ W = [
     # Elad
     (58.38, 'הרגעת'), (58.82, 'את'), (58.90, 'החרדה,', 1), (59.40, 'אתה'), (59.54, 'אומר.'),
     # the flop bet (timed to the audio envelope)
-    (77.92, '2,500.', 1),
+    (77.92, '2,500.', 1), (80.42, 'שולם.'),
     (85.02, 'הדבר'), (85.48, 'הכי'), (85.86, 'חשוב'), (86.12, 'להיות'), (86.24, 'בפוקוס', 1), (86.78, 'ולהיות'), (87.04, 'רגוע.', 1),
     # the turn and river calls (timed to the audio envelope)
-    (92.98, '7.', 1), (93.56, 'בט'), (93.78, '7,000.'),
-    (105.51, "צ'ק."), (106.55, '11.', 1), (107.70, 'בט'), (107.95, '11,000.'),
+    (91.30, "צ'ק."), (92.98, '7.', 1), (93.56, 'בט'), (93.78, '7,000.'), (94.46, 'תודה.'), (95.16, 'קול.'), (98.06, 'קול.'),
+    (105.40, "צ'ק."), (106.52, '11.', 1), (107.50, 'בט'), (107.90, '11,000.'),
     # the shove, the folds, the reveal
     (113.66, 'עולים.', 1),
     (120.40, 'יואו,'), (121.24, 'יואו,'), (121.90, 'קינג', 1), (123.64, 'עשר', 1), (124.42, 'פלצת.', 1), (125.46, 'טוב'), (125.68, 'עליי.'),
@@ -87,7 +88,7 @@ def make(parts, out, title, captions_only=False):
              {'from': round(B, 4), 'to': last['to'], 'join': True}]
     S = segs
     h = next(i for i, s in enumerate(S) if s['from'] > 75)   # first hand part: the flop
-    turn, river = h + 2, h + 3
+    turn, river = h + 2, h + 4
     job = {
         'src': 'input/israbluff9-4.mp4',
         'title': title,
@@ -124,10 +125,13 @@ def make(parts, out, title, captions_only=False):
         },
         'win': {'at': 120.4, 'player': 'meni', 'cards': ['Kd', 'Td']},
         'punches': [113.66],
-        'equity': {'player': 'מני', 'values': [['PRE', 23], ['FLOP', 17], ['TURN', 8], ['RIVER', 0]], 'at': 122.94},
+        'equity': {'player': 'מני', 'values': [['PRE', 23], ['FLOP', 17], ['TURN', 8], ['RIVER', 0]], 'at': 122.92},
+        'eqSolid': True,
         'eqTop': 84,
         'eqScale': 0.96,
     }
+    # the hook versions open on the reveal ("קינג עשר פלצת"), rewind, then the whole story
+    job['teaser'] = [121.54, 125.20]
     if captions_only:
         # the same reel without our hand panels (the show's own graphics already show the hand);
         # sounds, punches and the equity box stay as they were

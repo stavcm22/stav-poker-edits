@@ -41,6 +41,7 @@ export type Job = {
   potPos?: 'top' | 'bottom' | 'center'; // where the pot box sits (default top-left)
   rowGap?: number; // px between player rows
   hideHud?: boolean; // keep everything else (sounds, punches, equity) but draw none of the hand panels
+  eqSolid?: boolean; // equity box fully opaque from its first frame (it lands on a hard cut and hides what is under it)
   hudStyle?: 'compact'; // compact panels laid exactly over a broadcast's own graphics, no dark floor
   hudBox?: {x: number; y: number; w: number; rowH: number; gap: number; bx: number; by: number; bw: number; bh: number}; // compact layout: player rows at left, board+pot box at right
   vertical?: boolean; // the source is already 9:16: fill the frame with it instead of cropping a 16:9 shot
@@ -717,7 +718,7 @@ const Tag: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, 
 const EquityBox: React.FC<{job: Job; t: number; frame: number; fps: number}> = ({job, t, frame, fps}) => {
   const eq = job.equity;
   if (!eq || t < eq.at || (eq.until && t > eq.until)) return null;
-  const pIn = soft(frame, fps, eq.at, 18);
+  const pIn = job.eqSolid ? 1 : soft(frame, fps, eq.at, 18);
   return (
     <div
       style={{
@@ -727,7 +728,7 @@ const EquityBox: React.FC<{job: Job; t: number; frame: number; fps: number}> = (
         width: 912,
         height: 320,
         transformOrigin: '50% 0',
-        background: 'rgba(12,14,16,0.9)',
+        background: job.eqSolid ? 'rgb(12,14,16)' : 'rgba(12,14,16,0.9)',
         border: '1px solid rgba(255,194,26,0.25)',
         borderRadius: 18,
         opacity: Math.min(1, pIn * 1.3),
@@ -1392,7 +1393,11 @@ export const doubleFrames = (first: Job, second: Job, withHook: boolean) =>
 
 // ---------- cold open: the climax first, a rewind, then the whole hand ----------
 const REWIND_SEC = 1.1;
-const coldTeaser = (job: Job, from: number, to: number): Job => ({...job, segments: [{from, to}], hook: undefined});
+// the teaser keeps whatever the reel's own parts carry over that stretch (covers, joins)
+const coldTeaser = (job: Job, from: number, to: number): Job => {
+  const own = job.segments.filter((s) => s.to > from && s.from < to).map((s, i) => ({...s, from: Math.max(s.from, from), to: Math.min(s.to, to), ...(i === 0 ? {join: false} : {})}));
+  return {...job, segments: own.length ? own : [{from, to}], hook: undefined};
+};
 export const coldOpenFrames = (job: Job, from: number, to: number) =>
   reelFrames(coldTeaser(job, from, to), false, false) + Math.round(REWIND_SEC * FPS) + reelFrames(job, false);
 const Rewind: React.FC = () => {
