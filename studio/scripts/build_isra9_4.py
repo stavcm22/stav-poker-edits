@@ -130,8 +130,9 @@ def make(parts, out, title, captions_only=False):
         'eqTop': 84,
         'eqScale': 0.96,
     }
-    # the hook versions open on the reveal ("קינג עשר פלצת"), rewind, then the whole story
-    job['teaser'] = [121.54, 125.20]
+    # the hook versions open on Meni's shove ("עולים") and Elad thinking it over with queens, stopping before
+    # anyone acts (nothing of how the hand ends), rewind, then the whole story
+    job['teaser'] = [113.50, 116.90]
     if captions_only:
         # the same reel without our hand panels (the show's own graphics already show the hand);
         # sounds, punches and the equity box stay as they were
