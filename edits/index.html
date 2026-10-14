@@ -12,7 +12,7 @@
 (function(){var d=document.documentElement;d.classList.add('js');
 var rm=false,seen=false;
 
-if(!rm&&!seen&&!location.hash){d.classList.add('intro-on','intro-lock')}else{d.classList.add('intro-done')}
+if(true){d.classList.add('intro-on','intro-lock')}else{d.classList.add('intro-done')}
 if(matchMedia('(hover:hover) and (pointer:fine)').matches)d.classList.add('fine');
 setTimeout(function(){d.classList.remove('intro-on','intro-lock');d.classList.add('intro-done')},9000);})();
 </script>
