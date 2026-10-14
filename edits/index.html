@@ -22,7 +22,7 @@ var rm=false,seen=false;
 
 if(true){d.classList.add('intro-on','intro-lock')}else{d.classList.add('intro-done')}
 if(matchMedia('(hover:hover) and (pointer:fine)').matches)d.classList.add('fine');
-setTimeout(function(){d.classList.remove('intro-on','intro-lock');d.classList.add('intro-done')},9000);})();
+setTimeout(function(){d.classList.remove('intro-on','intro-lock');d.classList.add('intro-done')},4000);})();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -517,10 +517,10 @@ html.intro-on .intro{display:block}
 .intro.title .in-title{opacity:1}
 .in-word{position:relative; display:flex; align-items:center; gap:clamp(10px,2vw,28px); font:700 clamp(96px,21vw,330px)/.78 var(--f-display); letter-spacing:.03em; color:#F2F4F6}
 .in-word .L{display:inline-block; opacity:0; transform:translateY(-35%) scale(2.4); filter:blur(14px)}
-.intro.slam .in-word .L{animation:slam .5s cubic-bezier(.2,1.4,.3,1) forwards; animation-delay:calc(var(--i) * 55ms)}
+.intro.slam .in-word .L{animation:slam .36s cubic-bezier(.2,1.4,.3,1) forwards; animation-delay:calc(var(--i) * 34ms)}
 @keyframes slam{0%{opacity:0; transform:translateY(-35%) scale(2.4); filter:blur(14px)}55%{opacity:1; filter:blur(0)}100%{opacity:1; transform:none; filter:blur(0)}}
 .in-word .bar{width:clamp(4px,.6vw,9px); align-self:stretch; margin-block:.08em .12em; background:#2BC6D8; transform:scaleY(0); transform-origin:50% 0}
-.intro.slam .in-word .bar{animation:barIn .35s .45s cubic-bezier(.7,0,.2,1) forwards}
+.intro.slam .in-word .bar{animation:barIn .3s .28s cubic-bezier(.7,0,.2,1) forwards}
 @keyframes barIn{to{transform:scaleY(1)}}
 @media (max-width:600px){ .in-word{font-size:15vw; gap:5px; letter-spacing:.01em} }
 .in-word .ch{position:absolute; inset:0; display:flex; align-items:center; gap:inherit; pointer-events:none; opacity:0; mix-blend-mode:screen}
@@ -548,9 +548,9 @@ html.intro-on .intro{display:block}
 .in-skip{position:absolute; z-index:4; right:clamp(14px,3vw,36px); bottom:clamp(18px,4vw,36px); height:38px; padding:0 14px; border-radius:2px; border:1px solid #3A424D; background:rgba(9,11,13,.6); color:#E6E9EC; font:600 12px/1 var(--f-mono); letter-spacing:.12em; cursor:pointer}
 .in-skip:hover{border-color:#2BC6D8; color:#2BC6D8}
 .in-cut{position:absolute; left:0; right:0; top:50%; height:2px; margin-top:-1px; background:#2BC6D8; box-shadow:0 0 18px #2BC6D8,0 0 2px #fff; transform:scaleX(0); z-index:5}
-.intro.out .in-cut{animation:cutLine .5s cubic-bezier(.7,0,.2,1) forwards}
+.intro.out .in-cut{animation:cutLine .32s cubic-bezier(.7,0,.2,1) forwards}
 @keyframes cutLine{0%{transform:scaleX(0)}45%{transform:scaleX(1)}100%{transform:scaleX(1); opacity:0}}
-.intro.out{animation:introOut .62s .12s cubic-bezier(.75,0,.2,1) forwards}
+.intro.out{animation:introOut .42s 0s cubic-bezier(.75,0,.2,1) forwards}
 @keyframes introOut{to{clip-path:inset(50% 0 50% 0)}}
 
 /* hero entrance after the intro (only when js is on) */
@@ -599,6 +599,46 @@ html.intro-done .hero .suite{animation:whipIn .8s .15s cubic-bezier(.7,0,.1,1) b
 @keyframes hwPop{0%{opacity:0; transform:scale(1.14) translateX(-10px); filter:blur(4px)}60%{filter:none}100%{opacity:1; transform:none}}
 .hw .phn .ph-demo{display:inline-block; justify-self:start; font:600 10px/1 var(--f-body); color:#fff; background:linear-gradient(100deg,#9B5CFF,#FF3DAE); padding:4px 6px 3px; border-radius:2px}
 @media (max-width:900px){ .hw-tabs{padding-inline:var(--gut)} }
+
+/* ───── full of video: montage, section clips, dense mobile wall, tap-to-play ───── */
+.hero > .hero-bg{inset:0 calc(50% - 50vw)}
+.vclip.mont{position:absolute; inset:0 0 auto 0; height:min(100%,100vh); overflow:hidden; pointer-events:none}
+.vclip.mont video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.34; filter:saturate(1.25) contrast(1.05)}
+.vclip.mont::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 55%,transparent),color-mix(in srgb,var(--bg) 25%,transparent) 35%,color-mix(in srgb,var(--bg) 70%,transparent) 75%,var(--bg)),radial-gradient(ellipse at 70% 30%,transparent,color-mix(in srgb,var(--bg) 50%,transparent) 70%)}
+@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]) .vclip.mont video{opacity:.18} }
+.cuts-mont{height:100%!important; z-index:0}
+.cuts-mont video{opacity:.16!important}
+.cuts-stage > .shot,.cuts-stage > .cuts-hud{z-index:1}
+.sec-h.has-clip{position:relative; --clipw:clamp(92px,13vw,160px); padding-inline-end:calc(var(--clipw) + 20px); min-height:calc(var(--clipw) * 16 / 9)}
+.sec-h.has-clip.ab-h,.contact .sec-h.has-clip{max-width:none}
+.vclip.sclip{position:absolute; inset-inline-end:0; top:0; width:var(--clipw); aspect-ratio:9/16; border-radius:6px; overflow:hidden; background:#000; padding:0; box-shadow:0 0 0 2px transparent,0 0 0 1px rgba(61,235,255,.5),0 0 34px -8px rgba(61,91,255,.8),0 0 60px -20px rgba(255,61,174,.7); transform:rotate(-2deg)}
+.vclip.sclip video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+.vclip.sclip > span{position:absolute; left:6px; bottom:6px; font:600 10px/1 var(--f-body); color:#021013; background:#3DEBFF; padding:4px 5px 3px; border-radius:2px; z-index:2}
+.tap-play{position:absolute; inset:0; z-index:6; display:none; place-items:center; border:0; padding:0; background:rgba(5,7,9,.38); cursor:pointer; pointer-events:auto}
+.tap-play i{width:clamp(44px,32%,68px); aspect-ratio:1; border-radius:4px; background:linear-gradient(135deg,#3DEBFF,#9B5CFF); box-shadow:0 0 0 2px rgba(255,255,255,.85),0 0 30px rgba(61,235,255,.75); display:grid; place-items:center; animation:tapPulse 1.6s ease-in-out infinite}
+.tap-play i::before{content:""; width:38%; height:42%; margin-left:8%; background:#fff; clip-path:polygon(0 0,100% 50%,0 100%)}
+@keyframes tapPulse{50%{transform:scale(1.08); box-shadow:0 0 0 2px #fff,0 0 44px rgba(61,235,255,.95)}}
+.needs-tap > .tap-play,.needs-tap .ph-scr > .tap-play{display:grid}
+.vclip.mont .tap-play{display:none!important}
+.hw-more{display:none}
+@media (max-width:900px){
+  .hw-track{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; overflow:visible; -webkit-mask-image:none; mask-image:none; padding:4px var(--gut) 6px}
+  .hw .phn{flex:none; min-width:0}
+  .hw .phn.mx{display:none}
+  .hw .ph-shell{border-radius:8px}
+  .hw .ph-scr{border-radius:6px}
+  .hw .ph-tag{display:none}
+  .hw .phn figcaption{position:absolute; left:6px; right:6px; bottom:9px; margin:0; z-index:3; pointer-events:none; gap:2px; text-shadow:0 1px 3px rgba(0,0,0,.9)}
+  .hw .phn figcaption b{font-size:17px; color:#fff}
+  .hw .phn figcaption span{font-size:9.5px; color:#E6E9EC; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+  .hw .phn figcaption .ph-demo{font-size:9px; padding:3px 4px 2px; display:inline-block; justify-self:start}
+  .hw .ph-ui::after{content:""; position:absolute; inset:auto 0 0 0; height:45%; background:linear-gradient(transparent,rgba(0,0,0,.75))}
+  .hw .ph-snd{right:auto; left:5px; top:12px; bottom:auto; width:26px; height:26px}
+  .hw .ph-snd svg{width:14px; height:14px}
+  .hw-more{display:block; margin:6px var(--gut) 0; width:calc(100% - var(--gut) * 2); height:42px; border-radius:3px; border:1px solid rgba(61,235,255,.55); background:color-mix(in srgb,var(--panel) 80%,transparent); color:var(--fg); font:600 15px/1 var(--f-body); cursor:pointer; box-shadow:0 0 18px -8px rgba(61,235,255,.8)}
+  .hw-more[hidden]{display:none}
+}
+@media (min-width:601px) and (max-width:900px){ .hw-track{grid-template-columns:repeat(4,minmax(0,1fr))} }
 
 /* hero backdrop: giant outlined timecode with speed-ramped parallax */
 .hero{position:relative; isolation:isolate}
@@ -962,7 +1002,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
   var cv = document.getElementById('inLeader'), x = cv.getContext('2d');
   var leader = function(){
     var dpr = Math.min(2, devicePixelRatio || 1); cv.width = innerWidth * dpr; cv.height = innerHeight * dpr;
-    var s0 = performance.now(), STEP = 290;
+    var s0 = performance.now(), STEP = 165;
     var f = function(now){
       if (finished) return; var e = now - s0; if (e >= STEP * 3) return;
       var n = 3 - Math.floor(e / STEP), fr = (e % STEP) / STEP, w = cv.width, hh = cv.height, cx = w / 2, cy = hh / 2, r = Math.min(w, hh) * 0.3;
@@ -983,18 +1023,20 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
     if (finished) return; finished = true; timers.forEach(clearTimeout);
     try { sessionStorage.setItem('se_intro', '1'); } catch (e) {}
     el.classList.add('out', 'title'); el.classList.remove('leader');
-    setTimeout(function(){ d.classList.remove('intro-on', 'intro-lock'); d.classList.add('intro-done'); done(); }, 720);
+    setTimeout(function(){ d.classList.remove('intro-on', 'intro-lock'); d.classList.add('intro-done'); done(); }, 430);
   };
-  at(650, function(){ el.classList.add('leader'); leader(); });
-  at(650 + 870, function(){ el.classList.remove('leader'); el.classList.add('title', 'rgb'); flash(); });
-  at(650 + 870 + 300, function(){ el.classList.remove('rgb'); el.classList.add('slam'); });
-  at(650 + 870 + 300 + 820, function(){ el.classList.add('shake'); flash(); });
+  at(160, function(){ el.classList.add('leader'); leader(); });
+  at(660, function(){ el.classList.remove('leader'); el.classList.add('title', 'rgb'); flash(); });
+  at(780, function(){ el.classList.remove('rgb'); el.classList.add('slam'); });
+  at(1420, function(){ el.classList.add('shake'); flash(); });
   var subs = sub.querySelectorAll('span');
-  [].forEach.call(subs, function(s, k){ at(2780 + k * 210, function(){ [].forEach.call(subs, function(o){ o.classList.remove('hl'); }); s.classList.add('in', 'hl'); }); });
-  at(2780 + subs.length * 210 + 120, function(){ [].forEach.call(subs, function(o){ o.classList.remove('hl'); }); });
-  at(3900, finish);
+  [].forEach.call(subs, function(s, k){ at(1200 + k * 85, function(){ [].forEach.call(subs, function(o){ o.classList.remove('hl'); }); s.classList.add('in', 'hl'); }); });
+  at(1200 + subs.length * 85 + 100, function(){ [].forEach.call(subs, function(o){ o.classList.remove('hl'); }); });
+  at(1800, finish);
   document.getElementById('inSkip').addEventListener('click', finish);
   el.addEventListener('click', function(e){ if (e.target.id !== 'inSkip') finish(); });
+  el.addEventListener('pointerdown', function(){ finish(); });
+  el.addEventListener('touchstart', function(){ finish(); }, { passive: true });
   addEventListener('keydown', function(e){ if (e.key === 'Escape' || e.key === ' ' || e.key === 'Enter') finish(); });
   window.SE_SKIP_INTRO = finish;
 })();
@@ -1015,7 +1057,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
 <main>
 <!-- ───────── HERO ───────── -->
 <section class="wrap hero" id="top" data-scene>
-  <div class="hero-bg" aria-hidden="true"><div class="ghost-tc" data-speed="-.35" id="ghostTc">00:00:00:00</div><div class="ghost-tc b" data-speed=".22">STAV · EDITS</div></div>
+  <div class="hero-bg" aria-hidden="true"><div class="vclip mont" data-prio="0" data-src-v="assets/work/montage_v.mp4" data-src-h="assets/work/montage_h.mp4"><video muted playsinline loop preload="auto" poster="assets/work/montage_h.jpg" data-poster-v="assets/work/montage_v.jpg"></video></div><div class="ghost-tc" data-speed="-.35" id="ghostTc">00:00:00:00</div><div class="ghost-tc b" data-speed=".22">STAV · EDITS</div></div>
   <div class="hero-copy">
     <p class="slate"><span class="rec"></span>סצנה 01 · טייק 01 · REC</p>
     <h1 id="h1"><span class="w" style="--i:0">שולחים</span> <span class="w" style="--i:1">חומר.</span><br><span class="w" style="--i:2">מקבלים</span> <span class="w g" style="--i:3">סרטון.</span></h1>
@@ -1033,7 +1075,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
         <figure class="phn demo" data-cat="barber" data-src="assets/work/barber.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/barber.jpg" aria-label="מספרה: דוגמת עריכה"></video>
-            <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag" data-dur="barber">REEL · 0:18</span></div>
+            <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">REEL · 0:18</span></div>
             <button class="ph-snd" type="button" aria-label="הפעלת סאונד" aria-pressed="false"><svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="m17 9 4 6m0-6-4 6"/></svg><svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
           </div></div></div>
           <figcaption><b>מספרה</b><span class="ph-demo">דוגמת עריכה</span></figcaption>
@@ -1041,7 +1083,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
         <figure class="phn demo" data-cat="food" data-src="assets/work/chef.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/chef.jpg" aria-label="שף פרטי: דוגמת עריכה"></video>
-            <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag" data-dur="chef">REEL</span></div>
+            <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">REEL · 0:18</span></div>
             <button class="ph-snd" type="button" aria-label="הפעלת סאונד" aria-pressed="false"><svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="m17 9 4 6m0-6-4 6"/></svg><svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
           </div></div></div>
           <figcaption><b>שף פרטי</b><span class="ph-demo">דוגמת עריכה</span></figcaption>
@@ -1049,7 +1091,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
         <figure class="phn demo" data-cat="realestate" data-src="assets/work/realestate.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/realestate.jpg" aria-label="נדל״ן: דוגמת עריכה"></video>
-            <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag" data-dur="realestate">REEL</span></div>
+            <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">REEL · 0:18</span></div>
             <button class="ph-snd" type="button" aria-label="הפעלת סאונד" aria-pressed="false"><svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="m17 9 4 6m0-6-4 6"/></svg><svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
           </div></div></div>
           <figcaption><b>נדל״ן</b><span class="ph-demo">דוגמת עריכה</span></figcaption>
@@ -1061,6 +1103,14 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
             <button class="ph-snd" type="button" aria-label="הפעלת סאונד" aria-pressed="false"><svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="m17 9 4 6m0-6-4 6"/></svg><svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
           </div></div></div>
           <figcaption><b>נו לימיט</b><span>אייל אשכר · היד מאמסטרדם</span></figcaption>
+        </figure>
+        <figure class="phn" data-cat="podcast" data-src="assets/work/bama1.mp4" data-audio="1">
+          <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
+            <video muted playsinline loop preload="none" poster="assets/work/bama1.jpg" aria-label="במה פתוחה: מני מלכה · אשתי רוצה עוד ילד"></video>
+            <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">SHOW · 0:19</span></div>
+            <button class="ph-snd" type="button" aria-label="הפעלת סאונד" aria-pressed="false"><svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="m17 9 4 6m0-6-4 6"/></svg><svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
+          </div></div></div>
+          <figcaption><b>במה פתוחה</b><span>מני מלכה · אשתי רוצה עוד ילד</span></figcaption>
         </figure>
         <figure class="phn" data-cat="podcast" data-src="assets/work/sr1.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
@@ -1086,6 +1136,14 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           </div></div></div>
           <figcaption><b>נו לימיט</b><span>נועם מול קסיאס · שיחת טלפון</span></figcaption>
         </figure>
+        <figure class="phn" data-cat="podcast" data-src="assets/work/bama2.mp4" data-audio="1">
+          <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
+            <video muted playsinline loop preload="none" poster="assets/work/bama2.jpg" aria-label="במה פתוחה: מני מלכה · הנהג ולא האוטו"></video>
+            <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">SHOW · 0:42</span></div>
+            <button class="ph-snd" type="button" aria-label="הפעלת סאונד" aria-pressed="false"><svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="m17 9 4 6m0-6-4 6"/></svg><svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
+          </div></div></div>
+          <figcaption><b>במה פתוחה</b><span>מני מלכה · הנהג ולא האוטו</span></figcaption>
+        </figure>
         <figure class="phn" data-cat="podcast" data-src="assets/work/sr2.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/sr2.jpg" aria-label="שומעת רגע: ד״ר ליאת יקיר · הקורטיזול של נשים"></video>
@@ -1102,6 +1160,14 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           </div></div></div>
           <figcaption><b>בית המלאכה</b><span>כהן מיכאל · מודעה</span></figcaption>
         </figure>
+        <figure class="phn" data-cat="biz" data-src="assets/work/mc1.mp4">
+          <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
+            <video muted playsinline loop preload="none" poster="assets/work/mc1.jpg" aria-label="בית המלאכה: כהן מיכאל · יישור גוף הכלי"></video>
+            <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">REEL · 0:25</span></div>
+            
+          </div></div></div>
+          <figcaption><b>בית המלאכה</b><span>כהן מיכאל · יישור גוף הכלי</span></figcaption>
+        </figure>
         <figure class="phn" data-cat="podcast" data-src="assets/work/nl-omri.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/nl-omri.jpg" aria-label="נו לימיט: לרוץ פעמיים מול עומרי"></video>
@@ -1110,6 +1176,14 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           </div></div></div>
           <figcaption><b>נו לימיט</b><span>לרוץ פעמיים מול עומרי</span></figcaption>
         </figure>
+        <figure class="phn" data-cat="podcast" data-src="assets/work/bama3.mp4" data-audio="1">
+          <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
+            <video muted playsinline loop preload="none" poster="assets/work/bama3.jpg" aria-label="במה פתוחה: מני מלכה · חמש הופעות ברצף"></video>
+            <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">SHOW · 0:24</span></div>
+            <button class="ph-snd" type="button" aria-label="הפעלת סאונד" aria-pressed="false"><svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="m17 9 4 6m0-6-4 6"/></svg><svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
+          </div></div></div>
+          <figcaption><b>במה פתוחה</b><span>מני מלכה · חמש הופעות ברצף</span></figcaption>
+        </figure>
         <figure class="phn" data-cat="podcast" data-src="assets/work/sr3.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/sr3.jpg" aria-label="שומעת רגע: ד״ר ליאת יקיר · ספורט נגד דיכאון"></video>
@@ -1117,6 +1191,14 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
             <button class="ph-snd" type="button" aria-label="הפעלת סאונד" aria-pressed="false"><svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="m17 9 4 6m0-6-4 6"/></svg><svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
           </div></div></div>
           <figcaption><b>שומעת רגע</b><span>ד״ר ליאת יקיר · ספורט נגד דיכאון</span></figcaption>
+        </figure>
+        <figure class="phn" data-cat="biz" data-src="assets/work/mc2.mp4">
+          <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
+            <video muted playsinline loop preload="none" poster="assets/work/mc2.jpg" aria-label="בית המלאכה: כהן מיכאל · הלחמה"></video>
+            <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">REEL · 0:16</span></div>
+            
+          </div></div></div>
+          <figcaption><b>בית המלאכה</b><span>כהן מיכאל · הלחמה</span></figcaption>
         </figure>
         <figure class="phn" data-cat="podcast" data-src="assets/work/nl-meni.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
@@ -1134,7 +1216,16 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           </div></div></div>
           <figcaption><b>בית המלאכה</b><span>כהן מיכאל · מודעה</span></figcaption>
         </figure>
+        <figure class="phn" data-cat="biz" data-src="assets/work/mc3.mp4">
+          <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
+            <video muted playsinline loop preload="none" poster="assets/work/mc3.jpg" aria-label="בית המלאכה: כהן מיכאל · ליטוש"></video>
+            <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">REEL · 0:13</span></div>
+            
+          </div></div></div>
+          <figcaption><b>בית המלאכה</b><span>כהן מיכאל · ליטוש</span></figcaption>
+        </figure>
       </div>
+      <button type="button" class="hw-more" id="hwMore" hidden>עוד <b></b> סרטונים ▾</button>
     </div>
     <p class="lead">אני סתיו, עורך וידאו. שולחים לי פרק של פודקאסט, סרטון מהטלפון או צילומים מהעסק, <strong>ואני הופך את זה לסרטון ערוך עם קצב, כתוביות וגרפיקה</strong>, מוכן להעלאה לרילס, לטיקטוק וליוטיוב.</p>
     <p class="free"><b>העריכה הראשונה עליי.</b> בלי התחייבות.</p>
@@ -1252,6 +1343,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
   <h2 class="vh">מה הופך סרטון לטוב</h2>
   <div class="cuts-track">
     <div class="cuts-stage">
+      <div class="vclip mont cuts-mont" aria-hidden="true" data-prio="2" data-src-v="assets/work/montage_v.mp4" data-src-h="assets/work/montage_h.mp4"><video muted playsinline loop preload="none" poster="assets/work/montage_h.jpg" data-poster-v="assets/work/montage_v.jpg"></video></div>
       <article class="shot s1">
         <div class="count" aria-hidden="true" id="cCount">3</div>
         <div class="lbl">שוט 01 · הוק</div>
@@ -1375,7 +1467,8 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
 
 <!-- ───────── WORK BIN ───────── -->
 <section class="sec wrap" id="work" data-scene>
-  <header class="sec-h" data-cut>
+  <header class="sec-h has-clip" data-cut>
+      <div class="vclip sclip" data-prio="2" data-src="assets/work/barber.mp4"><video muted playsinline loop preload="none" poster="assets/work/barber.jpg" aria-label="קטע לדוגמה: מספרה"></video><span>מספרה</span></div>
     <p class="tcm"><i></i><span data-tc="work">00:00:00:00</span> · עבודות</p>
     <h2>מה אני עורך</h2>
     <p>חמישה סוגי עבודות. לחצו על תיקייה כדי לראות דוגמה.</p>
@@ -1436,7 +1529,8 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
 <div class="wrap"><div class="seam j" aria-hidden="true"><div class="row v"><i class="a"></i><i class="b"></i></div><div class="row au"><i class="a"></i><i class="b"></i></div><span class="lbl">J-CUT</span><i class="ph"></i></div></div>
 <!-- ───────── FX ───────── -->
 <section class="sec wrap" id="tools" data-scene>
-  <header class="sec-h" data-cut>
+  <header class="sec-h has-clip" data-cut>
+      <div class="vclip sclip" data-prio="2" data-src="assets/work/chef.mp4"><video muted playsinline loop preload="none" poster="assets/work/chef.jpg" aria-label="קטע לדוגמה: שף פרטי"></video><span>שף פרטי</span></div>
     <p class="tcm"><i></i><span data-tc="tools">00:00:00:00</span> · הכלים</p>
     <h2>מה נכנס לסרטון</h2>
     <p>כל שורה פה היא משהו שאני מכניס לסרטונים, לפי מה שכל סרטון צריך. כשהקו עובר על נקודה, רואים את האפקט בפעולה.</p>
@@ -1511,7 +1605,8 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
 <div class="wrap"><div class="seam l" aria-hidden="true"><div class="row v"><i class="a"></i><i class="b"></i></div><div class="row au"><i class="a"></i><i class="b"></i></div><span class="lbl">L-CUT</span><i class="ph"></i></div></div>
 <!-- ───────── PROCESS ───────── -->
 <section class="sec wrap" id="process" data-scene>
-  <header class="sec-h" data-cut>
+  <header class="sec-h has-clip" data-cut>
+      <div class="vclip sclip" data-prio="2" data-src="assets/work/realestate.mp4"><video muted playsinline loop preload="none" poster="assets/work/realestate.jpg" aria-label="קטע לדוגמה: נדל״ן"></video><span>נדל״ן</span></div>
     <p class="tcm"><i></i><span data-tc="process">00:00:00:00</span> · איך זה עובד</p>
     <h2>ארבעה שלבים, הכל בהודעות</h2>
     <p>בלי טפסים ובלי לחכות לפגישה.</p>
@@ -1550,7 +1645,8 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
 <!-- ───────── CONTACT ───────── -->
 <section class="sec wrap" id="contact" data-scene>
   <div class="contact">
-    <header class="sec-h" style="margin:0" data-cut>
+    <header class="sec-h has-clip" style="margin:0" data-cut>
+      <div class="vclip sclip" data-prio="2" data-src="assets/work/bama1.mp4"><video muted playsinline loop preload="none" poster="assets/work/bama1.jpg" aria-label="קטע לדוגמה: במה פתוחה"></video><span>במה פתוחה</span></div>
       <p class="tcm"><i></i><span data-tc="contact">00:00:00:00</span> · דברו איתי</p>
       <h2>יש לכם חומר? <em>שלחו לי.</em></h2>
       <p>כתבו מה יש לכם ומה אתם רוצים שייצא. אפשר לשלוח קובץ, קישור, או סתם רעיון.</p>
@@ -2128,7 +2224,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
         phones.forEach(p => { if (p !== o) { if (p.snd) { p.v.muted = true; p.snd.setAttribute('aria-pressed', 'false'); } p.ph.classList.remove('focus'); p.rw.classList.toggle('has-focus', false); } });
         v.muted = !on; if (snd) snd.setAttribute('aria-pressed', String(on));
         ph.classList.toggle('focus', on); rw.classList.toggle('has-focus', on);
-        if (on) { if (!o.loaded) { o.loaded = true; v.src = ph.dataset.src; } v.play().catch(() => { v.muted = true; snd && snd.setAttribute('aria-pressed', 'false'); }); }
+        if (on) { o.load && o.load(); o.m && (o.m.user = true); v.play().catch(() => { v.muted = true; snd && snd.setAttribute('aria-pressed', 'false'); }); }
       };
       o.setSound = setSound;
       if (snd) snd.addEventListener('click', (e) => { e.stopPropagation(); setSound(v.muted); });
@@ -2138,14 +2234,56 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
         ph.addEventListener('pointerleave', () => { if (v.muted) { ph.classList.remove('focus'); if (!rw.querySelector('.phn.focus')) rw.classList.remove('has-focus'); } });
       }
     });
-    const load = (o) => { if (o.loaded) return; o.loaded = true; o.v.src = o.ph.dataset.src; o.v.preload = 'metadata'; };
-    const ob = new IntersectionObserver((es) => es.forEach(e => {
-      const o = phones.find(p => p.ph === e.target); if (!o) return;
-      o.vis = e.isIntersecting;
-      if (o.vis) { load(o); o.v.play().catch(() => {}); }
-      else { o.v.pause(); if (!o.v.muted) o.setSound(false); }
-    }), { rootMargin: '200px 0px 200px 0px', threshold: 0.01 });
-    phones.forEach(o => ob.observe(o.ph));
+    /* media manager: autoplay what is on screen (max ~6-7 at once), pause the rest,
+       and when the browser refuses autoplay (iOS low power, data saver) show a big play button */
+    const MM = [], small = () => innerWidth < 768;
+    const MAX = () => small() ? 7 : 7;
+    const addTap = (host, m) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'tap-play'; b.setAttribute('aria-label', 'הפעלת הסרטון'); b.innerHTML = '<i></i>'; host.appendChild(b);
+      b.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); m.user = true; m.blocked = false; load(m); m.v.play().then(() => m.box.classList.remove('needs-tap')).catch(() => {}); sched(); }); };
+    const reg = (box, v, src, prio, o) => { const m = { box, v, src, prio, o, vis: false, loaded: false, blocked: false, user: false, since: 0, order: MM.length }; MM.push(m); if (o) o.m = m;
+      addTap(box.querySelector('.ph-scr') || box, m);
+      v.addEventListener('playing', () => { m.blocked = false; box.classList.remove('needs-tap'); }); return m; };
+    const load = (m) => { if (m.loaded) return; m.loaded = true; m.v.preload = m.prio <= 1 ? 'auto' : 'metadata'; m.v.src = m.src; };
+    phones.forEach(o => { o.m = reg(o.ph, o.v, o.ph.dataset.src, o.rw.id === 'hw' ? 1 : 3, o); o.load = () => load(o.m); });
+    $$('.vclip').forEach(box => { const v = $('video', box); const src = box.dataset.src || (small() ? box.dataset.srcV : box.dataset.srcH); if (small() && v.dataset.posterV) v.poster = v.dataset.posterV; reg(box, v, src, +box.dataset.prio || 2); });
+    const shown = (el) => !el.hidden && el.offsetParent !== null && !el.closest('[hidden]');
+    let pend = false;
+    const sched = () => { if (pend) return; pend = true; requestAnimationFrame(run); };
+    function run() {
+      pend = false; const now = performance.now();
+      const vis = MM.filter(m => m.vis && shown(m.box)).sort((a, b) => (b.user - a.user) || (a.prio - b.prio) || (a.order - b.order));
+      const allow = new Set(vis.slice(0, MAX()));
+      MM.forEach(m => {
+        if (allow.has(m)) {
+          load(m); if (!m.since) m.since = now;
+          if (m.v.paused && !m.blocked) { const pr = m.v.play(); if (pr && pr.catch) pr.catch((err) => { if (err && err.name === 'NotAllowedError') { m.blocked = true; m.box.classList.add('needs-tap'); } }); }
+        } else {
+          m.since = 0; if (!m.v.paused) m.v.pause(); m.user = false;
+          if (m.o && !m.v.muted) m.o.setSound(false);
+          if (!m.vis) m.box.classList.remove('needs-tap');
+        }
+      });
+    }
+    const ob = new IntersectionObserver((es) => { es.forEach(e => { const m = MM.find(x => x.box === e.target); if (m) m.vis = e.isIntersecting; }); sched(); }, { rootMargin: '150px 0px 150px 0px', threshold: 0.01 });
+    MM.forEach(m => ob.observe(m.box));
+    // watchdog: a visible video that is still not moving after 2.5s gets the play button
+    setInterval(() => { const now = performance.now(); MM.forEach(m => { if (m.vis && shown(m.box) && m.since && m.v.paused && now - m.since > 2500 && !m.box.classList.contains('mont')) m.box.classList.add('needs-tap'); }); sched(); }, 900);
+    // any user gesture unlocks: retry everything that was refused
+    const unlock = () => { MM.forEach(m => { if (m.blocked) { m.blocked = false; } }); sched(); };
+    ['pointerdown', 'touchend', 'keydown'].forEach(t => addEventListener(t, unlock, { passive: true }));
+    window.SE_MEDIA = { MM, sched };
+    // older players (hero suite, before/after, bin) get the same safety net
+    const guard = (box, vids, want) => {
+      if (!box) return; let vis = false, miss = 0; const b = document.createElement('button'); b.type = 'button'; b.className = 'tap-play'; b.setAttribute('aria-label', 'הפעלת הסרטון'); b.innerHTML = '<i></i>'; box.appendChild(b);
+      b.addEventListener('pointerdown', (e) => e.stopPropagation());
+      b.addEventListener('click', (e) => { e.stopPropagation(); vids().forEach(v => v.play().catch(() => {})); box.classList.remove('needs-tap'); });
+      vids().forEach(v => v.addEventListener('playing', () => { miss = 0; box.classList.remove('needs-tap'); }));
+      new IntersectionObserver((es) => { vis = es[0].isIntersecting; }, { threshold: 0.2 }).observe(box);
+      setInterval(() => { const vs = vids(); if (vis && want() && vs.length && vs[0].paused) { if (++miss >= 3) box.classList.add('needs-tap'); } else { miss = 0; box.classList.remove('needs-tap'); } }, 1000);
+    };
+    guard($('#frame'), () => [$('#reel')], () => $('#frame').classList.contains('playing'));
+    guard($('#ab'), () => $$('#ab video'), () => true);
+    guard($('#bvFrame'), () => [$('#bvVideo')], () => !$('#bvVideo').hidden);
     // hero wall arrows
     const hw = $('#hw');
     if (hw) {
@@ -2163,19 +2301,25 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
       recount();
       // demo reels may not be uploaded yet: drop any whose file is missing
       $$('.phn.demo', tr).forEach(p => fetch(p.dataset.src, { method: 'HEAD' }).then(r => { if (!r.ok) throw 0; }).catch(() => { p.remove(); items = items.filter(x => x !== p); const k = phones.findIndex(o => o.ph === p); if (k >= 0) phones.splice(k, 1); recount(); }));
-      let cur = 'all', tmr;
+      let cur = 'all', tmr, open = false;
+      const moreBtn = $('#hwMore');
+      const more = (show) => { const n = innerWidth <= 900 && !open ? 6 : 1e9; show.forEach((p, k) => p.classList.toggle('mx', k >= n)); const rest = Math.max(0, show.length - n); moreBtn.hidden = !rest; $('b', moreBtn).textContent = rest; };
+      const curShow = () => items.filter(p => cur === 'all' || p.dataset.cat === cur);
+      moreBtn.addEventListener('click', () => { open = true; more(curShow()); curShow().forEach((p, k) => { if (k >= 6) { p.style.setProperty('--i', k - 6); p.classList.add('hw-pop'); } }); sched(); });
+      more(curShow()); addEventListener('resize', () => more(curShow()));
       const pick = (cat) => {
         if (cat === cur) return; cur = cat; clearTimeout(tmr);
         tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.cat === cat)));
         phones.forEach(p => { if (!p.v.muted && p.rw === hw) p.setSound(false); });
         const show = items.filter(p => cat === 'all' || p.dataset.cat === cat);
-        if (RM) { items.forEach(p => { p.hidden = !show.includes(p); }); tr.scrollLeft = 0; return; }
+        if (RM) { items.forEach(p => { p.hidden = !show.includes(p); }); tr.scrollLeft = 0; more(show); sched(); return; }
         items.forEach(p => { p.classList.remove('hw-pop'); if (!p.hidden && !show.includes(p)) p.classList.add('hw-out'); });
         tmr = setTimeout(() => {
           items.forEach(p => { p.hidden = !show.includes(p); p.classList.remove('hw-out'); });
           tr.scrollLeft = 0;
+          more(show);
           show.forEach((p, k) => { p.style.setProperty('--i', k); void p.offsetWidth; p.classList.add('hw-pop'); });
-          window.SE_FX && SE_FX.kick(.35);
+          window.SE_FX && SE_FX.kick(.35); sched();
         }, 200);
       };
       tabs.forEach(t => t.addEventListener('click', () => { pick(t.dataset.cat); try { t.scrollIntoView({ inline: 'nearest', block: 'nearest' }); } catch (e) {} }));
@@ -2327,7 +2471,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
     // timecode mirrors
     if (++tcTick % 4 === 0) { const t = pageTc.textContent; if (curTc && curTc.textContent !== t) curTc.textContent = t; if (ghostTc && ghostTc.textContent !== t && y < vh * 1.5) ghostTc.textContent = t; }
     // phones: progress bars
-    for (const o of phones) { if (!o.vis || !o.v.duration) continue; o.prog.style.setProperty('--t', (o.v.currentTime / o.v.duration).toFixed(4)); }
+    for (const o of phones) { if (!o.m || !o.m.vis || o.v.paused || !o.v.duration) continue; o.prog.style.setProperty('--t', (o.v.currentTime / o.v.duration).toFixed(4)); }
     if (pointerDirty) { pointerDirty = false; magnet(); }
     requestAnimationFrame(loop);
   };
