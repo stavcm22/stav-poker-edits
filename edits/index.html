@@ -644,6 +644,7 @@ html.intro-done .hero .suite{animation:whipIn .8s .15s cubic-bezier(.7,0,.1,1) b
 
 /* ───── lightbox ───── */
 html.lb-open,html.lb-open body{overflow:hidden}
+@supports (height:100dvh){:root{--dvh:100dvh}}
 .lb{position:fixed; inset:0; z-index:260; display:grid; place-items:center; padding:calc(env(safe-area-inset-top,0px) + 10px) 12px calc(env(safe-area-inset-bottom,0px) + 12px); direction:rtl; color:#ECEEF1}
 .lb[hidden]{display:none!important}
 .lb-back{position:absolute; inset:0; background:radial-gradient(ellipse at 50% 40%,rgba(20,26,40,.92),rgba(3,4,6,.97) 70%); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px)}
@@ -651,7 +652,7 @@ html.lb-open,html.lb-open body{overflow:hidden}
 .lb.in .lb-wrap{animation:lbIn .34s cubic-bezier(.2,1.2,.3,1) both}
 @keyframes lbFade{from{opacity:0}}
 @keyframes lbIn{from{opacity:0; transform:scale(.92) translateY(14px)}}
-.lb-wrap{position:relative; display:flex; flex-direction:column; gap:10px; width:var(--lbw); --lbh:min(calc(100dvh - 216px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)),calc((100vw - 24px) * 16 / 9),900px); --lbw:calc(var(--lbh) * 9 / 16)}
+.lb-wrap{position:relative; display:flex; flex-direction:column; gap:10px; width:var(--lbw); --lbh:min(calc(var(--dvh,100vh) - 216px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)),calc((100vw - 24px) * 16 / 9),900px); --lbw:calc(var(--lbh) * 9 / 16)}
 .lb-head{display:flex; align-items:center; gap:10px; min-width:0}
 .lb-t{flex:1; min-width:0; display:grid; gap:3px}
 .lb-t small{font:600 11px/1 var(--f-body); color:#3DEBFF; letter-spacing:.02em}
@@ -699,7 +700,7 @@ html.lb-open,html.lb-open body{overflow:hidden}
 .vclip.sclip::after{bottom:auto; top:8px; font-size:9px}
 .vclip.sclip > span{bottom:6px}
 @media (max-width:900px){ .hw .phn .ph-scr::after{bottom:auto; top:12px; left:auto; right:5px; transform:none; font-size:8.5px; padding:3px 4px 2px} }
-@media (max-width:600px){ .lb{padding-inline:8px} .lb-wrap{--lbh:min(calc(100dvh - 208px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)),calc((100vw - 16px) * 16 / 9))} .lb-nav{display:none} .lb-t b{font-size:23px} }
+@media (max-width:600px){ .lb{padding-inline:8px} .lb-wrap{--lbh:min(calc(var(--dvh,100vh) - 208px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)),calc((100vw - 16px) * 16 / 9))} .lb-nav{display:none} .lb-t b{font-size:23px} }
 
 /* hero backdrop: giant outlined timecode with speed-ramped parallax */
 .hero{position:relative; isolation:isolate}
@@ -2671,7 +2672,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
     $('#lbTitle').textContent = it.title; $('#lbSub').textContent = it.sub; $('#lbCat').textContent = CATN[it.cat] || 'עריכות';
     $('#lbN').textContent = (idx + 1) + '/' + list.length; $('#lbCta').href = waText(it);
     $('#lbPrev').disabled = $('#lbNext').disabled = list.length < 2;
-    V.poster = it.poster; V.src = it.src; V.currentTime = 0; bar.style.setProperty('--p', 0); time.textContent = '0:00 / 0:00';
+    V.poster = it.poster; V.src = it.src; try { V.currentTime = 0; } catch (e) {} bar.style.setProperty('--p', 0); time.textContent = '0:00 / 0:00';
     if (dir) { stage.classList.remove('sw-up', 'sw-down'); void stage.offsetWidth; stage.classList.add(dir > 0 ? 'sw-up' : 'sw-down'); }
     play();
   };
@@ -2683,6 +2684,9 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
     window.SE_HOLD = true; held = $$('video').filter(v => v !== V && !v.paused); held.forEach(v => v.pause());
     $$('.phn video').forEach(v => { v.muted = true; }); $$('.ph-snd').forEach(b => b.setAttribute('aria-pressed', 'false'));
     lb.hidden = false; root.classList.add('lb-open'); lb.classList.remove('in'); void lb.offsetWidth; lb.classList.add('in');
+    // older iPhones: if the stage collapsed (no dvh/min support), size it in px
+    const wrap = $('.lb-wrap', lb); wrap.style.removeProperty('--lbh'); wrap.style.removeProperty('--lbw');
+    if (stage.getBoundingClientRect().height < 80) { const sm = innerWidth <= 600, h = Math.max(240, Math.min(innerHeight - (sm ? 208 : 216), (innerWidth - (sm ? 16 : 24)) * 16 / 9, sm ? 1e4 : 900)); wrap.style.setProperty('--lbh', h + 'px'); wrap.style.setProperty('--lbw', (h * 9 / 16) + 'px'); }
     if (list.length > 1) { lb.classList.remove('hint'); void lb.offsetWidth; lb.classList.add('hint'); }
     show(list.indexOf(it));
     setTimeout(() => $('#lbX').focus({ preventScroll: true }), 30);
