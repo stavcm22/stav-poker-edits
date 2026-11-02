@@ -1,0 +1,16 @@
+{
+  "name": "חוזה כלה | Shirel Twito",
+  "short_name": "חוזה כלה",
+  "description": "מילוי ושליחה של חוזה עיצוב שיער כלה",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "dir": "rtl",
+  "lang": "he",
+  "background_color": "#F7F1F1",
+  "theme_color": "#DABCBC",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
