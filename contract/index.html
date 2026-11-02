@@ -1,0 +1,889 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>חוזה כלה | Shirel Twito</title>
+<meta name="description" content="מילוי מהיר של חוזה עיצוב שיער כלה ושליחה ללקוחה בוואטסאפ.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#DABCBC">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="חוזה כלה">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="icon" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<style>
+:root {
+  --pink: #DABCBC;
+  --pink-deep: #C49B9B;
+  --pink-soft: #F4E8E8;
+  --rose-ink: #7A4F52;
+  --gold: #B8977E;
+  --bg: #FBF7F5;
+  --card: #FFFDFC;
+  --ink: #2B2426;
+  --ink-2: #5A4A4C;
+  --mute: #9A8486;
+  --line: #EADCDC;
+  --ok: #2E7D4F;
+  --warn: #B4542C;
+  --wa: #25D366;
+  --f: "Assistant", "Heebo", "Segoe UI", Arial, sans-serif;
+  --fd: "Frank Ruhl Libre", "Assistant", Georgia, serif;
+  --serif: "Times New Roman", Times, "Liberation Serif", serif;
+  --latin: "Cormorant Garamond", "Times New Roman", Times, serif;
+  --radius: 20px;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; color: var(--ink); font-family: var(--f); font-size: 17px; line-height: 1.5;
+  background: var(--bg);
+  background-image: radial-gradient(900px 500px at 100% -10%, rgba(218,188,188,.55), transparent 60%), radial-gradient(700px 500px at -10% 30%, rgba(244,232,232,.9), transparent 60%);
+  background-attachment: fixed; }
+button, input, textarea, select { font: inherit; color: inherit; }
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+.hidden { display: none !important; }
+
+/* ---------- top bar ---------- */
+.top { background: rgba(251,247,245,.86); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: calc(8px + env(safe-area-inset-top, 0px)) 16px 8px; position: sticky; top: 0; z-index: 20; border-bottom: 1px solid rgba(196,155,155,.35); }
+.top .in { max-width: 760px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { font-family: var(--latin); font-weight: 600; font-size: 27px; letter-spacing: .04em; direction: ltr; line-height: 1; color: var(--ink); }
+.top .tag { font-weight: 600; font-size: 14px; color: var(--rose-ink); background: var(--pink-soft); border: 1px solid rgba(196,155,155,.5); padding: 4px 12px; border-radius: 999px; }
+
+/* ---------- hero ---------- */
+.hero { text-align: center; padding: 26px 8px 18px; }
+.hero .script { font-family: var(--latin); font-style: italic; font-weight: 500; font-size: 17px; color: var(--rose-ink); letter-spacing: .14em; text-transform: uppercase; direction: ltr; }
+.hero h1 { font-family: var(--fd); font-weight: 500; font-size: 34px; line-height: 1.15; margin: 6px 0 8px; color: var(--ink); }
+.hero p { margin: 0 auto; max-width: 420px; color: var(--ink-2); font-size: 16px; }
+.orn { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 14px auto 0; color: var(--gold); }
+.orn::before, .orn::after { content: ""; width: 56px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold)); }
+.orn::after { background: linear-gradient(270deg, transparent, var(--gold)); }
+.orn svg { width: 10px; height: 10px; fill: var(--gold); }
+
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 16px 120px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 18px; margin-bottom: 14px; box-shadow: 0 10px 30px -18px rgba(122,79,82,.25); }
+.card h2 { margin: 0 0 12px; font-family: var(--fd); font-size: 21px; font-weight: 500; display: flex; align-items: center; gap: 10px; color: var(--ink); }
+.card h2 .n { width: 30px; height: 30px; border-radius: 50%; background: var(--pink); color: var(--ink); display: grid; place-items: center; font-family: var(--latin); font-weight: 600; font-size: 17px; flex: none; }
+.hint { color: var(--mute); font-size: 14px; margin: -6px 0 12px; }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
+.grid .full { grid-column: 1 / -1; }
+@media (max-width: 420px) { .grid { grid-template-columns: 1fr; } .grid .half { grid-column: auto; } .grid.keep2 { grid-template-columns: 1fr 1fr; } }
+label.f { display: flex; flex-direction: column; gap: 5px; font-size: 14.5px; font-weight: 600; color: var(--ink-2); }
+label.f input, label.f textarea { width: 100%; min-height: 48px; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 12px; background: #FFFAF9; font-size: 17px; font-weight: 400; color: var(--ink); outline: none; transition: border-color .15s, box-shadow .15s; }
+label.f input:focus, label.f textarea:focus { border-color: var(--pink-deep); box-shadow: 0 0 0 4px rgba(218,188,188,.35); background: #fff; }
+label.f input.err { border-color: var(--warn); }
+label.f .sub { font-weight: 400; color: var(--mute); font-size: 13px; }
+.money { position: relative; }
+.money input { padding-inline-end: 34px; }
+.money::after { content: "₪"; position: absolute; inset-inline-end: 13px; bottom: 11px; color: var(--mute); font-weight: 600; }
+input[type="date"] { direction: ltr; text-align: right; }
+input[type="tel"] { direction: ltr; text-align: right; }
+
+.check { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 12px; background: #FCFAFA; cursor: pointer; user-select: none; min-height: 48px; font-weight: 600; }
+.check input { width: 22px; height: 22px; accent-color: #8E5E5E; margin: 0; }
+
+.total { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 16px; border-radius: 14px; background: linear-gradient(135deg, var(--pink-soft), #F9F1EF); border: 1px solid rgba(196,155,155,.4); margin-top: 12px; font-weight: 600; color: var(--rose-ink); }
+.total b { font-family: var(--fd); font-size: 26px; color: var(--ink); }
+
+/* ---------- buttons ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 0 18px; border-radius: 14px; border: 1.5px solid transparent; font-weight: 700; font-size: 17px; cursor: pointer; text-decoration: none; transition: transform .12s ease, filter .12s; -webkit-tap-highlight-color: transparent; }
+.btn:active { transform: scale(.98); }
+.btn svg { width: 22px; height: 22px; flex: none; }
+.btn-wa { background: var(--wa); color: #fff; }
+.btn-wa svg { fill: #fff; }
+.btn-dark { background: var(--ink); color: #fff; }
+.btn-dark svg { fill: #fff; }
+.btn-pink { background: var(--pink); color: var(--ink); }
+.btn-ghost { background: #fff; border-color: rgba(196,155,155,.55); color: var(--rose-ink); }
+.btn-ghost svg { fill: var(--ink); }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+.btn-sm { min-height: 38px; font-size: 15px; padding: 0 12px; border-radius: 10px; }
+.btn.full { width: 100%; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.row > .btn { flex: 1 1 160px; }
+
+/* sticky action bar */
+.actions { position: fixed; inset: auto 0 0 0; z-index: 30; background: rgba(251,247,245,.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid rgba(196,155,155,.35); padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); }
+.actions .in { max-width: 760px; margin: 0 auto; display: flex; gap: 10px; }
+.actions .btn { flex: 1; }
+.actions .btn-ghost { flex: 0 0 auto; padding: 0 16px; }
+
+/* ---------- preview ---------- */
+.preview-wrap { background: linear-gradient(180deg, #EFE3E3, #F6ECEC); border-radius: var(--radius); padding: 14px; }
+.preview-pages { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.pv { position: relative; overflow: hidden; box-shadow: 0 10px 30px -10px rgba(80,50,52,.35); background: #fff; border-radius: 4px; }
+.pv > .page { position: absolute; top: 0; left: 0; transform-origin: top left; }
+.pbadge { font-size: 12px; color: var(--mute); margin-bottom: 8px; font-family: var(--latin); letter-spacing: .1em; }
+#printDoc { position: absolute; left: -20000px; top: 0; width: 794px; }
+
+/* ---------- contract pages (shared by preview + PDF) ---------- */
+.page { width: 794px; height: 1123px; background: #fff; color: #1a1a1a; position: relative; direction: rtl; font-family: var(--f); font-size: 14px; line-height: 1.5; overflow: hidden; }
+.page .band { position: absolute; left: 0; right: 0; height: 96px; background: #DABCBC; display: flex; align-items: center; justify-content: space-between; padding: 0 44px; direction: ltr; }
+.page .band.hdr { top: 0; }
+.page .band.ftr { bottom: 0; }
+.page .band .logo { font-family: var(--serif); font-weight: 700; font-size: 38px; color: #1a1a1a; letter-spacing: .01em; }
+.page .band .contact { display: flex; align-items: center; gap: 22px; font-family: var(--f); font-weight: 700; font-size: 15.5px; color: #1a1a1a; }
+.page .band .contact span { display: inline-flex; align-items: center; gap: 7px; }
+.page .band .contact svg { width: 19px; height: 19px; }
+.page .body { position: absolute; left: 56px; right: 56px; top: 0; }
+.page .body.has-hdr { top: 128px; }
+.page .body.no-hdr { top: 56px; }
+.blk { margin: 0; }
+.c-title { font-size: 21px; font-weight: 700; margin: 0 0 4px; }
+.c-intro { margin: 0 0 18px; }
+.c-party { margin: 0 0 14px; }
+.c-party .pt { font-weight: 700; margin: 0 0 4px; font-size: 15px; }
+.c-party .pl { display: flex; flex-wrap: wrap; gap: 4px 26px; }
+.fill { display: inline-block; min-width: 120px; padding: 0 6px 1px; text-align: center; font-weight: 600; background: linear-gradient(#333, #333) bottom / 100% 1px no-repeat; }
+.fill.sm { min-width: 70px; }
+.fill.empty { color: transparent; }
+.c-sec { margin: 0 0 12px; }
+.c-sec h3 { font-size: 15.5px; font-weight: 700; margin: 0 0 3px; }
+.c-sec p { margin: 0 0 2px; }
+.c-sec ul { margin: 0; padding: 0 16px 0 0; list-style: none; }
+.c-sec li { position: relative; margin: 0 0 2px; }
+.c-sec li::before { content: "•"; position: absolute; right: -14px; top: 0; }
+.c-sec li.b { font-weight: 700; }
+.c-rule { border: 0; border-top: 1px solid #333; margin: 2px 0 14px; }
+.c-sigs { display: flex; gap: 40px; align-items: flex-end; margin: 10px 0 24px; }
+.c-sigs .s { flex: 1; display: flex; align-items: flex-end; gap: 8px; }
+.c-sigs .s .lbl { white-space: nowrap; font-weight: 600; padding-bottom: 2px; }
+.c-sigs .s .line { flex: 1; border-bottom: 1px solid #333; height: 58px; position: relative; }
+.c-sigs .s .line img { position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); max-height: 56px; max-width: 92%; }
+.c-sigs .s .line .stamp { position: absolute; top: 100%; left: 0; right: 0; font-size: 10.5px; color: #666; text-align: center; margin-top: 2px; }
+
+/* ---------- saved list ---------- */
+.list { display: flex; flex-direction: column; gap: 8px; }
+.item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 12px; background: #FCFAFA; }
+.item .t { flex: 1; min-width: 0; }
+.item .t b { display: block; font-size: 16px; }
+.item .t span { color: var(--mute); font-size: 13.5px; }
+.item .st { font-size: 12.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--pink-soft); }
+.item .st.sent { background: #DDF3E5; color: var(--ok); }
+.item .st.signed { background: #D9EAF7; color: #1F5A86; }
+.empty { color: var(--mute); text-align: center; padding: 10px; }
+
+/* ---------- signature pad ---------- */
+.pad { position: relative; border: 1.5px dashed var(--pink-deep); border-radius: 16px; background: #fff; height: 200px; touch-action: none; overflow: hidden; background-image: linear-gradient(transparent 70%, rgba(196,155,155,.35) 70%, rgba(196,155,155,.35) calc(70% + 1px), transparent calc(70% + 1px)); }
+.pad canvas { width: 100%; height: 100%; display: block; }
+.pad .ph { position: absolute; inset: 0; display: grid; place-items: center; color: var(--mute); pointer-events: none; font-size: 15px; }
+.pad .ph.off { display: none; }
+.sigprev { background: #fff; border: 1.5px solid var(--line); border-radius: 12px; padding: 10px; display: grid; place-items: center; min-height: 90px; }
+.sigprev img { max-height: 70px; }
+
+details.set summary { cursor: pointer; font-weight: 700; font-size: 17px; list-style: none; display: flex; align-items: center; justify-content: space-between; }
+details.set summary::-webkit-details-marker { display: none; }
+details.set summary::after { content: "▾"; color: var(--mute); transition: transform .2s; }
+details.set[open] summary::after { transform: rotate(180deg); }
+details.set .body { padding-top: 12px; }
+
+/* ---------- toast / modal ---------- */
+.toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%) translateY(20px); background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 12px; font-weight: 600; opacity: 0; transition: .25s; z-index: 60; max-width: calc(100% - 32px); text-align: center; pointer-events: none; }
+.toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+.modal { position: fixed; inset: 0; background: rgba(30,20,20,.45); display: grid; place-items: end center; z-index: 50; padding: 0; }
+.modal .box { background: #fff; width: 100%; max-width: 560px; border-radius: 20px 20px 0 0; padding: 20px 18px calc(20px + env(safe-area-inset-bottom, 0px)); }
+.modal h3 { margin: 0 0 8px; font-size: 20px; }
+.modal p { margin: 0 0 14px; color: var(--ink-2); }
+.spin { width: 22px; height: 22px; border: 3px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; animation: sp .8s linear infinite; }
+@keyframes sp { to { transform: rotate(360deg); } }
+
+/* ---------- sign mode ---------- */
+.hello { text-align: center; padding: 26px 10px 20px; }
+.hello h1 { margin: 0 0 8px; font-family: var(--fd); font-weight: 500; font-size: 32px; }
+.hello p { margin: 0 auto; max-width: 440px; color: var(--ink-2); }
+.done { text-align: center; padding: 30px 16px; }
+.done .big { font-size: 48px; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="in">
+    <div class="brand">Shirel Twito</div>
+    <div class="tag" id="topTag">חוזה כלה</div>
+  </div>
+</header>
+
+<!-- ===================== STYLIST APP ===================== -->
+<main class="wrap" id="appView">
+
+  <div class="hero">
+    <div class="script">Bridal Hair</div>
+    <h1>חוזה כלה חדש</h1>
+    <p>ממלאים רק את מה שחסר, רואים את החוזה המוכן ושולחים לכלה בוואטסאפ.</p>
+    <div class="orn"><svg viewBox="0 0 10 10"><path d="M5 0l5 5-5 5-5-5z"/></svg></div>
+  </div>
+
+  <section class="card">
+    <h2><span class="n">1</span> פרטי הכלה</h2>
+    <p class="hint">רק מה שחסר בחוזה. השאר כבר מלא.</p>
+    <div class="grid">
+      <label class="f full">שם מלא <input id="cName" type="text" autocomplete="off" placeholder="לדוגמה: נועה כהן"></label>
+      <label class="f">טלפון <input id="cPhone" type="tel" inputmode="tel" placeholder="05X-XXXXXXX"></label>
+      <label class="f">כתובת <input id="cAddr" type="text" placeholder="עיר / כתובת"></label>
+      <label class="f">תאריך האירוע <span class="sub">(מופיע בחוזה)</span><input id="eventDate" type="date"></label>
+      <label class="f">מועד ההסכם <span class="sub">(תאריך החתימה)</span><input id="signDate" type="date"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">2</span> תשלום</h2>
+    <div class="grid">
+      <label class="f money">עיצוב שיער ביום האירוע <input id="p1" type="number" inputmode="numeric" min="0" step="50"></label>
+      <label class="f money">ליווי לאולם <input id="p2" type="number" inputmode="numeric" min="0" step="50"></label>
+      <label class="check full"><input id="withEscort" type="checkbox" checked> כולל ליווי לאולם</label>
+      <label class="f money">מקדמה <input id="dep" type="number" inputmode="numeric" min="0" step="50"></label>
+      <label class="f">תאריך תשלום המקדמה <input id="depDate" type="date"></label>
+    </div>
+    <div class="total"><span>סה״כ לתשלום</span><b id="totalOut">0 ₪</b></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">3</span> תוספות ומלוות</h2>
+    <div class="grid keep2">
+      <label class="f money full">פיקדון תוספות שיער <input id="pik" type="number" inputmode="numeric" min="0" step="50"></label>
+      <label class="f money">מלווה ללא תוספות <input id="m1" type="number" inputmode="numeric" min="0" step="50"></label>
+      <label class="f money">מלווה עם תוספות <input id="m2" type="number" inputmode="numeric" min="0" step="50"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">4</span> שליחה</h2>
+    <p class="hint">הכפתור הירוק יוצר PDF ופותח שיתוף לוואטסאפ. אפשר גם לשלוח קישור שבו הכלה חותמת מהטלפון ומחזירה חוזה חתום.</p>
+    <div class="row">
+      <button class="btn btn-wa" id="btnSend">
+        <svg viewBox="0 0 24 24"><path d="M20 3.9A11 11 0 0 0 2.6 17.2L1 23l5.9-1.5A11 11 0 0 0 23 12a11 11 0 0 0-3-8.1zM12 21.1a9.1 9.1 0 0 1-4.6-1.3l-.3-.2-3.5.9.9-3.4-.2-.3A9.1 9.1 0 1 1 12 21.1zm5-6.8c-.3-.1-1.6-.8-1.9-.9s-.4-.1-.6.1-.7.9-.9 1.1-.3.2-.6.1a7.4 7.4 0 0 1-3.7-3.2c-.3-.5.3-.4.8-1.5.1-.2 0-.3 0-.5l-.9-2c-.2-.5-.5-.5-.6-.5h-.6a1 1 0 0 0-.8.4 3.2 3.2 0 0 0-1 2.4 5.6 5.6 0 0 0 1.2 3 12.8 12.8 0 0 0 4.9 4.3c1.8.8 2.5.8 3.4.7a2.9 2.9 0 0 0 1.9-1.4 2.4 2.4 0 0 0 .2-1.4c-.1-.1-.3-.2-.6-.3z"/></svg>
+        שליחת החוזה ללקוחה
+      </button>
+      <button class="btn btn-dark" id="btnLink">
+        <svg viewBox="0 0 24 24"><path d="M3.9 12a4.1 4.1 0 0 1 4.1-4.1h4V6H8a6 6 0 0 0 0 12h4v-1.9H8A4.1 4.1 0 0 1 3.9 12zM8 13h8v-2H8v2zm8-7h-4v1.9h4a4.1 4.1 0 0 1 0 8.2h-4V18h4a6 6 0 0 0 0-12z"/></svg>
+        קישור לחתימה דיגיטלית
+      </button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn btn-ghost" id="btnQuote">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 12h8v2H8v-2zm0 4h8v2H8v-2z"/></svg>
+        שליחת הצעת מחיר
+      </button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn btn-ghost" id="btnPdf">
+        <svg viewBox="0 0 24 24"><path d="M5 20h14v-2H5v2zm7-18L5.3 8.7l1.4 1.4L11 5.8V16h2V5.8l4.3 4.3 1.4-1.4L12 2z" transform="rotate(180 12 11)"/></svg>
+        הורדת PDF
+      </button>
+      <button class="btn btn-ghost" id="btnNew">חוזה חדש</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>תצוגה מקדימה</h2>
+    <div class="preview-wrap"><div class="preview-pages" id="preview"></div></div>
+  </section>
+
+  <section class="card">
+    <h2>חוזים שמורים</h2>
+    <p class="hint">נשמר במכשיר הזה בלבד. לחיצה טוענת את החוזה חזרה לטופס.</p>
+    <div class="list" id="savedList"></div>
+  </section>
+
+  <section class="card">
+    <details class="set">
+      <summary>הגדרות (הפרטים שלי וחתימה)</summary>
+      <div class="body">
+        <div class="grid">
+          <label class="f">שם מלא <input id="sName" type="text"></label>
+          <label class="f">כתובת <input id="sAddr" type="text"></label>
+          <label class="f">טלפון (לחוזה ולוואטסאפ) <input id="sPhone" type="tel" inputmode="tel"></label>
+          <label class="f">טלפון בכותרת <input id="sPhoneDisplay" type="text" style="direction:ltr"></label>
+          <label class="f full">אינסטגרם <input id="sIg" type="text" style="direction:ltr"></label>
+          <label class="f full">קישור להצעת מחיר (קנבה) <span class="sub">יצורף להודעה לכלה ולעמוד החתימה</span><input id="sQuote" type="url" inputmode="url" placeholder="https://www.canva.com/design/..." style="direction:ltr"></label>
+        </div>
+        <h2 style="margin-top:16px;font-size:17px">החתימה שלי</h2>
+        <div class="sigprev"><img id="sigPreview" alt="חתימה"></div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn btn-ghost btn-sm" id="btnDrawSig">ציור חתימה חדשה</button>
+          <button class="btn btn-ghost btn-sm" id="btnResetSig">חזרה לחתימה המקורית</button>
+        </div>
+        <h2 style="margin-top:16px;font-size:17px">מחירי ברירת מחדל</h2>
+        <div class="grid keep2">
+          <label class="f money">עיצוב שיער <input id="dP1" type="number" inputmode="numeric"></label>
+          <label class="f money">ליווי <input id="dP2" type="number" inputmode="numeric"></label>
+          <label class="f money">מקדמה <input id="dDep" type="number" inputmode="numeric"></label>
+          <label class="f money">פיקדון <input id="dPik" type="number" inputmode="numeric"></label>
+          <label class="f money">מלווה ללא תוספות <input id="dM1" type="number" inputmode="numeric"></label>
+          <label class="f money">מלווה עם תוספות <input id="dM2" type="number" inputmode="numeric"></label>
+        </div>
+        <p class="hint" style="margin-top:10px">ההגדרות נשמרות אוטומטית במכשיר.</p>
+      </div>
+    </details>
+  </section>
+</main>
+
+<div class="actions" id="actionBar">
+  <div class="in">
+    <button class="btn btn-wa" id="btnSend2">
+      <svg viewBox="0 0 24 24"><path d="M20 3.9A11 11 0 0 0 2.6 17.2L1 23l5.9-1.5A11 11 0 0 0 23 12a11 11 0 0 0-3-8.1zM12 21.1a9.1 9.1 0 0 1-4.6-1.3l-.3-.2-3.5.9.9-3.4-.2-.3A9.1 9.1 0 1 1 12 21.1zm5-6.8c-.3-.1-1.6-.8-1.9-.9s-.4-.1-.6.1-.7.9-.9 1.1-.3.2-.6.1a7.4 7.4 0 0 1-3.7-3.2c-.3-.5.3-.4.8-1.5.1-.2 0-.3 0-.5l-.9-2c-.2-.5-.5-.5-.6-.5h-.6a1 1 0 0 0-.8.4 3.2 3.2 0 0 0-1 2.4 5.6 5.6 0 0 0 1.2 3 12.8 12.8 0 0 0 4.9 4.3c1.8.8 2.5.8 3.4.7a2.9 2.9 0 0 0 1.9-1.4 2.4 2.4 0 0 0 .2-1.4c-.1-.1-.3-.2-.6-.3z"/></svg>
+      שליחה ללקוחה
+    </button>
+    <a class="btn btn-ghost" href="#preview" id="btnToPreview">תצוגה</a>
+  </div>
+</div>
+
+<!-- ===================== BRIDE SIGN VIEW ===================== -->
+<main class="wrap hidden" id="signView">
+  <div class="hello">
+    <div class="hero" style="padding:0 0 6px"><div class="script">Bridal Hair</div></div>
+    <h1 id="helloTitle">היי 👋</h1>
+    <p id="helloText">שיראל שלחה לך את חוזה העבודה לעיצוב שיער הכלה. עברי עליו, חתמי למטה ושלחי חזרה.</p>
+    <div class="orn"><svg viewBox="0 0 10 10"><path d="M5 0l5 5-5 5-5-5z"/></svg></div>
+  </div>
+  <section class="card hidden" id="quoteCard">
+    <h2>הצעת המחיר</h2>
+    <a class="btn btn-ghost full" id="quoteBtn" target="_blank" rel="noopener">לצפייה בהצעת המחיר</a>
+  </section>
+  <section class="card">
+    <h2>החוזה</h2>
+    <div class="preview-wrap"><div class="preview-pages" id="signPreview"></div></div>
+  </section>
+  <section class="card" id="signCard">
+    <h2>החתימה שלך</h2>
+    <p class="hint">חתמי באצבע בתוך המסגרת.</p>
+    <div class="pad" id="bridePad"><canvas></canvas><div class="ph">חתמי כאן</div></div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn btn-ghost btn-sm" id="brideClear">ניקוי</button>
+    </div>
+    <label class="check" style="margin-top:14px"><input id="agree" type="checkbox"> קראתי את ההסכם ואני מאשרת את תנאיו</label>
+    <div class="row" style="margin-top:14px">
+      <button class="btn btn-wa full" id="btnBrideSend">
+        <svg viewBox="0 0 24 24"><path d="M20 3.9A11 11 0 0 0 2.6 17.2L1 23l5.9-1.5A11 11 0 0 0 23 12a11 11 0 0 0-3-8.1zM12 21.1a9.1 9.1 0 0 1-4.6-1.3l-.3-.2-3.5.9.9-3.4-.2-.3A9.1 9.1 0 1 1 12 21.1zm5-6.8c-.3-.1-1.6-.8-1.9-.9s-.4-.1-.6.1-.7.9-.9 1.1-.3.2-.6.1a7.4 7.4 0 0 1-3.7-3.2c-.3-.5.3-.4.8-1.5.1-.2 0-.3 0-.5l-.9-2c-.2-.5-.5-.5-.6-.5h-.6a1 1 0 0 0-.8.4 3.2 3.2 0 0 0-1 2.4 5.6 5.6 0 0 0 1.2 3 12.8 12.8 0 0 0 4.9 4.3c1.8.8 2.5.8 3.4.7a2.9 2.9 0 0 0 1.9-1.4 2.4 2.4 0 0 0 .2-1.4c-.1-.1-.3-.2-.6-.3z"/></svg>
+        חתימה ושליחה חזרה לשיראל
+      </button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn btn-ghost full" id="btnBridePdf">הורדת החוזה החתום כ-PDF</button>
+    </div>
+  </section>
+  <section class="card done hidden" id="signDone">
+    <div class="big">💕</div>
+    <h2 style="justify-content:center">תודה! החוזה נחתם</h2>
+    <p class="hint" id="doneText">אם השיתוף לא נפתח, הקובץ ירד למכשיר. אפשר לשלוח אותו לשיראל בוואטסאפ.</p>
+    <a class="btn btn-wa" id="doneWa" target="_blank" rel="noopener">פתיחת וואטסאפ של שיראל</a>
+  </section>
+</main>
+
+<!-- off-screen document used for PDF rendering -->
+<div id="printDoc" aria-hidden="true"></div>
+
+<!-- signature draw modal (stylist) -->
+<div class="modal hidden" id="sigModal">
+  <div class="box">
+    <h3>ציור חתימה</h3>
+    <p>חתמי באצבע או בעכבר. החתימה נשמרת במכשיר הזה.</p>
+    <div class="pad" id="stylistPad"><canvas></canvas><div class="ph">חתמי כאן</div></div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn btn-ghost" id="sigClear">ניקוי</button>
+      <button class="btn btn-ghost" id="sigCancel">ביטול</button>
+      <button class="btn btn-pink" id="sigSave">שמירה</button>
+    </div>
+  </div>
+</div>
+
+<!-- after-download helper -->
+<div class="modal hidden" id="waModal">
+  <div class="box">
+    <h3 id="waTitle">ה-PDF ירד למכשיר</h3>
+    <p id="waText">הדפדפן הזה לא תומך בשיתוף קבצים ישיר. פתחי את וואטסאפ וצרפי את הקובץ שירד.</p>
+    <div class="row">
+      <a class="btn btn-wa" id="waOpen" target="_blank" rel="noopener">פתיחת וואטסאפ</a>
+      <button class="btn btn-ghost" id="waClose">סגירה</button>
+    </div>
+  </div>
+</div>
+
+<!-- link modal -->
+<div class="modal hidden" id="linkModal">
+  <div class="box">
+    <h3>קישור לחתימה דיגיטלית</h3>
+    <p>הכלה פותחת את הקישור, רואה את החוזה המלא, חותמת באצבע ושולחת לך חזרה PDF חתום בוואטסאפ.</p>
+    <label class="f"><span class="sub">הקישור</span><textarea id="linkOut" rows="3" readonly style="direction:ltr;font-size:13px;min-height:72px"></textarea></label>
+    <div class="row" style="margin-top:12px">
+      <button class="btn btn-wa" id="linkWa">שליחה בוואטסאפ</button>
+      <button class="btn btn-ghost" id="linkCopy">העתקה</button>
+      <button class="btn btn-ghost" id="linkClose">סגירה</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   Data & defaults
+   ========================================================= */
+const BUILTIN_SIG = "data:image/png;base64,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";
+const DEFAULT_SETTINGS = {
+  name: "שיראל טויטו", addr: "גורן", phone: "0542608049",
+  phoneDisplay: "+972 54-260-8049", ig: "Shireltwito.hair_",
+  dP1: 2000, dP2: 1400, dDep: 300, dPik: 500, dM1: 550, dM2: 750,
+  quoteUrl: "https://canva.link/ujr7p5g0kaj7v4a", sig: ""
+};
+const LS = { settings: "st_settings_v1", draft: "st_draft_v1", saved: "st_saved_v1" };
+const $ = (id) => document.getElementById(id);
+const isSignMode = new URLSearchParams(location.search).has("s");
+
+let settings = loadJSON(LS.settings, {});
+settings = { ...DEFAULT_SETTINGS, ...settings };
+
+function loadJSON(k, fb) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : fb; } catch { return fb; } }
+function saveJSON(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+
+/* =========================================================
+   Helpers
+   ========================================================= */
+const todayISO = () => { const d = new Date(); return [d.getFullYear(), String(d.getMonth()+1).padStart(2,"0"), String(d.getDate()).padStart(2,"0")].join("-"); };
+function fmtDate(iso) { if (!iso) return ""; const [y,m,d] = iso.split("-"); if (!y||!m||!d) return iso; return `${d}/${m}/${y}`; }
+function fmtMoney(n) { n = Number(n); if (!isFinite(n)) return ""; return n.toLocaleString("he-IL"); }
+function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function waNumber(phone) {
+  let d = String(phone || "").replace(/\D/g, "");
+  if (d.startsWith("00")) d = d.slice(2);
+  if (d.startsWith("0")) d = "972" + d.slice(1);
+  return d;
+}
+function waLink(phone, text) { const n = waNumber(phone); return `https://wa.me/${n}?text=${encodeURIComponent(text)}`; }
+function toast(msg, ms = 2600) { const t = $("toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("on"), ms); }
+function b64urlEncode(obj) {
+  const bytes = new TextEncoder().encode(JSON.stringify(obj));
+  let bin = ""; bytes.forEach(b => bin += String.fromCharCode(b));
+  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function b64urlDecode(s) {
+  s = s.replace(/-/g, "+").replace(/_/g, "/"); while (s.length % 4) s += "=";
+  const bin = atob(s); const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+function downloadBlob(blob, name) {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+}
+function setBusy(btn, on, label) {
+  if (!btn) return;
+  if (on) { btn.dataset.html = btn.innerHTML; btn.innerHTML = `<span class="spin"></span> ${label || "מכינה PDF..."}`; btn.disabled = true; }
+  else { if (btn.dataset.html) btn.innerHTML = btn.dataset.html; btn.disabled = false; }
+}
+
+/* =========================================================
+   Contract model
+   ========================================================= */
+function readForm() {
+  return {
+    v: 1,
+    stylist: { name: settings.name, addr: settings.addr, phone: settings.phone, phoneDisplay: settings.phoneDisplay, ig: settings.ig },
+    quoteUrl: (settings.quoteUrl || "").trim(),
+    client: { name: $("cName").value.trim(), phone: $("cPhone").value.trim(), addr: $("cAddr").value.trim() },
+    eventDate: $("eventDate").value, signDate: $("signDate").value,
+    p1: num($("p1").value), p2: num($("p2").value), withEscort: $("withEscort").checked,
+    dep: num($("dep").value), depDate: $("depDate").value,
+    pik: num($("pik").value), m1: num($("m1").value), m2: num($("m2").value)
+  };
+}
+function num(v) { const n = parseFloat(v); return isFinite(n) ? n : 0; }
+function total(d) { return (d.p1 || 0) + (d.withEscort ? (d.p2 || 0) : 0); }
+function writeForm(d) {
+  $("cName").value = d.client?.name || ""; $("cPhone").value = d.client?.phone || ""; $("cAddr").value = d.client?.addr || "";
+  $("eventDate").value = d.eventDate || ""; $("signDate").value = d.signDate || todayISO();
+  $("p1").value = d.p1 ?? settings.dP1; $("p2").value = d.p2 ?? settings.dP2; $("withEscort").checked = d.withEscort !== false;
+  $("dep").value = d.dep ?? settings.dDep; $("depDate").value = d.depDate || todayISO();
+  $("pik").value = d.pik ?? settings.dPik; $("m1").value = d.m1 ?? settings.dM1; $("m2").value = d.m2 ?? settings.dM2;
+}
+
+/* ---------- contract HTML blocks ---------- */
+function fill(v, cls = "") { const s = String(v ?? "").trim(); return `<span class="fill ${cls} ${s ? "" : "empty"}">${s ? esc(s) : "&nbsp;"}</span>`; }
+function money(v) { return fill(v !== "" && v != null ? `${fmtMoney(v)} ₪` : "", "sm"); }
+
+function contractBlocks(d, opts = {}) {
+  const t = total(d);
+  const escortVal = d.withEscort ? money(d.p2) : fill("לא סוכם", "sm");
+  const b = [];
+  b.push(`<div class="blk"><h1 class="c-title">חוזה עבודה | שירותי עיצוב שיער כלה</h1>
+    <p class="c-intro">הסכם זה נעשה ונחתם ביום ${fill(fmtDate(d.signDate))} (להלן: "מועד ההסכם"), בין:</p></div>`);
+  b.push(`<div class="blk c-party"><p class="pt">המסרקת</p><div class="pl">
+    <span>שם מלא: ${fill(d.stylist.name)}</span><span>כתובת: ${fill(d.stylist.addr)}</span><span>טלפון: ${fill(d.stylist.phone)}</span></div></div>`);
+  b.push(`<div class="blk c-party"><p class="pt">לבין הלקוחה</p><div class="pl">
+    <span>שם מלא: ${fill(d.client.name)}</span><span>כתובת: ${fill(d.client.addr)}</span><span>טלפון: ${fill(d.client.phone)}</span>
+    ${d.eventDate ? `<span>תאריך האירוע: ${fill(fmtDate(d.eventDate))}</span>` : ""}</div></div>`);
+  b.push(`<div class="blk c-sec"><h3>1. רקע</h3>
+    <p>המעצב/ת הינו/ה בעל/ת מומחיות בתחום עיצוב שיער, והלקוחה מעוניינת בשירותיו/ה ביום חתונתה. הצדדים מסכימים להתקשר בהסכם זה בהתאם לתנאים המפורטים להלן.</p></div><hr class="c-rule">`);
+  b.push(`<div class="blk c-sec"><h3>2. השירותים שיינתנו</h3>
+    <p>2.1 ביום החתונה יעניק המעצב/ת ללקוחה את השירותים הבאים:</p><ul>
+    <li>עיצוב שיער מקצועי בהתאם לסגנון שנבחר מראש.</li>
+    <li>הגעה למקום ההתארגנות (בית, מלון או כל מיקום אחר שסוכם).</li>
+    <li>שימוש בתוספות שיער לפי הצורך ובהתאם לשיקול דעת מקצועי של המעצב/ת, בכפוף להפקדת פיקדון בלבד (ראו סעיף 4).</li>
+    <li class="b">ליווי לצילומים או לאולם, אם סוכם מראש מול הלקוחה.</li>
+    <li>עיצוב שיער למלוות, בהתאם לסעיף 6 שלהלן.</li></ul></div><hr class="c-rule">`);
+  b.push(`<div class="blk c-sec"><h3>3. תשלום</h3>
+    <p>3.1 הלקוחה תשלם עבור השירותים שסוכמו בינה לבין המעצב/ת כמפורט להלן:</p><ul>
+    <li>תשלום עבור עיצוב השיער ביום האירוע: ${money(d.p1)}</li>
+    <li>תשלום עבור ליווי לאולם (במידה שסוכם): ${escortVal}</li>
+    <li class="b">סה"כ לתשלום: ${money(t)}</li></ul>
+    <p>הסכום הכולל כולל את עיצוב השיער ביום האירוע, הגעה למקום ההתארגנות, שימוש בתוספות שיער (בכפוף להחזרתן), וליווי – אם הוזמן.</p>
+    <p>3.2 תשלום המקדמה יבוצע בתאריך ${fill(fmtDate(d.depDate), "sm")}, בסך של ${money(d.dep)}.</p>
+    <p>3.3 המקדמה ניתנת להחזר רק במקרה של ביטול שייעשה בתוך 14 ימים ממועד תשלום המקדמה. ביטול לאחר 14 ימים – המקדמה לא תוחזר (ראה סעיף 7).</p>
+    <p>3.4 יתרת התשלום תבוצע במועד התסרוקת הראשונה ביום החתונה, בכל אמצעי תשלום שיתואם מראש (מזומן, העברה בנקאית, ביט או פייבוקס).</p></div><hr class="c-rule">`);
+  b.push(`<div class="blk c-sec"><h3>4. תוספות שיער – תנאי שימוש והחזרה</h3>
+    <p>4.1 במידת הצורך ייעשה שימוש בתוספות שיער על מנת להגיע לתוצאה הרצויה.</p>
+    <p>4.2 הלקוחה מתחייבת להפקיד פיקדון בסך של ${money(d.pik)} כתנאי לשימוש בתוספות, באמצעות אחד מהאמצעים הבאים: צ'ק פיקדון / העברה בנקאית / מזומן / ביט / פייבוקס.</p>
+    <p>סכום הפיקדון יוחזר ללקוחה לאחר שהחזירה את התוספות במועד (כמפורט בסעיף 4.4) ובמצב תקין כפי שנמסרו לה.</p>
+    <p>4.3 התוספות יסופקו כשהן במצב תקין, נקי ומוכן לשימוש.</p>
+    <p>4.4 הלקוחה מתחייבת להחזירן תוך שלושה (3) ימים ממועד האירוע, כשהן תקינות ובמצב בו התקבלו.</p></div>`);
+  b.push(`<div class="blk c-sec"><h3>5. ליווי ביום האירוע</h3>
+    <p>5.1 במידה והלקוחה מבקשת ליווי לאולם – יש לתאם זאת מראש מול המעצב/ת.</p>
+    <p>5.2 התשלום עבור הליווי ייקבע בנפרד מראש, וייכלל בסכום הכולל המוסכם בין הצדדים.</p>
+    <p>5.3 אי בקשת ליווי לא תקנה החזר או הנחה, לאחר מועד סגירת ההסכם.</p>
+    <p>5.4 שעת החלפת התסרוקת בליווי תקבע מראש בתיאום ציפיות מלא מול הכלה.</p></div><hr class="c-rule">`);
+  b.push(`<div class="blk c-sec"><h3>6. שירותי עיצוב שיער למלוות</h3>
+    <p>6.1 הלקוחה רשאית להזמין שירותי עיצוב שיער למלוות ביום האירוע, בהתאם לתיאום מראש.</p>
+    <p>6.2 מחיר עבור מלווה ללא תוספות: ${money(d.m1)} למלווה.</p>
+    <p>מחיר עבור מלווה עם תוספות: ${money(d.m2)} למלווה.</p>
+    <p>(יש לוודא תיאום מראש לצורך הבאת תוספות מתאימות, ככל שנדרש).</p>
+    <p>6.3 המעצב/ת לא מתחייב/ת לספק שירות למלוות שלא תואמו מראש.</p>
+    <p>6.4 תשלום עבור המלוות יבוצע ביום האירוע, במזומן / העברה / אפליקציה.</p></div><hr class="c-rule">`);
+  b.push(`<div class="blk c-sec"><h3>7. ביטול ההתקשרות</h3>
+    <p>7.1 הלקוחה רשאית לבטל את השירות ולקבל החזר מלא של המקדמה, ובלבד שהביטול בוצע תוך 14 ימים ממועד התשלום.</p>
+    <p>7.2 ביטול לאחר 14 ימים – המקדמה לא תוחזר.</p>
+    <p>7.3 ביטול ההתקשרות על ידי הלקוחה בתוך 14 ימים לפני מועד החתונה יחייב בתשלום מלא, גם אם השירות לא ניתן בפועל. הסכום משקף פיצוי מוסכם מראש בגין התחייבות למועד ואובדן הכנסה.</p>
+    <p>סעיף זה לא יחול במקרה של ביטול עקב כוח עליון מצד המעצב/ת, כמפורט בסעיף 8.</p></div><hr class="c-rule">`);
+  b.push(`<div class="blk c-sec"><h3>8. כוח עליון ומחליף/ה</h3>
+    <p>8.1 במקרה בו המעצב/ת לא יוכל לספק את השירותים עקב נסיבות של כוח עליון – לרבות אך לא רק: מחלה, תאונה, מצב בטחוני, או כל נסיבה שאינה בשליטתו/ה – יפעל המעצב/ת ככל הניתן לספק ללקוחה שירות מקצועי חלופי באמצעות אדם מטעמו/ה.</p>
+    <p>8.2 במידה ולא ניתן יהיה לספק שירות חלופי, יושב ללקוחה הסכום המלא ששולם, ולא תעמוד לה כל דרישה או טענה נוספת.</p></div><hr class="c-rule">`);
+  b.push(`<div class="blk c-sec"><h3>9. אחריות</h3>
+    <p>המעצב/ת מתחייב/ת לבצע את השירותים באופן מקצועי, בהתאם לסטנדרטים בענף.</p>
+    <p>המעצב/ת לא יישא/תישא באחריות לכל שינוי במראה התסרוקת עקב תנאים חיצוניים כגון מזג אוויר, לחות, חום, הזעה או טיפול לא נכון בתסרוקת לאחר סיומה.</p></div><hr class="c-rule">`);
+  b.push(`<div class="blk c-sec"><h3>10. שונות</h3>
+    <p>10.1 כל שינוי או תוספת להסכם זה ייעשו בכתב וייחתמו על ידי שני הצדדים.</p>
+    <p>10.2 סמכות השיפוט בכל עניין הנוגע להסכם זה תהא לבתי המשפט המוסמכים בישראל בלבד.</p>
+    <p>10.3 חתימת הצדדים מהווה אישור לכך שקראו והבינו את תוכן ההסכם, והם מקבלים אותו מרצונם החופשי.</p></div><hr class="c-rule">`);
+  const sSig = opts.stylistSig ? `<img src="${opts.stylistSig}" alt="">` : "";
+  const bSig = opts.brideSig ? `<img src="${opts.brideSig}" alt="">` : "";
+  const stamp = opts.signedAt ? `<div class="stamp">נחתם דיגיטלית ${esc(opts.signedAt)}</div>` : "";
+  b.push(`<div class="blk c-sec"><h3>11. חתימות</h3>
+    <div class="c-sigs">
+      <div class="s"><span class="lbl">חתימת המסרקת:</span><span class="line">${sSig}</span></div>
+      <div class="s"><span class="lbl">חתימת הכלה:</span><span class="line">${bSig}${stamp}</span></div>
+    </div></div>`);
+  return b;
+}
+
+const PAGE = { w: 794, h: 1123, hdr: 96, pad: 56, bodyTopHdr: 128, bodyTopNoHdr: 56, bottom: 32, ftr: 96 };
+
+function bandHTML(cls, d) {
+  return `<div class="band ${cls}">
+    <div class="logo">Shirel Twito</div>
+    <div class="contact">
+      <span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1a1a1a"/><rect x="6.5" y="6.5" width="11" height="11" rx="3.2" fill="none" stroke="#DABCBC" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" fill="none" stroke="#DABCBC" stroke-width="1.6"/><circle cx="15.2" cy="8.8" r=".9" fill="#DABCBC"/></svg>${esc(d.stylist.ig)}</span>
+      <span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1a1a1a"/><path d="M9.3 6.6c.3-.1.6 0 .8.3l1.1 2c.2.3.1.6-.1.8l-.9.9c.6 1.4 1.7 2.5 3.1 3.1l.9-.9c.2-.2.6-.3.8-.1l2 1.1c.3.2.4.5.3.8-.3 1.1-1.3 2-2.5 1.9C10.9 16.1 7.9 13.1 7.4 9c-.1-1.1.8-2.1 1.9-2.4z" fill="#DABCBC"/></svg><span style="direction:ltr">${esc(d.stylist.phoneDisplay)}</span></span>
+    </div></div>`;
+}
+
+/* Lay blocks out onto A4 pages. Returns array of .page elements. */
+function paginate(d, opts = {}) {
+  const blocks = contractBlocks(d, opts);
+  const meas = document.createElement("div");
+  meas.className = "page"; meas.style.height = "auto"; meas.style.position = "absolute"; meas.style.left = "-30000px"; meas.style.top = "0";
+  const mb = document.createElement("div"); mb.className = "body"; mb.style.position = "static"; mb.style.width = (PAGE.w - PAGE.pad * 2) + "px"; mb.style.margin = "0 " + PAGE.pad + "px";
+  meas.appendChild(mb); document.body.appendChild(meas);
+  const nodes = blocks.map(h => { const w = document.createElement("div"); w.innerHTML = h; const f = document.createDocumentFragment(); while (w.firstChild) f.appendChild(w.firstChild); const g = document.createElement("div"); g.appendChild(f); return g; });
+  nodes.forEach(n => mb.appendChild(n));
+  const heights = nodes.map(n => n.getBoundingClientRect().height);
+  document.body.removeChild(meas);
+
+  const pages = []; let cur = null, used = 0, avail = 0;
+  const newPage = (first) => {
+    const p = document.createElement("div"); p.className = "page";
+    if (first) p.insertAdjacentHTML("beforeend", bandHTML("hdr", d));
+    const body = document.createElement("div"); body.className = "body " + (first ? "has-hdr" : "no-hdr"); p.appendChild(body);
+    pages.push(p); cur = body; used = 0;
+    avail = PAGE.h - (first ? PAGE.bodyTopHdr : PAGE.bodyTopNoHdr) - PAGE.bottom;
+  };
+  newPage(true);
+  nodes.forEach((n, i) => {
+    const h = heights[i];
+    const isLast = i === nodes.length - 1;
+    const need = h + (isLast ? PAGE.ftr + 16 : 0); // keep room for the footer band (plus breathing space) under the signatures
+    if (used + need > avail && used > 0) newPage(false);
+    cur.appendChild(n); used += h;
+  });
+  pages[pages.length - 1].insertAdjacentHTML("beforeend", bandHTML("ftr", d));
+  return pages;
+}
+
+function renderPreview(container, pages) {
+  container.innerHTML = "";
+  const w = Math.min(container.clientWidth || 340, PAGE.w);
+  const s = w / PAGE.w;
+  pages.forEach((p, i) => {
+    const box = document.createElement("div"); box.className = "pv"; box.style.width = w + "px"; box.style.height = Math.round(PAGE.h * s) + "px";
+    const c = p.cloneNode(true); c.style.transform = `scale(${s})`; box.appendChild(c);
+    container.appendChild(box);
+    container.insertAdjacentHTML("beforeend", `<div class="pbadge">${i + 1} / ${pages.length}</div>`);
+  });
+}
+
+/* =========================================================
+   PDF
+   ========================================================= */
+async function makePDF(pages) {
+  if (!window.html2canvas || !window.jspdf) throw new Error("libs");
+  await document.fonts.ready;
+  const host = $("printDoc"); host.innerHTML = ""; pages.forEach(p => host.appendChild(p));
+  // let images (signatures) decode
+  await Promise.all([...host.querySelectorAll("img")].map(im => im.complete ? 1 : new Promise(r => { im.onload = im.onerror = r; })));
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ unit: "px", format: [PAGE.w, PAGE.h], orientation: "portrait", hotfixes: ["px_scaling"], compress: true });
+  for (let i = 0; i < pages.length; i++) {
+    const canvas = await html2canvas(pages[i], { scale: 2, backgroundColor: "#ffffff", logging: false, useCORS: true, width: PAGE.w, height: PAGE.h, windowWidth: PAGE.w });
+    const img = canvas.toDataURL("image/jpeg", 0.9);
+    if (i > 0) pdf.addPage([PAGE.w, PAGE.h], "portrait");
+    pdf.addImage(img, "JPEG", 0, 0, PAGE.w, PAGE.h, undefined, "FAST");
+  }
+  host.innerHTML = "";
+  return pdf.output("blob");
+}
+function pdfName(d, signed) { const n = (d.client.name || "כלה").replace(/[\\/:*?"<>|]/g, " ").trim(); return `חוזה ${signed ? "חתום " : ""}- ${n}.pdf`; }
+
+async function sharePDF(blob, name, text, fallbackPhone, fallbackMsg) {
+  const file = new File([blob], name, { type: "application/pdf" });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: name, text }); return "shared"; }
+    catch (e) { if (e && e.name === "AbortError") return "cancelled"; }
+  }
+  downloadBlob(blob, name);
+  $("waOpen").href = waLink(fallbackPhone, fallbackMsg);
+  $("waOpen").classList.toggle("hidden", !waNumber(fallbackPhone));
+  $("waModal").classList.remove("hidden");
+  return "downloaded";
+}
+
+/* =========================================================
+   Stylist app
+   ========================================================= */
+function currentSig() { return settings.sig || BUILTIN_SIG; }
+
+function refreshPreview() {
+  const d = readForm();
+  $("totalOut").textContent = fmtMoney(total(d)) + " ₪";
+  const pages = paginate(d, { stylistSig: currentSig() });
+  renderPreview($("preview"), pages);
+  saveJSON(LS.draft, d);
+}
+let refreshT; const refreshSoon = () => { clearTimeout(refreshT); refreshT = setTimeout(refreshPreview, 180); };
+
+function validate() {
+  const d = readForm(); let ok = true;
+  [["cName", d.client.name], ["cPhone", d.client.phone]].forEach(([id, v]) => { const bad = !v; $(id).classList.toggle("err", bad); if (bad) ok = false; });
+  if (!ok) { toast("צריך לפחות שם וטלפון של הכלה"); $(d.client.name ? "cPhone" : "cName").focus(); }
+  return ok;
+}
+
+function saveContract(d, status) {
+  const list = loadJSON(LS.saved, []);
+  const key = `${d.client.name}|${d.eventDate}`;
+  const i = list.findIndex(x => x.key === key);
+  const rec = { key, status, at: Date.now(), data: d };
+  if (i >= 0) list[i] = { ...rec, status: rank(status) >= rank(list[i].status) ? status : list[i].status }; else list.unshift(rec);
+  saveJSON(LS.saved, list.slice(0, 60)); renderSaved();
+}
+function rank(s) { return { draft: 0, sent: 1, signed: 2 }[s] || 0; }
+function renderSaved() {
+  const list = loadJSON(LS.saved, []); const el = $("savedList"); el.innerHTML = "";
+  if (!list.length) { el.innerHTML = `<div class="empty">עדיין אין חוזים שמורים</div>`; return; }
+  list.forEach((r, i) => {
+    const it = document.createElement("div"); it.className = "item";
+    const lbl = { draft: "טיוטה", sent: "נשלח", signed: "חתום" }[r.status] || "טיוטה";
+    it.innerHTML = `<div class="t"><b>${esc(r.data.client.name || "ללא שם")}</b><span>${r.data.eventDate ? "אירוע " + fmtDate(r.data.eventDate) + " · " : ""}${fmtMoney(total(r.data))} ₪ · ${new Date(r.at).toLocaleDateString("he-IL")}</span></div>
+      <span class="st ${r.status}">${lbl}</span>
+      <button class="btn btn-ghost btn-sm" data-load="${i}">טעינה</button>
+      <button class="btn btn-ghost btn-sm" data-del="${i}" aria-label="מחיקה">✕</button>`;
+    el.appendChild(it);
+  });
+  el.querySelectorAll("[data-load]").forEach(b => b.onclick = () => { writeForm(list[+b.dataset.load].data); refreshPreview(); window.scrollTo({ top: 0, behavior: "smooth" }); toast("החוזה נטען לטופס"); });
+  el.querySelectorAll("[data-del]").forEach(b => b.onclick = () => { if (!confirm("למחוק את החוזה השמור?")) return; list.splice(+b.dataset.del, 1); saveJSON(LS.saved, list); renderSaved(); });
+}
+
+function clientMsg(d) {
+  const first = (d.client.name || "").split(" ")[0] || "";
+  const q = d.quoteUrl ? `\nהצעת המחיר שלך: ${d.quoteUrl}\n` : "";
+  return `היי ${first} 💕\nמצרפת את חוזה העבודה לעיצוב שיער הכלה${d.eventDate ? " ליום " + fmtDate(d.eventDate) : ""}.\nנשמח שתעברי עליו ותאשרי.${q}\n${d.stylist.name}`;
+}
+
+async function sendToClient(btn) {
+  if (!validate()) return;
+  const d = readForm();
+  setBusy(btn, true);
+  try {
+    const blob = await makePDF(paginate(d, { stylistSig: currentSig() }));
+    const r = await sharePDF(blob, pdfName(d), clientMsg(d), d.client.phone, clientMsg(d));
+    if (r !== "cancelled") { saveContract(d, "sent"); if (r === "shared") toast("החוזה נשלח 💕"); }
+  } catch (e) { console.error(e); toast("משהו השתבש ביצירת ה-PDF. נסי שוב."); }
+  setBusy(btn, false);
+}
+async function downloadPDF(btn) {
+  if (!validate()) return;
+  const d = readForm(); setBusy(btn, true);
+  try { const blob = await makePDF(paginate(d, { stylistSig: currentSig() })); downloadBlob(blob, pdfName(d)); saveContract(d, "draft"); toast("ה-PDF ירד למכשיר"); }
+  catch (e) { console.error(e); toast("משהו השתבש ביצירת ה-PDF. נסי שוב."); }
+  setBusy(btn, false);
+}
+function signLink(d) {
+  const payload = { ...d }; delete payload.v;
+  const base = location.origin + location.pathname.replace(/index\.html$/, "");
+  return `${base}?s=${b64urlEncode(payload)}`;
+}
+function openLinkModal() {
+  if (!validate()) return;
+  const d = readForm(); const url = signLink(d);
+  $("linkOut").value = url;
+  const first = (d.client.name || "").split(" ")[0];
+  const q = d.quoteUrl ? `\nהצעת המחיר שלך: ${d.quoteUrl}\n` : "";
+  const msg = `היי ${first} 💕\nהנה חוזה העבודה לעיצוב שיער הכלה${d.eventDate ? " ליום " + fmtDate(d.eventDate) : ""}.\nפותחים את הקישור, עוברים על החוזה וחותמים באצבע:\n${url}\n${q}\n${d.stylist.name}`;
+  $("linkWa").onclick = async () => {
+    if (navigator.share) { try { await navigator.share({ text: msg }); saveContract(d, "sent"); return; } catch (e) { if (e.name === "AbortError") return; } }
+    window.open(waLink(d.client.phone, msg), "_blank"); saveContract(d, "sent");
+  };
+  $("linkCopy").onclick = async () => { try { await navigator.clipboard.writeText(url); toast("הקישור הועתק"); } catch { $("linkOut").select(); document.execCommand("copy"); toast("הקישור הועתק"); } saveContract(d, "sent"); };
+  $("linkModal").classList.remove("hidden");
+}
+
+/* ---------- signature pad ---------- */
+function makePad(el) {
+  const canvas = el.querySelector("canvas"), ph = el.querySelector(".ph"), ctx = canvas.getContext("2d");
+  let drawing = false, dirty = false, last = null;
+  function resize() {
+    const r = el.getBoundingClientRect(); const dpr = window.devicePixelRatio || 1;
+    const snap = dirty ? canvas.toDataURL() : null;
+    canvas.width = Math.round(r.width * dpr); canvas.height = Math.round(r.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.strokeStyle = "#111"; ctx.lineWidth = 2.4;
+    if (snap) { const im = new Image(); im.onload = () => ctx.drawImage(im, 0, 0, r.width, r.height); im.src = snap; }
+  }
+  const pos = (e) => { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  el.addEventListener("pointerdown", e => { e.preventDefault(); drawing = true; last = pos(e); el.setPointerCapture(e.pointerId); ctx.beginPath(); ctx.arc(last.x, last.y, 1.2, 0, Math.PI * 2); ctx.fillStyle = "#111"; ctx.fill(); dirty = true; ph.classList.add("off"); });
+  el.addEventListener("pointermove", e => { if (!drawing) return; e.preventDefault(); const p = pos(e); ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke(); last = p; });
+  const up = () => { drawing = false; };
+  el.addEventListener("pointerup", up); el.addEventListener("pointercancel", up); el.addEventListener("pointerleave", up);
+  new ResizeObserver(resize).observe(el); resize();
+  return {
+    clear() { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.restore(); dirty = false; ph.classList.remove("off"); },
+    isEmpty() { return !dirty; },
+    toDataURL() { // crop to ink bounds
+      const w = canvas.width, h = canvas.height, data = ctx.getImageData(0, 0, w, h).data;
+      let minX = w, minY = h, maxX = -1, maxY = -1;
+      for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { if (data[(y * w + x) * 4 + 3] > 20) { if (x < minX) minX = x; if (x > maxX) maxX = x; if (y < minY) minY = y; if (y > maxY) maxY = y; } }
+      if (maxX < 0) return "";
+      const pad = 8, cw = maxX - minX + 1 + pad * 2, ch = maxY - minY + 1 + pad * 2;
+      const out = document.createElement("canvas"); out.width = cw; out.height = ch;
+      out.getContext("2d").drawImage(canvas, minX - pad, minY - pad, cw, ch, 0, 0, cw, ch);
+      return out.toDataURL("image/png");
+    }
+  };
+}
+
+/* ---------- settings ---------- */
+function bindSettings() {
+  const map = { sName: "name", sAddr: "addr", sPhone: "phone", sPhoneDisplay: "phoneDisplay", sIg: "ig", sQuote: "quoteUrl", dP1: "dP1", dP2: "dP2", dDep: "dDep", dPik: "dPik", dM1: "dM1", dM2: "dM2" };
+  Object.entries(map).forEach(([id, k]) => {
+    $(id).value = settings[k];
+    $(id).addEventListener("input", () => { settings[k] = $(id).type === "number" ? num($(id).value) : $(id).value.trim(); saveJSON(LS.settings, settings); refreshSoon(); });
+  });
+  $("sigPreview").src = currentSig();
+  const pad = makePad($("stylistPad"));
+  $("btnDrawSig").onclick = () => { pad.clear(); $("sigModal").classList.remove("hidden"); };
+  $("sigClear").onclick = () => pad.clear();
+  $("sigCancel").onclick = () => $("sigModal").classList.add("hidden");
+  $("sigSave").onclick = () => { if (pad.isEmpty()) { toast("החתימה ריקה"); return; } settings.sig = pad.toDataURL(); saveJSON(LS.settings, settings); $("sigPreview").src = settings.sig; $("sigModal").classList.add("hidden"); refreshPreview(); toast("החתימה נשמרה"); };
+  $("btnResetSig").onclick = () => { settings.sig = ""; saveJSON(LS.settings, settings); $("sigPreview").src = BUILTIN_SIG; refreshPreview(); toast("חזרנו לחתימה המקורית"); };
+}
+
+function initApp() {
+  const draft = loadJSON(LS.draft, null);
+  writeForm(draft || {});
+  if (!draft) { $("signDate").value = todayISO(); $("depDate").value = todayISO(); }
+  ["cName", "cPhone", "cAddr", "eventDate", "signDate", "p1", "p2", "withEscort", "dep", "depDate", "pik", "m1", "m2"].forEach(id => { $(id).addEventListener("input", refreshSoon); $(id).addEventListener("change", refreshSoon); });
+  ["cName", "cPhone"].forEach(id => $(id).addEventListener("input", () => $(id).classList.remove("err")));
+  $("btnSend").onclick = () => sendToClient($("btnSend"));
+  $("btnSend2").onclick = () => sendToClient($("btnSend2"));
+  $("btnPdf").onclick = () => downloadPDF($("btnPdf"));
+  $("btnLink").onclick = openLinkModal;
+  $("btnQuote").onclick = async () => {
+    const d = readForm();
+    if (!d.quoteUrl) { toast("קודם הדביקי את קישור הקנבה בהגדרות למטה"); $("sQuote").closest("details").open = true; $("sQuote").focus(); return; }
+    if (!validate()) return;
+    const first = (d.client.name || "").split(" ")[0];
+    const msg = `היי ${first} 💕\nמצרפת את הצעת המחיר לעיצוב שיער הכלה${d.eventDate ? " ליום " + fmtDate(d.eventDate) : ""}:\n${d.quoteUrl}\n\nאשמח לענות על כל שאלה,\n${d.stylist.name}`;
+    if (navigator.share) { try { await navigator.share({ text: msg }); return; } catch (e) { if (e.name === "AbortError") return; } }
+    window.open(waLink(d.client.phone, msg), "_blank");
+  };
+  $("btnNew").onclick = () => { if (!confirm("לנקות את פרטי הכלה ולהתחיל חוזה חדש?")) return; writeForm({}); $("signDate").value = todayISO(); $("depDate").value = todayISO(); refreshPreview(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  $("linkClose").onclick = () => $("linkModal").classList.add("hidden");
+  $("waClose").onclick = () => $("waModal").classList.add("hidden");
+  bindSettings(); renderSaved();
+  document.fonts.ready.then(refreshPreview); refreshPreview();
+  let rw; window.addEventListener("resize", () => { clearTimeout(rw); rw = setTimeout(refreshPreview, 200); });
+}
+
+/* =========================================================
+   Bride sign view
+   ========================================================= */
+function initSign() {
+  let d;
+  try { d = b64urlDecode(new URLSearchParams(location.search).get("s")); } catch { d = null; }
+  $("appView").classList.add("hidden"); $("actionBar").classList.add("hidden"); $("signView").classList.remove("hidden");
+  $("topTag").textContent = "חתימה על החוזה";
+  if (!d || !d.client) { $("helloTitle").textContent = "הקישור לא תקין"; $("helloText").textContent = "בקשי משיראל לשלוח את הקישור שוב."; $("signCard").classList.add("hidden"); return; }
+  d.stylist = { ...DEFAULT_SETTINGS, ...(d.stylist || {}) };
+  const first = (d.client.name || "").split(" ")[0];
+  $("helloTitle").textContent = `היי ${first} 👋`;
+  $("helloText").textContent = `${d.stylist.name} שלחה לך את חוזה העבודה לעיצוב שיער הכלה${d.eventDate ? " ליום " + fmtDate(d.eventDate) : ""}. עברי עליו, חתמי למטה ושלחי חזרה.`;
+  $("btnBrideSend").lastChild.textContent = ` חתימה ושליחה חזרה ל${d.stylist.name.split(" ")[0]}`;
+  $("doneWa").textContent = `פתיחת וואטסאפ של ${d.stylist.name.split(" ")[0]}`;
+  if (d.quoteUrl && /^https?:\/\//i.test(d.quoteUrl)) { $("quoteBtn").href = d.quoteUrl; $("quoteCard").classList.remove("hidden"); }
+  const render = () => renderPreview($("signPreview"), paginate(d, { stylistSig: BUILTIN_SIG }));
+  document.fonts.ready.then(render); render();
+  let rw; window.addEventListener("resize", () => { clearTimeout(rw); rw = setTimeout(render, 200); });
+  const pad = makePad($("bridePad"));
+  $("brideClear").onclick = () => pad.clear();
+  const signedPages = () => {
+    const now = new Date();
+    const stamp = `${now.toLocaleDateString("he-IL")} ${now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}`;
+    return paginate(d, { stylistSig: BUILTIN_SIG, brideSig: pad.toDataURL(), signedAt: stamp });
+  };
+  const check = () => { if (pad.isEmpty()) { toast("קודם חתמי בתוך המסגרת"); return false; } if (!$("agree").checked) { toast("צריך לסמן שקראת ואישרת את ההסכם"); return false; } return true; };
+  const backMsg = `היי ${d.stylist.name.split(" ")[0]} 💕\nמצרפת את החוזה החתום.\n${d.client.name}`;
+  $("btnBrideSend").onclick = async () => {
+    if (!check()) return; const btn = $("btnBrideSend"); setBusy(btn, true);
+    try {
+      const blob = await makePDF(signedPages());
+      const r = await sharePDF(blob, pdfName(d, true), backMsg, d.stylist.phone, backMsg);
+      if (r !== "cancelled") { $("signCard").classList.add("hidden"); $("signDone").classList.remove("hidden"); $("doneWa").href = waLink(d.stylist.phone, backMsg); if (r === "shared") $("doneText").textContent = "החוזה החתום נשלח. אפשר גם לשלוח הודעה ישירה."; window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }); }
+    } catch (e) { console.error(e); toast("משהו השתבש ביצירת ה-PDF. נסי שוב."); }
+    setBusy(btn, false);
+  };
+  $("btnBridePdf").onclick = async () => {
+    if (!check()) return; const btn = $("btnBridePdf"); setBusy(btn, true);
+    try { downloadBlob(await makePDF(signedPages()), pdfName(d, true)); toast("ה-PDF ירד למכשיר"); } catch (e) { console.error(e); toast("משהו השתבש. נסי שוב."); }
+    setBusy(btn, false);
+  };
+  $("waClose").onclick = () => $("waModal").classList.add("hidden");
+}
+
+if (isSignMode) initSign(); else initApp();
+</script>
+</body>
+</html>
