@@ -385,10 +385,10 @@ details.set .body { padding-top: 12px; }
     <div id="hennaStyles" class="hidden" style="margin-top:10px">
       <div class="hint" style="margin:0 0 8px">רקע להצעת החינה</div>
       <div class="seg" style="grid-template-columns:repeat(5,1fr);font-size:14px">
-        <label><input type="radio" name="qStyle" value="cream" checked> מנדלה</label>
+        <label><input type="radio" name="qStyle" value="wine" checked> בורדו</label>
+        <label><input type="radio" name="qStyle" value="cream"> מנדלה</label>
         <label><input type="radio" name="qStyle" value="frame"> מסגרת</label>
         <label><input type="radio" name="qStyle" value="arch"> קשת</label>
-        <label><input type="radio" name="qStyle" value="wine"> בורדו</label>
         <label><input type="radio" name="qStyle" value="blush"> ורוד</label>
       </div>
     </div>
@@ -1011,7 +1011,7 @@ const QUOTE_DEFAULTS = {
     escortText: "תוספת של ליווי מלא לאולם כולל החלפת תסרוקת וטאצ' אפ" }
 };
 const qType = () => (document.querySelector('input[name="qType"]:checked') || {}).value || "reg";
-const qStyle = () => (document.querySelector('input[name="qStyle"]:checked') || {}).value || "cream";
+const qStyle = () => (document.querySelector('input[name="qStyle"]:checked') || {}).value || "wine";
 /* Ornaments are drawn onto <canvas> so html2canvas copies them pixel for pixel. */
 function orn(cls, svg, w, h) {
   const c = document.createElement("canvas"); c.className = "qo " + cls; c.width = w * 2; c.height = h * 2; c.style.width = w + "px"; c.style.height = h + "px";
@@ -1097,7 +1097,7 @@ function buildQuote(q) {
   const fine = q.fine ? `<p class="fine">${esc(q.fine)}</p>` : "";
   const foot = q.escortText ? `<div class="foot">${esc(q.escortText)}${q.escort ? " - " + fmtMoney(q.escort) + "₪" : ""}</div>` : "";
   if (q.type === "henna") {
-    const st = HENNA_ACCENT[q.style] ? q.style : "cream"; el.classList.add("st-" + st); const ac = HENNA_ACCENT[st];
+    const st = HENNA_ACCENT[q.style] ? q.style : "wine"; el.classList.add("st-" + st); const ac = HENNA_ACCENT[st];
     const m = mandalaSVG(ac), band = bandSVG(ac);
     if (st === "cream" || st === "wine") el.append(orn("mand tr", m, 640, 640), orn("mand bl", m, 640, 640), orn("mini", m, 120, 120));
     if (st === "frame") el.append(orn("frame", frameSVG(ac), 1080, 1350), orn("mini", m, 120, 120));
