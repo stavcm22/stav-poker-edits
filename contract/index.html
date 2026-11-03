@@ -304,6 +304,7 @@ details.set .body { padding-top: 12px; }
           <label class="f">טלפון (לחוזה ולוואטסאפ) <input id="sPhone" type="tel" inputmode="tel"></label>
           <label class="f">טלפון בכותרת <input id="sPhoneDisplay" type="text" style="direction:ltr"></label>
           <label class="f full">אינסטגרם <input id="sIg" type="text" style="direction:ltr"></label>
+          <label class="f full">חתימה בסוף ההודעות לכלה <input id="sMsgSign" type="text"></label>
           <label class="f full">קישור להצעת מחיר (קנבה) <span class="sub">יצורף להודעה לכלה ולעמוד החתימה</span><input id="sQuote" type="url" inputmode="url" placeholder="https://www.canva.com/design/..." style="direction:ltr"></label>
         </div>
         <h2 style="margin-top:16px;font-size:17px">החתימה שלי</h2>
@@ -433,7 +434,7 @@ const DEFAULT_SETTINGS = {
   name: "שיראל טויטו", addr: "גורן", phone: "0542608049",
   phoneDisplay: "+972 54-260-8049", ig: "Shireltwito.hair_",
   dP1: 2000, dP2: 1400, dDep: 300, dPik: 500, dM1: 550, dM2: 750,
-  quoteUrl: "https://canva.link/ujr7p5g0kaj7v4a", sig: ""
+  quoteUrl: "https://canva.link/ujr7p5g0kaj7v4a", msgSign: "Shirel hairstyle 💕", sig: ""
 };
 const LS = { settings: "st_settings_v1", draft: "st_draft_v1", saved: "st_saved_v1" };
 const $ = (id) => document.getElementById(id);
@@ -488,6 +489,7 @@ function readForm() {
     v: 1,
     stylist: { name: settings.name, addr: settings.addr, phone: settings.phone, phoneDisplay: settings.phoneDisplay, ig: settings.ig },
     quoteUrl: (settings.quoteUrl || "").trim(),
+    msgSign: (settings.msgSign || "").trim(),
     client: { name: $("cName").value.trim(), phone: $("cPhone").value.trim(), addr: $("cAddr").value.trim() },
     eventDate: $("eventDate").value, signDate: $("signDate").value,
     p1: num($("p1").value), p2: num($("p2").value), withEscort: $("withEscort").checked,
@@ -718,10 +720,11 @@ function renderSaved() {
   el.querySelectorAll("[data-del]").forEach(b => b.onclick = () => { if (!confirm("למחוק את החוזה השמור?")) return; list.splice(+b.dataset.del, 1); saveJSON(LS.saved, list); renderSaved(); });
 }
 
+function firstName(d) { return (d.client.name || "").split(" ")[0] || ""; }
+function forDate(d) { return d.eventDate ? " לתאריך " + fmtDate(d.eventDate) : ""; }
+function signOff(d) { return d.msgSign ? "\n\n" + d.msgSign : ""; }
 function clientMsg(d) {
-  const first = (d.client.name || "").split(" ")[0] || "";
-  const q = d.quoteUrl ? `\nהצעת המחיר שלך: ${d.quoteUrl}\n` : "";
-  return `היי ${first} 💕\nמצרפת את חוזה העבודה לעיצוב שיער הכלה${d.eventDate ? " ליום " + fmtDate(d.eventDate) : ""}.\nנשמח שתעברי עליו ותאשרי.${q}\n${d.stylist.name}`;
+  return `היי ${firstName(d)} 🤍\nמצרפת את חוזה העבודה עבור תסרוקת כלה${forDate(d)}.\nאשמח שתעברי עליו ותאשרי 🫶🏻${signOff(d)}`;
 }
 
 async function sendToClient(btn) {
@@ -752,8 +755,7 @@ function openLinkModal() {
   const d = readForm(); const url = signLink(d);
   $("linkOut").value = url;
   const first = (d.client.name || "").split(" ")[0];
-  const q = d.quoteUrl ? `\nהצעת המחיר שלך: ${d.quoteUrl}\n` : "";
-  const msg = `היי ${first} 💕\nהנה חוזה העבודה לעיצוב שיער הכלה${d.eventDate ? " ליום " + fmtDate(d.eventDate) : ""}.\nפותחים את הקישור, עוברים על החוזה וחותמים באצבע:\n${url}\n${q}\n${d.stylist.name}`;
+  const msg = `היי ${first} 🤍\nמצרפת את חוזה העבודה עבור תסרוקת כלה${forDate(d)}.\nאשמח שתעברי עליו, תחתמי באצבע ותאשרי 🫶🏻\n${url}${signOff(d)}`;
   $("linkWa").onclick = async () => {
     if (navigator.share) { try { await navigator.share({ text: msg }); saveContract(d, "sent"); return; } catch (e) { if (e.name === "AbortError") return; } }
     window.open(waLink(d.client.phone, msg), "_blank"); saveContract(d, "sent");
@@ -797,7 +799,7 @@ function makePad(el) {
 
 /* ---------- settings ---------- */
 function bindSettings() {
-  const map = { sName: "name", sAddr: "addr", sPhone: "phone", sPhoneDisplay: "phoneDisplay", sIg: "ig", sQuote: "quoteUrl", dP1: "dP1", dP2: "dP2", dDep: "dDep", dPik: "dPik", dM1: "dM1", dM2: "dM2" };
+  const map = { sName: "name", sAddr: "addr", sPhone: "phone", sPhoneDisplay: "phoneDisplay", sIg: "ig", sQuote: "quoteUrl", sMsgSign: "msgSign", dP1: "dP1", dP2: "dP2", dDep: "dDep", dPik: "dPik", dM1: "dM1", dM2: "dM2" };
   Object.entries(map).forEach(([id, k]) => {
     $(id).value = settings[k];
     $(id).addEventListener("input", () => { settings[k] = $(id).type === "number" ? num($(id).value) : $(id).value.trim(); saveJSON(LS.settings, settings); refreshSoon(); });
@@ -826,7 +828,7 @@ function initApp() {
     if (!d.quoteUrl) { toast("קודם הדביקי את קישור הקנבה בהגדרות למטה"); $("sQuote").closest("details").open = true; $("sQuote").focus(); return; }
     if (!validate()) return;
     const first = (d.client.name || "").split(" ")[0];
-    const msg = `היי ${first} 💕\nמצרפת את הצעת המחיר לעיצוב שיער הכלה${d.eventDate ? " ליום " + fmtDate(d.eventDate) : ""}:\n${d.quoteUrl}\n\nאשמח לענות על כל שאלה,\n${d.stylist.name}`;
+    const msg = `היי ${first} 🤍\nמצרפת את הצעת המחיר עבור תסרוקת כלה${forDate(d)}:\n${d.quoteUrl}\nאשמח לענות על כל שאלה 🫶🏻${signOff(d)}`;
     if (navigator.share) { try { await navigator.share({ text: msg }); return; } catch (e) { if (e.name === "AbortError") return; } }
     window.open(waLink(d.client.phone, msg), "_blank");
   };
