@@ -15,7 +15,7 @@
 <link rel="icon" href="assets/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Amatic+SC:wght@400;700&family=David+Libre:wght@400;500;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style>
@@ -160,6 +160,91 @@ input[type="tel"] { direction: ltr; text-align: right; }
 .c-sigs .s .line img { position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); max-height: 56px; max-width: 92%; }
 .c-sigs .s .line .stamp { position: absolute; top: 100%; left: 0; right: 0; font-size: 10.5px; color: #666; text-align: center; margin-top: 2px; }
 
+/* ---------- tabs ---------- */
+.tabs { display: flex; gap: 6px; background: var(--pink-soft); border: 1px solid var(--line); border-radius: 999px; padding: 5px; margin: 0 auto 16px; max-width: 420px; }
+.tabs button { flex: 1; min-height: 44px; border: 0; border-radius: 999px; background: transparent; font-weight: 700; font-size: 16px; color: var(--rose-ink); cursor: pointer; }
+.tabs button.on { background: var(--card); color: var(--ink); box-shadow: 0 4px 14px -8px rgba(122,79,82,.5); }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.seg label { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; border: 1.5px solid var(--line); border-radius: 14px; background: #FFFAF9; font-weight: 700; cursor: pointer; }
+.seg label:has(input:checked) { border-color: var(--pink-deep); background: var(--pink-soft); color: var(--ink); }
+.seg input { position: absolute; opacity: 0; width: 0; height: 0; }
+label.f textarea { min-height: 120px; line-height: 1.45; resize: vertical; }
+
+/* ---------- price quote canvas (1080 x 1350) ---------- */
+.q { width: 1080px; height: 1350px; position: relative; overflow: hidden; direction: rtl; }
+.q * { box-sizing: border-box; }
+.q canvas.qo { position: absolute; pointer-events: none; display: block; }
+.q .pers { position: absolute; left: 0; right: 0; text-align: center; font-size: 30px; letter-spacing: .02em; }
+.q .brand { position: absolute; bottom: 36px; left: 0; right: 0; text-align: center; font-family: var(--latin); font-weight: 600; font-size: 30px; letter-spacing: .14em; direction: ltr; opacity: .9; }
+/* regular bride: light grey, black ink, handwriting */
+.q-reg { background: #CDCDCD; color: #111; font-family: "Amatic SC", "Assistant", sans-serif; }
+.q-reg .corner { width: 300px; height: 300px; }
+.q-reg .corner.tl { top: 28px; left: 28px; }
+.q-reg .corner.br { bottom: 28px; right: 28px; transform: rotate(180deg); }
+.q-reg .ttl { position: absolute; top: 95px; left: 0; right: 0; text-align: center; font-family: "David Libre", "Frank Ruhl Libre", serif; font-weight: 500; line-height: 1.05; }
+.q-reg .ttl .a { font-size: 70px; display: block; }
+.q-reg .ttl .b { font-size: 112px; display: block; font-weight: 700; margin-top: 4px; }
+.q-reg .div.dtop { top: 346px; left: 150px; }
+.q-reg .div.dbot { bottom: 110px; left: 270px; }
+.q-reg .pers { top: 420px; font-weight: 700; font-size: 38px; color: #222; }
+.q-reg .main { position: absolute; top: 470px; right: 90px; left: 440px; font-size: 48px; font-weight: 700; line-height: 1.35; }
+.q-reg .main .price { font-size: 56px; margin-bottom: 14px; }
+.q-reg .main p { margin: 0 0 14px; }
+.q-reg .main ul { margin: 0; padding: 0 28px 0 0; list-style: none; }
+.q-reg .main li { position: relative; margin: 0 0 14px; }
+.q-reg .main li::before { content: "•"; position: absolute; right: -28px; top: 0; }
+.q-reg .main .fine { font-size: 32px; line-height: 1.3; margin-top: -4px; }
+.q-reg .side { position: absolute; top: 590px; left: 70px; width: 330px; font-size: 34px; font-weight: 700; line-height: 1.3; text-align: right; }
+.q-reg .side p { margin: 0 0 16px; }
+.q-reg .foot { position: absolute; bottom: 190px; left: 110px; right: 110px; text-align: center; font-size: 52px; font-weight: 700; line-height: 1.3; }
+.q-reg .brand { color: #111; }
+/* henna bride: shared layout, five classic moods */
+.q-henna { font-family: "Assistant", "Heebo", sans-serif; color: var(--qc); background: var(--qbg); }
+.q-henna .mand { width: 640px; height: 640px; opacity: var(--qop, .26); }
+.q-henna .mand.tr { top: -330px; right: -330px; }
+.q-henna .mand.bl { bottom: -330px; left: -330px; }
+.q-henna .mini { width: 120px; height: 120px; left: 480px; top: 62px; opacity: .9; }
+.q-henna .band { left: 200px; }
+.q-henna .band.btop { top: 392px; }
+.q-henna .band.bbot { bottom: 118px; }
+.q-henna .frame { top: 0; left: 0; }
+.q-henna .arch { top: 40px; left: 140px; opacity: .9; }
+.q-henna .pais { top: 0; opacity: .5; }
+.q-henna .pais.l { left: 22px; } .q-henna .pais.r { right: 22px; transform: scaleX(-1); }
+.q-henna .ttl { position: absolute; top: 200px; left: 0; right: 0; text-align: center; font-family: "Frank Ruhl Libre", "David Libre", serif; font-weight: 500; line-height: 1.12; }
+.q-henna .ttl .a { display: block; font-size: 58px; letter-spacing: .06em; }
+.q-henna .ttl .b { display: block; font-size: 86px; font-weight: 500; }
+.q-henna .pers { top: 445px; font-weight: 600; font-size: 34px; }
+.q-henna .main { position: absolute; top: 510px; right: 130px; left: 130px; font-size: 44px; font-weight: 500; line-height: 1.5; }
+.q-henna .main .price { font-size: 50px; font-weight: 700; margin-bottom: 20px; }
+.q-henna .main p { margin: 0 0 16px; }
+.q-henna .main ul { margin: 0; padding: 0 34px 0 0; list-style: none; }
+.q-henna .main li { position: relative; margin: 0 0 18px; }
+.q-henna .main li::before { content: "✦"; position: absolute; right: -36px; top: 2px; font-size: 30px; color: var(--qa); }
+.q-henna .main .fine { font-size: 30px; line-height: 1.35; opacity: .9; }
+.q-henna .side { position: absolute; top: 960px; right: 130px; left: 130px; font-size: 30px; line-height: 1.4; }
+.q-henna .side p { margin: 0 0 8px; }
+.q-henna .foot { position: absolute; bottom: 180px; left: 120px; right: 120px; text-align: center; font-size: 44px; font-weight: 600; line-height: 1.4; }
+.q-henna .brand { color: var(--qa); }
+/* 1. cream + mandala */
+.q-henna.st-cream { --qbg: #F7EFE3; --qc: #6E4A2E; --qa: #B9924E; --qop: .28; background-image: linear-gradient(180deg, #FBF5EC, #F3E7D6 60%, #EFE1CD); }
+/* 2. ivory + double gold frame */
+.q-henna.st-frame { --qbg: #FBF7F1; --qc: #6B4630; --qa: #B08C4A; background-image: linear-gradient(180deg, #FDFAF5, #F7F0E6); }
+.q-henna.st-frame .ttl { top: 190px; }
+.q-henna.st-frame .band.btop { top: 382px; } .q-henna.st-frame .band.bbot { bottom: 128px; }
+.q-henna.st-frame .brand { bottom: 70px; }
+/* 3. sand + moroccan arch */
+.q-henna.st-arch { --qbg: #F4EBDF; --qc: #5E3A26; --qa: #A9834A; background-image: linear-gradient(180deg, #F8F1E7, #EFE3D2); }
+.q-henna.st-arch .ttl { top: 225px; } .q-henna.st-arch .ttl .a { font-size: 48px; } .q-henna.st-arch .ttl .b { font-size: 72px; }
+.q-henna.st-arch .pers { top: 585px; } .q-henna.st-arch .main { top: 645px; font-size: 40px; } .q-henna.st-arch .main .price { font-size: 46px; }
+.q-henna.st-arch .band.btop { top: 525px; left: 290px; } .q-henna.st-arch .band.bbot { bottom: 112px; }
+.q-henna.st-arch .foot { bottom: 165px; font-size: 40px; }
+/* 4. burgundy + gold */
+.q-henna.st-wine { --qbg: #5C2430; --qc: #F6E8D8; --qa: #D9B873; --qop: .22; background-image: linear-gradient(180deg, #6A2C38, #5C2430 55%, #4E1C27); }
+/* 5. blush + paisley borders */
+.q-henna.st-blush { --qbg: #F3E4E0; --qc: #6B3E3B; --qa: #B98E62; background-image: linear-gradient(180deg, #F8ECE9, #F1DFDB 60%, #EBD5D0); }
+.q-henna.st-blush .main { right: 170px; left: 170px; } .q-henna.st-blush .foot { left: 160px; right: 160px; }
+
 /* ---------- saved list ---------- */
 .list { display: flex; flex-direction: column; gap: 8px; }
 .item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 12px; background: #FCFAFA; }
@@ -222,6 +307,12 @@ details.set .body { padding-top: 12px; }
     <div class="orn"><svg viewBox="0 0 10 10"><path d="M5 0l5 5-5 5-5-5z"/></svg></div>
   </div>
 
+  <div class="tabs" role="tablist">
+    <button type="button" id="tabContract" class="on" data-tab="contract">חוזה</button>
+    <button type="button" id="tabQuote" data-tab="quote">הצעת מחיר</button>
+  </div>
+
+  <div id="viewContract">
   <section class="card">
     <h2><span class="n">1</span> פרטי הכלה</h2>
     <p class="hint">רק מה שחסר בחוזה. השאר כבר מלא.</p>
@@ -269,12 +360,6 @@ details.set .body { padding-top: 12px; }
       </button>
     </div>
     <div class="row" style="margin-top:10px">
-      <button class="btn btn-ghost" id="btnQuote">
-        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 12h8v2H8v-2zm0 4h8v2H8v-2z"/></svg>
-        שליחת הצעת מחיר
-      </button>
-    </div>
-    <div class="row" style="margin-top:10px">
       <button class="btn btn-ghost" id="btnPdf">
         <svg viewBox="0 0 24 24"><path d="M5 20h14v-2H5v2zm7-18L5.3 8.7l1.4 1.4L11 5.8V16h2V5.8l4.3 4.3 1.4-1.4L12 2z" transform="rotate(180 12 11)"/></svg>
         הורדת PDF
@@ -287,6 +372,65 @@ details.set .body { padding-top: 12px; }
     <h2>תצוגה מקדימה</h2>
     <div class="preview-wrap"><div class="preview-pages" id="preview"></div></div>
   </section>
+  </div><!-- /viewContract -->
+
+  <div id="viewQuote" class="hidden">
+  <section class="card">
+    <h2><span class="n">1</span> סוג ההצעה</h2>
+    <div class="seg">
+      <label><input type="radio" name="qType" value="reg" checked> תסרוקת כלה</label>
+      <label><input type="radio" name="qType" value="henna"> תסרוקת כלת חינה</label>
+    </div>
+    <div id="hennaStyles" class="hidden" style="margin-top:10px">
+      <div class="hint" style="margin:0 0 8px">רקע להצעת החינה</div>
+      <div class="seg" style="grid-template-columns:repeat(5,1fr);font-size:14px">
+        <label><input type="radio" name="qStyle" value="cream" checked> מנדלה</label>
+        <label><input type="radio" name="qStyle" value="frame"> מסגרת</label>
+        <label><input type="radio" name="qStyle" value="arch"> קשת</label>
+        <label><input type="radio" name="qStyle" value="wine"> בורדו</label>
+        <label><input type="radio" name="qStyle" value="blush"> ורוד</label>
+      </div>
+    </div>
+    <div class="grid" style="margin-top:12px">
+      <label class="f">שם הכלה <span class="sub">(לא חובה)</span><input id="qName" type="text" placeholder="לדוגמה: נועה"></label>
+      <label class="f">טלפון <span class="sub">(לוואטסאפ)</span><input id="qPhone" type="tel" inputmode="tel" placeholder="05X-XXXXXXX"></label>
+      <label class="f full">תאריך האירוע <span class="sub">(לא חובה)</span><input id="qDate" type="date"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">2</span> מחירים ותוכן</h2>
+    <p class="hint">הטקסט כבר מלא לפי הצעת המחיר הקיימת. אפשר לשנות כל שורה.</p>
+    <div class="grid">
+      <label class="f money">מחיר התסרוקת <input id="qPrice" type="number" inputmode="numeric" min="0" step="50"></label>
+      <label class="f money">ליווי מלא לאולם <input id="qEscort" type="number" inputmode="numeric" min="0" step="50"></label>
+      <label class="f full">מה כלול <span class="sub">(שורה לכל סעיף)</span><textarea id="qIncl" rows="4"></textarea></label>
+      <label class="f full">הערה קטנה <span class="sub">(מופיעה באותיות קטנות)</span><input id="qFine" type="text"></label>
+      <label class="f full">הערות נוספות <span class="sub">(שורה לכל הערה, אפשר להשאיר ריק)</span><textarea id="qNotes" rows="3"></textarea></label>
+      <label class="f full">שורת הליווי <input id="qEscortText" type="text"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">3</span> שליחה</h2>
+    <p class="hint">הכפתור הירוק יוצר תמונה של הצעת המחיר ופותח שיתוף לוואטסאפ.</p>
+    <div class="row">
+      <button class="btn btn-wa" id="btnQuoteSend">
+        <svg viewBox="0 0 24 24"><path d="M20 3.9A11 11 0 0 0 2.6 17.2L1 23l5.9-1.5A11 11 0 0 0 23 12a11 11 0 0 0-3-8.1zM12 21.1a9.1 9.1 0 0 1-4.6-1.3l-.3-.2-3.5.9.9-3.4-.2-.3A9.1 9.1 0 1 1 12 21.1zm5-6.8c-.3-.1-1.6-.8-1.9-.9s-.4-.1-.6.1-.7.9-.9 1.1-.3.2-.6.1a7.4 7.4 0 0 1-3.7-3.2c-.3-.5.3-.4.8-1.5.1-.2 0-.3 0-.5l-.9-2c-.2-.5-.5-.5-.6-.5h-.6a1 1 0 0 0-.8.4 3.2 3.2 0 0 0-1 2.4 5.6 5.6 0 0 0 1.2 3 12.8 12.8 0 0 0 4.9 4.3c1.8.8 2.5.8 3.4.7a2.9 2.9 0 0 0 1.9-1.4 2.4 2.4 0 0 0 .2-1.4c-.1-.1-.3-.2-.6-.3z"/></svg>
+        שליחת הצעת המחיר ללקוחה
+      </button>
+      <button class="btn btn-ghost" id="btnQuoteDl">הורדה כתמונה</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn btn-ghost" id="btnQuoteReset">חזרה לטקסט המקורי</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>תצוגה מקדימה</h2>
+    <div class="preview-wrap"><div class="preview-pages" id="quotePreview"></div></div>
+  </section>
+  </div><!-- /viewQuote -->
 
   <section class="card">
     <h2>חוזים שמורים</h2>
@@ -305,7 +449,6 @@ details.set .body { padding-top: 12px; }
           <label class="f">טלפון בכותרת <input id="sPhoneDisplay" type="text" style="direction:ltr"></label>
           <label class="f full">אינסטגרם <input id="sIg" type="text" style="direction:ltr"></label>
           <label class="f full">חתימה בסוף ההודעות לכלה <input id="sMsgSign" type="text"></label>
-          <label class="f full">קישור להצעת מחיר (קנבה) <span class="sub">יצורף להודעה לכלה ולעמוד החתימה</span><input id="sQuote" type="url" inputmode="url" placeholder="https://www.canva.com/design/..." style="direction:ltr"></label>
         </div>
         <h2 style="margin-top:16px;font-size:17px">החתימה שלי</h2>
         <div class="sigprev"><img id="sigPreview" alt="חתימה"></div>
@@ -346,10 +489,6 @@ details.set .body { padding-top: 12px; }
     <p id="helloText">שיראל שלחה לך את חוזה העבודה לעיצוב שיער הכלה. עברי עליו, חתמי למטה ושלחי חזרה.</p>
     <div class="orn"><svg viewBox="0 0 10 10"><path d="M5 0l5 5-5 5-5-5z"/></svg></div>
   </div>
-  <section class="card hidden" id="quoteCard">
-    <h2>הצעת המחיר</h2>
-    <a class="btn btn-ghost full" id="quoteBtn" target="_blank" rel="noopener">לצפייה בהצעת המחיר</a>
-  </section>
   <section class="card">
     <h2>החוזה</h2>
     <div class="preview-wrap"><div class="preview-pages" id="signPreview"></div></div>
@@ -434,9 +573,9 @@ const DEFAULT_SETTINGS = {
   name: "שיראל טויטו", addr: "גורן", phone: "0542608049",
   phoneDisplay: "+972 54-260-8049", ig: "Shireltwito.hair_",
   dP1: 2000, dP2: 1400, dDep: 300, dPik: 500, dM1: 550, dM2: 750,
-  quoteUrl: "https://canva.link/ujr7p5g0kaj7v4a", msgSign: "Shirel hairstyle 💕", sig: ""
+  msgSign: "Shirel hairstyle 💕", sig: ""
 };
-const LS = { settings: "st_settings_v1", draft: "st_draft_v1", saved: "st_saved_v1" };
+const LS = { settings: "st_settings_v1", draft: "st_draft_v1", saved: "st_saved_v1", quote: "st_quote_v1" };
 const $ = (id) => document.getElementById(id);
 const isSignMode = new URLSearchParams(location.search).has("s");
 
@@ -488,7 +627,6 @@ function readForm() {
   return {
     v: 1,
     stylist: { name: settings.name, addr: settings.addr, phone: settings.phone, phoneDisplay: settings.phoneDisplay, ig: settings.ig },
-    quoteUrl: (settings.quoteUrl || "").trim(),
     msgSign: (settings.msgSign || "").trim(),
     client: { name: $("cName").value.trim(), phone: $("cPhone").value.trim(), addr: $("cAddr").value.trim() },
     eventDate: $("eventDate").value, signDate: $("signDate").value,
@@ -799,7 +937,7 @@ function makePad(el) {
 
 /* ---------- settings ---------- */
 function bindSettings() {
-  const map = { sName: "name", sAddr: "addr", sPhone: "phone", sPhoneDisplay: "phoneDisplay", sIg: "ig", sQuote: "quoteUrl", sMsgSign: "msgSign", dP1: "dP1", dP2: "dP2", dDep: "dDep", dPik: "dPik", dM1: "dM1", dM2: "dM2" };
+  const map = { sName: "name", sAddr: "addr", sPhone: "phone", sPhoneDisplay: "phoneDisplay", sIg: "ig", sMsgSign: "msgSign", dP1: "dP1", dP2: "dP2", dDep: "dDep", dPik: "dPik", dM1: "dM1", dM2: "dM2" };
   Object.entries(map).forEach(([id, k]) => {
     $(id).value = settings[k];
     $(id).addEventListener("input", () => { settings[k] = $(id).type === "number" ? num($(id).value) : $(id).value.trim(); saveJSON(LS.settings, settings); refreshSoon(); });
@@ -823,21 +961,210 @@ function initApp() {
   $("btnSend2").onclick = () => sendToClient($("btnSend2"));
   $("btnPdf").onclick = () => downloadPDF($("btnPdf"));
   $("btnLink").onclick = openLinkModal;
-  $("btnQuote").onclick = async () => {
-    const d = readForm();
-    if (!d.quoteUrl) { toast("קודם הדביקי את קישור הקנבה בהגדרות למטה"); $("sQuote").closest("details").open = true; $("sQuote").focus(); return; }
-    if (!validate()) return;
-    const first = (d.client.name || "").split(" ")[0];
-    const msg = `היי ${first} 🤍\nמצרפת את הצעת המחיר עבור תסרוקת כלה${forDate(d)}:\n${d.quoteUrl}\nאשמח לענות על כל שאלה 🫶🏻${signOff(d)}`;
-    if (navigator.share) { try { await navigator.share({ text: msg }); return; } catch (e) { if (e.name === "AbortError") return; } }
-    window.open(waLink(d.client.phone, msg), "_blank");
-  };
   $("btnNew").onclick = () => { if (!confirm("לנקות את פרטי הכלה ולהתחיל חוזה חדש?")) return; writeForm({}); $("signDate").value = todayISO(); $("depDate").value = todayISO(); refreshPreview(); window.scrollTo({ top: 0, behavior: "smooth" }); };
   $("linkClose").onclick = () => $("linkModal").classList.add("hidden");
   $("waClose").onclick = () => $("waModal").classList.add("hidden");
-  bindSettings(); renderSaved();
-  document.fonts.ready.then(refreshPreview); refreshPreview();
-  let rw; window.addEventListener("resize", () => { clearTimeout(rw); rw = setTimeout(refreshPreview, 200); });
+  bindSettings(); renderSaved(); initQuote(); initTabs();
+  document.fonts.ready.then(() => { refreshPreview(); refreshQuote(); }); refreshPreview();
+  let rw; window.addEventListener("resize", () => { clearTimeout(rw); rw = setTimeout(() => { refreshPreview(); refreshQuote(); }, 200); });
+}
+
+/* =========================================================
+   Tabs
+   ========================================================= */
+function initTabs() {
+  const set = (tab) => {
+    const q = tab === "quote";
+    $("viewContract").classList.toggle("hidden", q); $("viewQuote").classList.toggle("hidden", !q);
+    $("tabContract").classList.toggle("on", !q); $("tabQuote").classList.toggle("on", q);
+    $("btnSend2").lastChild.textContent = q ? " שליחת הצעת מחיר" : " שליחה ללקוחה";
+    $("btnToPreview").href = q ? "#quotePreview" : "#preview";
+    $("topTag").textContent = q ? "הצעת מחיר" : "חוזה כלה";
+    document.querySelector(".hero h1").textContent = q ? "הצעת מחיר לכלה" : "חוזה כלה חדש";
+    document.querySelector(".hero p").textContent = q ? "בוחרים סוג, מעדכנים מחיר אם צריך, ושולחים לכלה תמונה מעוצבת בוואטסאפ." : "ממלאים רק את מה שחסר, רואים את החוזה המוכן ושולחים לכלה בוואטסאפ.";
+    try { localStorage.setItem("st_tab", tab); } catch {}
+    if (q) refreshQuote();
+  };
+  $("tabContract").onclick = () => set("contract"); $("tabQuote").onclick = () => set("quote");
+  $("btnSend2").onclick = () => ($("viewQuote").classList.contains("hidden") ? sendToClient($("btnSend2")) : sendQuote($("btnSend2")));
+  let t = "contract"; try { t = localStorage.getItem("st_tab") || "contract"; } catch {}
+  if (t === "quote") set("quote");
+}
+
+/* =========================================================
+   Price quote
+   ========================================================= */
+const QUOTE_DEFAULTS = {
+  reg: { price: 2400, escort: 1800,
+    incl: "הגעה למקום ההתארגנות.\nכולל פגישת ייעוץ והכירות לתיאום ציפיות, בתיאום מראש.\nתוספות שיער.",
+    fine: "*במידה ואין אפשרות להגיע, תתבצע הפגישה בטלפון/וידאו.",
+    notes: "יש אופציה לסירוק מלוות בעלות של 700₪.\nבמידה ויש מישהי שמעוניינת בתוספות שיער זה תוספת של 200₪.",
+    escortText: "תוספת של ליווי מלא לאולם כולל החלפת תסרוקת וטאצ' אפ לפני חופה" },
+  henna: { price: 1000, escort: 1000,
+    incl: "הגעה למקום ההתארגנות\nשיחת ייעוץ והכירות לתיאום ציפיות, בתיאום מראש.\nכולל תוספות שיער",
+    fine: "", notes: "",
+    escortText: "תוספת של ליווי מלא לאולם כולל החלפת תסרוקת וטאצ' אפ" }
+};
+const qType = () => (document.querySelector('input[name="qType"]:checked') || {}).value || "reg";
+const qStyle = () => (document.querySelector('input[name="qStyle"]:checked') || {}).value || "cream";
+/* Ornaments are drawn onto <canvas> so html2canvas copies them pixel for pixel. */
+function orn(cls, svg, w, h) {
+  const c = document.createElement("canvas"); c.className = "qo " + cls; c.width = w * 2; c.height = h * 2; c.style.width = w + "px"; c.style.height = h + "px";
+  c.dataset.svg = svg.replace("<svg ", `<svg width="${w * 2}" height="${h * 2}" `); return c;
+}
+function paintOrnaments(root) {
+  return Promise.all([...root.querySelectorAll("canvas.qo")].map(c => new Promise(res => {
+    const im = new Image(); im.onload = () => { try { c.getContext("2d").drawImage(im, 0, 0, c.width, c.height); } catch {} res(); }; im.onerror = res;
+    im.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(c.dataset.svg);
+  })));
+}
+function mandalaSVG(color) {
+  let p = "";
+  [60, 95, 130, 175, 215, 255, 290].forEach((r, i) => { p += `<circle cx="300" cy="300" r="${r}" fill="none" stroke="${color}" stroke-width="${i % 2 ? 2 : 1}"/>`; });
+  for (let i = 0; i < 16; i++) p += `<path d="M300 170c22 28 22 62 0 90c-22-28-22-62 0-90z" fill="none" stroke="${color}" stroke-width="1.6" transform="rotate(${i * 22.5} 300 300)"/>`;
+  for (let i = 0; i < 8; i++) p += `<path d="M300 240c14 16 14 40 0 56c-14-16-14-40 0-56z" fill="${color}" transform="rotate(${i * 45} 300 300)"/>`;
+  for (let i = 0; i < 24; i++) p += `<path d="M300 20c14 20 14 44 0 64c-14-20-14-44 0-64z" fill="none" stroke="${color}" stroke-width="1.4" transform="rotate(${i * 15} 300 300)"/>`;
+  for (let i = 0; i < 24; i++) p += `<circle cx="300" cy="100" r="5" fill="${color}" transform="rotate(${i * 15 + 7.5} 300 300)"/>`;
+  for (let i = 0; i < 36; i++) p += `<circle cx="300" cy="12" r="4" fill="${color}" transform="rotate(${i * 10} 300 300)"/>`;
+  for (let i = 0; i < 12; i++) p += `<path d="M300 140a35 35 0 0 1 0 70a35 35 0 0 1 0-70" fill="none" stroke="${color}" stroke-width="1.5" transform="rotate(${i * 30} 300 300)"/>`;
+  p += `<circle cx="300" cy="300" r="22" fill="${color}"/><circle cx="300" cy="300" r="34" fill="none" stroke="${color}" stroke-width="2"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">${p}</svg>`;
+}
+function bandSVG(color) {
+  let p = `<path d="M20 20h640" stroke="${color}" stroke-width="2" fill="none"/>`;
+  for (let x = 60; x <= 620; x += 40) p += `<path d="M${x - 12} 20q12-16 24 0q-12 16-24 0z" fill="none" stroke="${color}" stroke-width="2"/><circle cx="${x + 20}" cy="20" r="3" fill="${color}"/>`;
+  p += `<path d="M340 4l8 16-8 16-8-16z" fill="${color}"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 40">${p}</svg>`;
+}
+function cornerSVG(color) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" fill="none" stroke="${color}" stroke-width="7" stroke-linecap="round"><path d="M20 290V60c0-30 30-40 50-20s0 50-20 40M20 60c0-30 20-45 45-45h225"/><circle cx="30" cy="48" r="7" fill="${color}" stroke="none"/><path d="M90 15c20 0 30 15 20 28s-30 6-26-8"/></svg>`;
+}
+function dividerSVG(color) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 70" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round"><path d="M30 16h720M30 24h720"/><path d="M10 20l20-6v12zM770 20l-20-6v12z" fill="${color}"/><circle cx="60" cy="20" r="3.5" fill="${color}" stroke="none"/><circle cx="720" cy="20" r="3.5" fill="${color}" stroke="none"/><path d="M390 64c-18 0-30-14-22-26s24-2 22 8c-2-10 14-20 22-8s-4 26-22 26z"/><path d="M390 36v-8" stroke-width="2"/></svg>`;
+}
+function frameSVG(color) {
+  const W = 1080, H = 1350, o = 46, i = 60;
+  let p = `<rect x="${o}" y="${o}" width="${W - 2 * o}" height="${H - 2 * o}" fill="none" stroke="${color}" stroke-width="2.5"/>`;
+  p += `<rect x="${i}" y="${i}" width="${W - 2 * i}" height="${H - 2 * i}" fill="none" stroke="${color}" stroke-width="1"/>`;
+  p += `<clipPath id="in"><rect x="${i}" y="${i}" width="${W - 2 * i}" height="${H - 2 * i}"/></clipPath><g clip-path="url(#in)" opacity=".55">`;
+  const m = mandalaSVG(color).replace(/^<svg[^>]*>/, "").replace("</svg>", "");
+  [[i, i], [W - i, i], [i, H - i], [W - i, H - i]].forEach(([x, y]) => { p += `<g transform="translate(${x - 150} ${y - 150}) scale(.5)">${m}</g>`; });
+  p += `</g>`;
+  [[i, i], [W - i, i], [i, H - i], [W - i, H - i]].forEach(([x, y]) => { p += `<circle cx="${x}" cy="${y}" r="7" fill="${color}"/>`; });
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}">${p}</svg>`;
+}
+function archSVG(color) {
+  // moroccan ogee arch, 700 x 560
+  const arch = (o, w) => `<path d="M${40 + o} 560V300c0-110 60-180 140-215 40-18 90-30 120-70l50-${o ? 2 : 0}c30 40 80 52 120 70 80 35 140 105 140 215v260" fill="none" stroke="${color}" stroke-width="${w}"/>`;
+  let p = arch(0, 3) + `<path d="M58 560V300c0-100 56-166 130-200 44-20 92-36 122-72l40-10c30 36 78 52 122 72 74 34 130 100 130 200v260" fill="none" stroke="${color}" stroke-width="1.2"/>`;
+  p += `<circle cx="350" cy="14" r="6" fill="${color}"/><path d="M350 24v22" stroke="${color}" stroke-width="2"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 560">${p}</svg>`;
+}
+function paisleySVG(color) {
+  // vertical border 110 x 1350: repeated paisley teardrops with inner dots
+  let p = `<path d="M30 0v1350" stroke="${color}" stroke-width="1.2"/>`;
+  for (let y = 60; y < 1320; y += 150) {
+    p += `<path d="M55 ${y}c30 20 40 60 20 95s-60 30-70-5 15-70 50-90z" fill="none" stroke="${color}" stroke-width="2"/>`;
+    p += `<path d="M52 ${y + 22}c18 14 24 40 10 62s-36 18-42-4 8-44 32-58z" fill="none" stroke="${color}" stroke-width="1.2"/>`;
+    p += `<circle cx="40" cy="${y + 55}" r="5" fill="${color}"/><circle cx="56" cy="${y + 40}" r="2.5" fill="${color}"/><circle cx="28" cy="${y + 72}" r="2.5" fill="${color}"/>`;
+    p += `<circle cx="30" cy="${y + 125}" r="3.5" fill="${color}"/>`;
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 1350">${p}</svg>`;
+}
+const HENNA_ACCENT = { cream: "#B9924E", frame: "#B08C4A", arch: "#A9834A", wine: "#D9B873", blush: "#B98E62" };
+function readQuote() {
+  return { type: qType(), style: qStyle(), name: $("qName").value.trim(), phone: $("qPhone").value.trim(), date: $("qDate").value,
+    price: num($("qPrice").value), escort: num($("qEscort").value), incl: $("qIncl").value, fine: $("qFine").value.trim(), notes: $("qNotes").value, escortText: $("qEscortText").value.trim() };
+}
+function writeQuoteText(type, t) {
+  const d = { ...QUOTE_DEFAULTS[type], ...(t || {}) };
+  $("qPrice").value = d.price; $("qEscort").value = d.escort; $("qIncl").value = d.incl; $("qFine").value = d.fine; $("qNotes").value = d.notes; $("qEscortText").value = d.escortText;
+}
+function quoteTitle(type) { return type === "henna" ? "תסרוקת כלת חינה" : "תסרוקת כלה"; }
+function lines(t) { return String(t || "").split("\n").map(x => x.trim()).filter(Boolean); }
+function buildQuote(q) {
+  const el = document.createElement("div"); el.className = "q " + (q.type === "henna" ? "q-henna" : "q-reg");
+  const pers = (q.name || q.date) ? `<div class="pers">${q.name ? "עבור " + esc(q.name) : ""}${q.name && q.date ? " · " : ""}${q.date ? fmtDate(q.date) : ""}</div>` : "";
+  const incl = lines(q.incl).map(l => `<li>${esc(l)}</li>`).join("");
+  const notes = lines(q.notes).map(l => `<p>• ${esc(l)}</p>`).join("");
+  const fine = q.fine ? `<p class="fine">${esc(q.fine)}</p>` : "";
+  const foot = q.escortText ? `<div class="foot">${esc(q.escortText)}${q.escort ? " - " + fmtMoney(q.escort) + "₪" : ""}</div>` : "";
+  if (q.type === "henna") {
+    const st = HENNA_ACCENT[q.style] ? q.style : "cream"; el.classList.add("st-" + st); const ac = HENNA_ACCENT[st];
+    const m = mandalaSVG(ac), band = bandSVG(ac);
+    if (st === "cream" || st === "wine") el.append(orn("mand tr", m, 640, 640), orn("mand bl", m, 640, 640), orn("mini", m, 120, 120));
+    if (st === "frame") el.append(orn("frame", frameSVG(ac), 1080, 1350), orn("mini", m, 120, 120));
+    if (st === "arch") el.append(orn("arch", archSVG(ac), 800, 640));
+    if (st === "blush") { const ps = paisleySVG(ac); el.append(orn("pais l", ps, 110, 1350), orn("pais r", ps, 110, 1350), orn("mini", m, 120, 120)); }
+    el.insertAdjacentHTML("beforeend", `<div class="ttl"><span class="a">הצעת מחיר</span><span class="b">${quoteTitle(q.type)}</span></div>`);
+    el.append(orn("band btop", band, st === "arch" ? 500 : 680, st === "arch" ? 29 : 40));
+    el.insertAdjacentHTML("beforeend", `${pers}<div class="main"><div class="price">עלות ${quoteTitle(q.type)} - ${fmtMoney(q.price)}₪</div><p>כולל:</p><ul>${incl}</ul>${fine}</div>${notes ? `<div class="side">${notes}</div>` : ""}${foot}`);
+    el.append(orn("band bbot", band, 680, 40));
+    el.insertAdjacentHTML("beforeend", `<div class="brand">Shirel Twito</div>`);
+  } else {
+    const c = cornerSVG("#111"), dv = dividerSVG("#111");
+    el.append(orn("corner tl", c, 300, 300), orn("corner br", c, 300, 300));
+    el.insertAdjacentHTML("beforeend", `<div class="ttl"><span class="a">הצעת מחיר</span><span class="b">${quoteTitle(q.type)}</span></div>`);
+    el.append(orn("div dtop", dv, 780, 70));
+    el.insertAdjacentHTML("beforeend", `${pers}<div class="main"><div class="price">עלות ${quoteTitle(q.type)} - ${fmtMoney(q.price)}₪</div><p>כולל:</p><ul>${incl}</ul>${fine}</div>${notes ? `<div class="side">${notes}</div>` : ""}${foot}`);
+    el.append(orn("div dbot", dv, 540, 70));
+    el.insertAdjacentHTML("beforeend", `<div class="brand">Shirel Twito</div>`);
+  }
+  return el;
+}
+const QW = 1080, QH = 1350;
+function refreshQuote() {
+  const q = readQuote(); saveJSON(LS.quote, q);
+  const c = $("quotePreview"); c.innerHTML = "";
+  const w = Math.min(c.clientWidth || 340, 560); const sc = w / QW;
+  const box = document.createElement("div"); box.className = "pv"; box.style.width = w + "px"; box.style.height = Math.round(QH * sc) + "px";
+  const node = buildQuote(q); node.style.transform = `scale(${sc})`; node.style.transformOrigin = "top left"; node.style.position = "absolute"; node.style.top = "0"; node.style.left = "0";
+  box.appendChild(node); c.appendChild(box); paintOrnaments(node);
+}
+let qT; const refreshQuoteSoon = () => { clearTimeout(qT); qT = setTimeout(refreshQuote, 180); };
+async function makeQuoteImage(q) {
+  if (!window.html2canvas) throw new Error("libs");
+  await document.fonts.ready;
+  const host = $("printDoc"); host.innerHTML = ""; const node = buildQuote(q); host.appendChild(node);
+  await paintOrnaments(node);
+  const canvas = await html2canvas(node, { scale: 2, backgroundColor: null, logging: false, useCORS: true, width: QW, height: QH, windowWidth: QW });
+  host.innerHTML = "";
+  return new Promise(res => canvas.toBlob(res, "image/jpeg", 0.92));
+}
+function quoteMsg(q) {
+  const first = (q.name || "").split(" ")[0];
+  const d = { msgSign: (settings.msgSign || "").trim() };
+  return `היי${first ? " " + first : ""} 🤍\nמצרפת את הצעת המחיר עבור ${quoteTitle(q.type)}${q.date ? " לתאריך " + fmtDate(q.date) : ""}.\nאשמח לענות על כל שאלה 🫶🏻${signOff(d)}`;
+}
+function quoteFile(q) { return `הצעת מחיר${q.name ? " - " + q.name.replace(/[\\/:*?"<>|]/g, " ") : ""}.jpg`; }
+async function shareImage(blob, name, text, phone) {
+  const file = new File([blob], name, { type: "image/jpeg" });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: name, text }); return "shared"; } catch (e) { if (e && e.name === "AbortError") return "cancelled"; }
+  }
+  downloadBlob(blob, name);
+  $("waOpen").href = waLink(phone, text); $("waOpen").classList.toggle("hidden", !waNumber(phone));
+  $("waTitle").textContent = "התמונה ירדה למכשיר"; $("waModal").classList.remove("hidden");
+  return "downloaded";
+}
+async function sendQuote(btn) {
+  const q = readQuote(); setBusy(btn, true, "מכינה תמונה...");
+  try { const r = await shareImage(await makeQuoteImage(q), quoteFile(q), quoteMsg(q), q.phone); if (r === "shared") toast("הצעת המחיר נשלחה 💕"); }
+  catch (e) { console.error(e); toast("משהו השתבש ביצירת התמונה. נסי שוב."); }
+  setBusy(btn, false);
+}
+function initQuote() {
+  const saved = loadJSON(LS.quote, null);
+  if (saved && saved.type) { document.querySelector(`input[name="qType"][value="${saved.type}"]`).checked = true; writeQuoteText(saved.type, saved); $("qName").value = saved.name || ""; $("qPhone").value = saved.phone || ""; $("qDate").value = saved.date || ""; const st = document.querySelector(`input[name="qStyle"][value="${saved.style}"]`); if (st) st.checked = true; }
+  else writeQuoteText("reg");
+  const syncStyles = () => $("hennaStyles").classList.toggle("hidden", qType() !== "henna");
+  syncStyles();
+  document.querySelectorAll('input[name="qType"]').forEach(r => r.addEventListener("change", () => { writeQuoteText(qType()); syncStyles(); refreshQuote(); }));
+  document.querySelectorAll('input[name="qStyle"]').forEach(r => r.addEventListener("change", refreshQuote));
+  ["qName", "qPhone", "qDate", "qPrice", "qEscort", "qIncl", "qFine", "qNotes", "qEscortText"].forEach(id => { $(id).addEventListener("input", refreshQuoteSoon); $(id).addEventListener("change", refreshQuoteSoon); });
+  $("btnQuoteSend").onclick = () => sendQuote($("btnQuoteSend"));
+  $("btnQuoteDl").onclick = async () => { const q = readQuote(); const b = $("btnQuoteDl"); setBusy(b, true, "מכינה תמונה..."); try { downloadBlob(await makeQuoteImage(q), quoteFile(q)); toast("התמונה ירדה למכשיר"); } catch (e) { console.error(e); toast("משהו השתבש. נסי שוב."); } setBusy(b, false); };
+  $("btnQuoteReset").onclick = () => { writeQuoteText(qType()); refreshQuote(); toast("הטקסט חזר למקור"); };
 }
 
 /* =========================================================
@@ -855,7 +1182,6 @@ function initSign() {
   $("helloText").textContent = `${d.stylist.name} שלחה לך את חוזה העבודה לעיצוב שיער הכלה${d.eventDate ? " ליום " + fmtDate(d.eventDate) : ""}. עברי עליו, חתמי למטה ושלחי חזרה.`;
   $("btnBrideSend").lastChild.textContent = ` חתימה ושליחה חזרה ל${d.stylist.name.split(" ")[0]}`;
   $("doneWa").textContent = `פתיחת וואטסאפ של ${d.stylist.name.split(" ")[0]}`;
-  if (d.quoteUrl && /^https?:\/\//i.test(d.quoteUrl)) { $("quoteBtn").href = d.quoteUrl; $("quoteCard").classList.remove("hidden"); }
   const render = () => renderPreview($("signPreview"), paginate(d, { stylistSig: BUILTIN_SIG }));
   document.fonts.ready.then(render); render();
   let rw; window.addEventListener("resize", () => { clearTimeout(rw); rw = setTimeout(render, 200); });
