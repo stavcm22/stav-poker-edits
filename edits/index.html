@@ -23,6 +23,22 @@
 .svc-cta{margin-top:clamp(16px,2.6vw,26px); display:flex; flex-wrap:wrap; gap:14px 20px; align-items:center; justify-content:space-between; padding:16px 18px; background:var(--panel); border:1px solid var(--rule); border-radius:var(--r)}
 .svc-cta p{margin:0; color:var(--muted); font-size:clamp(16px,1.3vw,18px); max-width:34em}
 @media (max-width:760px){ .svc{grid-template-columns:1fr} .svc-cta .btn{width:100%; justify-content:center} }
+
+/* ── services: alive (7.11.2026) ── */
+.svc-bin{transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1), border-color .3s, box-shadow .3s}
+html.svc-js .svc-bin{opacity:0; transform:translateY(22px)}
+html.svc-js .svc-bin.on{opacity:1; transform:none}
+.svc-bin:nth-child(2){transition-delay:.08s} .svc-bin:nth-child(3){transition-delay:.16s} .svc-bin:nth-child(4){transition-delay:.24s}
+html.svc-js .svc-bin li{opacity:0; transform:translateX(-12px); transition:opacity .5s ease, transform .5s ease}
+html.svc-js .svc-bin.on li{opacity:1; transform:none}
+.svc-bin li:nth-child(1){transition-delay:.30s} .svc-bin li:nth-child(2){transition-delay:.38s} .svc-bin li:nth-child(3){transition-delay:.46s} .svc-bin li:nth-child(4){transition-delay:.54s} .svc-bin li:nth-child(5){transition-delay:.62s}
+.svc-bin::after{content:""; position:absolute; top:0; height:3px; width:28%; left:-30%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.85),transparent); animation:svcSweep 3.6s ease-in-out infinite}
+.svc-bin:nth-child(2)::after{animation-delay:.9s} .svc-bin:nth-child(3)::after{animation-delay:1.8s} .svc-bin:nth-child(4)::after{animation-delay:2.7s}
+@keyframes svcSweep{0%{left:-30%} 55%,100%{left:105%}}
+.svc-bin.on:hover{transform:translateY(-4px); border-color:var(--c); box-shadow:0 14px 34px -14px color-mix(in srgb,var(--c) 55%,transparent)}
+.svc-bin li{transition-property:opacity,transform,color}
+.svc-bin.on li:hover{color:var(--c)}
+@media (prefers-reduced-motion:reduce){ html.svc-js .svc-bin, html.svc-js .svc-bin li{opacity:1; transform:none; transition:none} .svc-bin::after{animation:none; display:none} }
 </style>
 <meta property="og:type" content="website">
 <meta property="og:title" content="HOOK STUDIO | וידאו, דפי נחיתה ומערכות לעסקים">
@@ -1135,7 +1151,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
     <a href="#services">כל השירותים</a>
   </nav>
   <div class="top-tc" aria-hidden="true"><span class="rec"></span><b id="pageTc">00:00:00:00</b></div>
-  <a class="btn primary sm mag" href="#contact">שלחו חומר</a>
+  <a class="btn primary sm mag" href="#contact">דברו איתי</a>
 </header>
 
 <main>
@@ -1144,13 +1160,13 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
   <div class="hero-bg" aria-hidden="true"><div class="vclip mont" data-prio="0" data-src-v="assets/work/montage_v.mp4" data-src-h="assets/work/montage_h.mp4"><video muted playsinline loop preload="auto" poster="assets/work/montage_h.jpg" data-poster-v="assets/work/montage_v.jpg"></video></div><div class="ghost-tc" data-speed="-.35" id="ghostTc">00:00:00:00</div><div class="ghost-tc b" data-speed=".22">HOOK · STUDIO</div></div>
   <div class="hero-copy">
     <p class="slate"><span class="rec"></span>סצנה 01 · טייק 01 · REC</p>
-    <h1 id="h1"><span class="w" style="--i:0">שולחים</span> <span class="w" style="--i:1">חומר.</span><br><span class="w" style="--i:2">מקבלים</span> <span class="w g" style="--i:3">סרטון.</span></h1>
+    <h1 id="h1"><span class="w" style="--i:0">תוכן</span> <span class="w" style="--i:1">ואתרים</span><br><span class="w" style="--i:2">שמביאים</span> <span class="w g" style="--i:3">לקוחות.</span></h1>
     <div class="rw hw" id="hw" role="region" aria-label="דוגמאות לעריכות שלי">
       <div class="hw-bar"><span class="hw-lbl"><span class="rec"></span>העריכות שלי · בחרו תחום</span><span class="hw-nav"><button type="button" id="hwPrev" class="mag" aria-label="הקודם">→</button><button type="button" id="hwNext" class="mag" aria-label="הבא">←</button></span></div>
       <div class="hw-tabs" role="tablist" aria-label="סוגי סרטונים">
         <button type="button" role="tab" aria-selected="true" data-cat="all">הכל<i></i></button>
         <button type="button" role="tab" aria-selected="false" data-cat="podcast">פודקאסטים<i></i></button>
-        <button type="button" role="tab" aria-selected="false" data-cat="poker">פוקר · נו לימיט<i></i></button>
+        <button type="button" role="tab" aria-selected="false" data-cat="show">שיחות וראיונות<i></i></button>
         <button type="button" role="tab" aria-selected="false" data-cat="comedy">סטנדאפ<i></i></button>
         <button type="button" role="tab" aria-selected="false" data-cat="barber">מספרות<i></i></button>
         <button type="button" role="tab" aria-selected="false" data-cat="food">אוכל ושפים<i></i></button>
@@ -1163,7 +1179,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
         <button type="button" role="tab" aria-selected="false" data-cat="biz">עסקים ומודעות<i></i></button>
       </div>
       <div class="hw-track">
-        <figure class="phn" data-cat="poker" data-src="assets/work/nl-arik8.mp4" data-audio="1">
+        <figure class="phn" data-cat="show" data-src="assets/work/nl-arik8.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/nl-arik8.jpg" aria-label="נו לימיט: אריק קליפר · הפלופ המושלם בדרך לגביע"></video>
             <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">PODCAST · 1:44</span></div>
@@ -1187,7 +1203,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           </div></div></div>
           <figcaption><b>BARBER HOME</b><span>סרטון תדמית למספרה</span></figcaption>
         </figure>
-        <figure class="phn" data-cat="poker" data-src="assets/work/nl-ori1.mp4" data-audio="1">
+        <figure class="phn" data-cat="show" data-src="assets/work/nl-ori1.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/nl-ori1.jpg" aria-label="נו לימיט: אורי פלג · המחשבון האנושי"></video>
             <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">PODCAST · 1:01</span></div>
@@ -1203,7 +1219,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           </div></div></div>
           <figcaption><b>ד״ר ליאת יקיר</b><span>עם טלי גרנות בשן · חרד או נמנע</span></figcaption>
         </figure>
-        <figure class="phn" data-cat="poker" data-src="assets/work/nl-arik6.mp4" data-audio="1">
+        <figure class="phn" data-cat="show" data-src="assets/work/nl-arik6.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/nl-arik6.jpg" aria-label="נו לימיט: אריק קליפר · בווגאס אני בא לעבודה"></video>
             <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">PODCAST · 0:50</span></div>
@@ -1219,7 +1235,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           </div></div></div>
           <figcaption><b>ד״ר ליאת יקיר</b><span>עם טלי גרנות בשן · הקשר שלך רעיל</span></figcaption>
         </figure>
-        <figure class="phn" data-cat="poker" data-src="assets/work/nl-ori4.mp4" data-audio="1">
+        <figure class="phn" data-cat="show" data-src="assets/work/nl-ori4.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/nl-ori4.jpg" aria-label="נו לימיט: אורי פלג · דחפתי אול-אין עם 7-2"></video>
             <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">PODCAST · 0:51</span></div>
@@ -1235,7 +1251,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           </div></div></div>
           <figcaption><b>ד״ר ליאת יקיר</b><span>עם דניאל דושי · הוא כבר לא האלפא</span></figcaption>
         </figure>
-        <figure class="phn" data-cat="poker" data-src="assets/work/nl-ori2.mp4" data-audio="1">
+        <figure class="phn" data-cat="show" data-src="assets/work/nl-ori2.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/nl-ori2.jpg" aria-label="נו לימיט: אורי פלג · העצה ההפוכה"></video>
             <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">PODCAST · 1:05</span></div>
@@ -1251,7 +1267,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           </div></div></div>
           <figcaption><b>ד״ר ליאת יקיר</b><span>עם דניאל דושי · הדג שלא יכול בלעדיה</span></figcaption>
         </figure>
-        <figure class="phn" data-cat="poker" data-src="assets/work/nl-kazino.mp4" data-audio="1">
+        <figure class="phn" data-cat="show" data-src="assets/work/nl-kazino.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/nl-kazino.jpg" aria-label="נו לימיט: הקזינו לילדים בקניון"></video>
             <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">PODCAST · 0:47</span></div>
@@ -1267,7 +1283,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           </div></div></div>
           <figcaption><b>ד״ר ליאת יקיר</b><span>עם טלי גרנות בשן · תאהבי את עצמך קודם</span></figcaption>
         </figure>
-        <figure class="phn" data-cat="poker" data-src="assets/work/nl-ori6.mp4" data-audio="1">
+        <figure class="phn" data-cat="show" data-src="assets/work/nl-ori6.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/nl-ori6.jpg" aria-label="נו לימיט: אורי פלג · טום דואן, גיבור או כבש"></video>
             <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">PODCAST · 1:03</span></div>
@@ -1283,7 +1299,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           </div></div></div>
           <figcaption><b>ד״ר ליאת יקיר</b><span>עם דניאל דושי · מי יוזמת את הגירושים</span></figcaption>
         </figure>
-        <figure class="phn" data-cat="poker" data-src="assets/work/nl-ori8.mp4" data-audio="1">
+        <figure class="phn" data-cat="show" data-src="assets/work/nl-ori8.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/nl-ori8.jpg" aria-label="נו לימיט: אורי פלג · האגו והממתקים"></video>
             <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">PODCAST · 0:58</span></div>
@@ -1299,7 +1315,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           </div></div></div>
           <figcaption><b>ד״ר ליאת יקיר</b><span>עם טלי גרנות בשן · מילה אחת שמעלימה סרטים</span></figcaption>
         </figure>
-        <figure class="phn" data-cat="poker" data-src="assets/work/nl-ori5.mp4" data-audio="1">
+        <figure class="phn" data-cat="show" data-src="assets/work/nl-ori5.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/nl-ori5.jpg" aria-label="נו לימיט: אורי פלג · הבומפוט"></video>
             <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">PODCAST · 0:44</span></div>
@@ -1315,7 +1331,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           </div></div></div>
           <figcaption><b>ד״ר ליאת יקיר</b><span>עם דניאל דושי · דופמין, הורמון הציפייה</span></figcaption>
         </figure>
-        <figure class="phn" data-cat="poker" data-src="assets/work/nl-ori7.mp4" data-audio="1">
+        <figure class="phn" data-cat="show" data-src="assets/work/nl-ori7.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/nl-ori7.jpg" aria-label="נו לימיט: אורי פלג · הבד ביט של קסקס"></video>
             <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">PODCAST · 1:02</span></div>
@@ -1347,7 +1363,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           </div></div></div>
           <figcaption><b>BARBER HOME</b><span>לפני ואחרי</span></figcaption>
         </figure>
-        <figure class="phn" data-cat="poker" data-src="assets/work/nl-arik7.mp4" data-audio="1">
+        <figure class="phn" data-cat="show" data-src="assets/work/nl-arik7.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/nl-arik7.jpg" aria-label="נו לימיט: אריק קליפר · הטעות של מקצוענים"></video>
             <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">PODCAST · 1:04</span></div>
@@ -1443,7 +1459,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           </div></div></div>
           <figcaption><b>בית קפה</b><span class="ph-demo">דוגמת עריכה</span></figcaption>
         </figure>
-        <figure class="phn" data-cat="poker" data-src="assets/work/nl-eyal.mp4" data-audio="1">
+        <figure class="phn" data-cat="show" data-src="assets/work/nl-eyal.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/nl-eyal.jpg" aria-label="נו לימיט: אייל אשכר · היד מאמסטרדם"></video>
             <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">PODCAST · 1:23</span></div>
@@ -1475,7 +1491,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           </div></div></div>
           <figcaption><b>בית המלאכה</b><span>כהן מיכאל · שיפוץ סקסופון</span></figcaption>
         </figure>
-        <figure class="phn" data-cat="poker" data-src="assets/work/nl-noam.mp4" data-audio="1">
+        <figure class="phn" data-cat="show" data-src="assets/work/nl-noam.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/nl-noam.jpg" aria-label="נו לימיט: נועם מול קסיאס · שיחת טלפון"></video>
             <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">PODCAST · 1:20</span></div>
@@ -1515,7 +1531,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           </div></div></div>
           <figcaption><b>בית המלאכה</b><span>כהן מיכאל · יישור גוף הכלי</span></figcaption>
         </figure>
-        <figure class="phn" data-cat="poker" data-src="assets/work/nl-omri.mp4" data-audio="1">
+        <figure class="phn" data-cat="show" data-src="assets/work/nl-omri.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/nl-omri.jpg" aria-label="נו לימיט: לרוץ פעמיים מול עומרי"></video>
             <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">PODCAST · 0:32</span></div>
@@ -1555,7 +1571,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           </div></div></div>
           <figcaption><b>בית המלאכה</b><span>כהן מיכאל · הלחמה</span></figcaption>
         </figure>
-        <figure class="phn" data-cat="poker" data-src="assets/work/nl-meni.mp4" data-audio="1">
+        <figure class="phn" data-cat="show" data-src="assets/work/nl-meni.mp4" data-audio="1">
           <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
             <video muted playsinline loop preload="none" poster="assets/work/nl-meni.jpg" aria-label="נו לימיט: מני מלכה על הצילום שלו"></video>
             <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">PODCAST · 0:48</span></div>
@@ -1582,10 +1598,10 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
       </div>
       <button type="button" class="hw-more" id="hwMore" hidden>עוד <b></b> סרטונים ▾</button>
     </div>
-    <p class="lead">אני סתיו, עורך וידאו. שולחים לי פרק של פודקאסט, סרטון מהטלפון או צילומים מהעסק, <strong>ואני הופך את זה לסרטון ערוך עם קצב, כתוביות וגרפיקה</strong>, מוכן להעלאה לרילס, לטיקטוק וליוטיוב.</p>
-    <p class="free"><b>העריכה הראשונה עליי.</b> בלי התחייבות.</p>
+    <p class="lead">אני סתיו, מ-HOOK STUDIO. אני עורך רילס, קטעים מפודקאסטים ומודעות, <strong>ובונה דפי נחיתה, אתרים ומערכות שמביאים לקוחות</strong>: זימון תורים, מענה אוטומטי בוואטסאפ וטפסי פניות.</p>
+    <p class="free"><b>הדבר הראשון עליי:</b> דף נחיתה לדוגמה, ריל ערוך או מודעה. בלי התחייבות.</p>
     <div class="ctas">
-      <a class="btn primary mag" href="https://wa.me/972535255705?text=%D7%94%D7%99%D7%99%20%D7%A1%D7%AA%D7%99%D7%95%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%9C%20%D7%A2%D7%A8%D7%99%D7%9B%D7%AA%20%D7%95%D7%99%D7%93%D7%90%D7%95" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.8 11.8 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>שלחו לי בוואטסאפ</a>
+      <a class="btn primary mag" href="https://wa.me/972535255705?text=%D7%94%D7%99%D7%99%20%D7%A1%D7%AA%D7%99%D7%95%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%90%D7%99%D7%9A%20%D7%90%D7%AA%D7%94%20%D7%99%D7%9B%D7%95%D7%9C%20%D7%9C%D7%A2%D7%96%D7%95%D7%A8%20%D7%9C%D7%A2%D7%A1%D7%A7%20%D7%A9%D7%9C%D7%99" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.8 11.8 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>שלחו לי בוואטסאפ</a>
       <a class="btn ghost mag" href="https://t.me/Stavcm_Edits_bot" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.7 19.6c-.2 1-.9 1.3-1.8.8l-4.8-3.6-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8.1c.4-.3-.1-.5-.6-.2L6.4 13.2l-4.7-1.5c-1-.3-1-1 .2-1.5L20.5 3c.9-.3 1.6.2 1.4 1.3Z"/></svg>טלגרם</a>
     </div>
     <dl class="specs">
@@ -1753,7 +1769,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
     <header class="sec-h" data-cut>
       <p class="tcm"><i></i><span data-tc="reels">00:00:00:00</span> · דוגמאות</p>
       <h2>דוגמאות <em>מהעריכות שלי.</em></h2>
-      <p>סרטונים אמיתיים שערכתי: מודעות לבית מלאכה לכלי נשיפה, רילס של שיפוץ מלא ויד פוקר עם גרפיקה. לחצו על סרטון כדי לצפות בו.</p>
+      <p>עבודות אמיתיות ללקוחות: קטעים מפודקאסטים, מודעות לעסקים ורילס. לחצו על סרטון כדי לצפות בו.</p>
     </header>
   </div>
   <div class="rw" id="rw">
@@ -1773,14 +1789,6 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
           <button class="ph-snd" type="button" aria-label="הפעלת סאונד" aria-pressed="false"><svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="m17 9 4 6m0-6-4 6"/></svg><svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
         </div></div></div>
         <figcaption><b>נגני סקסופון!</b><span>מודעה לפייסבוק ולאינסטגרם</span></figcaption>
-      </figure>
-      <figure class="phn" data-src="assets/work/poker.mp4" data-speed="-0.066" data-audio="1">
-        <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
-          <video muted playsinline loop preload="none" poster="assets/work/poker.jpg" aria-label="יד בפוקר: גרפיקה כמו בשידור"></video>
-          <div class="ph-ui" aria-hidden="true"><div class="ph-prog"><i></i></div><span class="ph-tag">POKER · 0:36</span></div>
-          <button class="ph-snd" type="button" aria-label="הפעלת סאונד" aria-pressed="false"><svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="m17 9 4 6m0-6-4 6"/></svg><svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
-        </div></div></div>
-        <figcaption><b>יד בפוקר</b><span>גרפיקה כמו בשידור</span></figcaption>
       </figure>
       <figure class="phn" data-src="assets/work/ad2.mp4" data-speed="0.055" data-audio="1">
         <div class="ph-in"><div class="ph-shell"><div class="ph-scr">
@@ -1854,12 +1862,6 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
         <span class="nm">יוטיוב</span>
         <span class="ds">סרטונים ארוכים: סדר, חיתוך, כתוביות, פרקים ותמונה ממוזערת שגורמת ללחוץ.</span>
         <span class="fm">16:9</span><span class="ln">כל אורך</span>
-      </button>
-      <button class="bin-row" aria-pressed="false" data-k="pkr">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 6h7l2 2h9v11H3z"/></svg>
-        <span class="nm">פוקר</span>
-        <span class="ds">ידיים עם גרפיקה כמו בשידור: הקלפים, הקופה והאחוזים על המסך. יש לזה אתר משלו.</span>
-        <span class="fm">9:16</span><span class="ln">30–45 שנ׳</span>
       </button>
     </div>
     <div class="bin-view">
@@ -1982,20 +1984,20 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
     <div class="io-ruler" aria-hidden="true"></div>
     <div class="io-body">
       <div class="io-reg" aria-hidden="true"></div>
-      <div class="io-mk in" aria-hidden="true"><span>IN · שולחים חומר</span></div>
-      <div class="io-mk out" aria-hidden="true"><span>OUT · מקבלים סרטון</span></div>
-      <h2>העריכה הראשונה עליי.</h2>
+      <div class="io-mk in" aria-hidden="true"><span>IN · מספרים מה צריך</span></div>
+      <div class="io-mk out" aria-hidden="true"><span>OUT · מקבלים תוצאה</span></div>
+      <h2>הדבר הראשון עליי.</h2>
     </div>
   </div>
   <div class="offer-foot">
-    <p>שולחים חומר, מקבלים סרטון ערוך, ורק אז מחליטים אם להמשיך. בלי התחייבות, ואם משהו לא בול, משנים עד שזה מושלם.</p>
+    <p>תצוגה של דף נחיתה לעסק שלכם, ריל אחד ערוך או מודעה מעוצבת: בוחרים אחד, מקבלים בחינם, ורק אז מחליטים אם להמשיך. בלי התחייבות, ואם משהו לא בול, משנים עד שזה מושלם.</p>
     <a class="btn primary mag" href="#contact">אני רוצה לנסות</a>
   </div>
 </section>
 
 <div class="marq" id="marq" aria-hidden="true">
-  <div class="marq-row" data-dir="1"><span><b>שולחים חומר.</b><i></i><b class="o">מקבלים סרטון.</b><i></i><b class="c">רילס</b><i></i><b class="o">טיקטוק</b><i></i><b>יוטיוב</b><i></i><b class="o">פודקאסטים</b><i></i></span></div>
-  <div class="marq-row" data-dir="-1"><span><b class="o">כתוביות</b><i></i><b>זומים</b><i></i><b class="o">סאונד נקי</b><i></i><b class="c">הוקים</b><i></i><b class="o">גרפיקה</b><i></i><b>צבע</b><i></i></span></div>
+  <div class="marq-row" data-dir="1"><span><b>מספרים מה צריך.</b><i></i><b class="o">מקבלים תוצאה.</b><i></i><b class="c">רילס</b><i></i><b class="o">דפי נחיתה</b><i></i><b>אתרים</b><i></i><b class="o">פודקאסטים</b><i></i></span></div>
+  <div class="marq-row" data-dir="-1"><span><b class="o">מודעות</b><i></i><b>כתוביות</b><i></i><b class="o">תורים אונליין</b><i></i><b class="c">וואטסאפ אוטומטי</b><i></i><b class="o">לוגו ומיתוג</b><i></i><b>הוקים</b><i></i></span></div>
 </div>
 <!-- ───────── SERVICES ───────── -->
 <section class="sec wrap" id="services" data-scene>
@@ -2064,11 +2066,11 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
     <header class="sec-h has-clip" style="margin:0" data-cut>
       <div class="vclip sclip" data-prio="2" data-src="assets/work/bama1.mp4"><video muted playsinline loop preload="none" poster="assets/work/bama1.jpg" aria-label="קטע לדוגמה: במה פתוחה"></video><span>במה פתוחה</span></div>
       <p class="tcm"><i></i><span data-tc="contact">00:00:00:00</span> · דברו איתי</p>
-      <h2>יש לכם חומר? <em>שלחו לי.</em></h2>
-      <p>כתבו מה יש לכם ומה אתם רוצים שייצא. אפשר לשלוח קובץ, קישור, או סתם רעיון.</p>
+      <h2>יש לכם עסק? <em>בואו נדבר.</em></h2>
+      <p>כתבו מה העסק צריך: סרטון, דף נחיתה, מודעה או מערכת. אפשר לשלוח קובץ, קישור, או סתם רעיון.</p>
     </header>
     <div class="big-btns">
-      <a class="bb wa mag" href="https://wa.me/972535255705?text=%D7%94%D7%99%D7%99%20%D7%A1%D7%AA%D7%99%D7%95%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%9C%20%D7%A2%D7%A8%D7%99%D7%9B%D7%AA%20%D7%95%D7%99%D7%93%D7%90%D7%95" target="_blank" rel="noopener" id="waBtn" >
+      <a class="bb wa mag" href="https://wa.me/972535255705?text=%D7%94%D7%99%D7%99%20%D7%A1%D7%AA%D7%99%D7%95%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%90%D7%99%D7%9A%20%D7%90%D7%AA%D7%94%20%D7%99%D7%9B%D7%95%D7%9C%20%D7%9C%D7%A2%D7%96%D7%95%D7%A8%20%D7%9C%D7%A2%D7%A1%D7%A7%20%D7%A9%D7%9C%D7%99" target="_blank" rel="noopener" id="waBtn" >
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.8 11.8 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
         <span><b>וואטסאפ</b><small>הודעה ישירה אליי</small><span class="live" aria-hidden="true">OPEN CHAT</span></span><span class="eq" aria-hidden="true"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i></span><span class="ar" aria-hidden="true">←</span><i class="ring2" aria-hidden="true"></i><i class="glw" aria-hidden="true"></i>
       </a>
@@ -2086,7 +2088,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
   <div class="wrap foot-row">
     <a class="logo" href="#top" aria-label="HOOK STUDIO"><span>HOOK</span><i></i><span>STUDIO</span></a>
     <span>וידאו, דפי נחיתה, אתרים, מודעות ומערכות לעסקים וליוצרים.</span>
-    <span>עורך גם ידיים בפוקר: <a href="https://stav-poker-edits.vercel.app" target="_blank" rel="noopener">Stav Poker Edits</a></span>
+    <span>אינסטגרם: <a href="https://instagram.com/hook.studio.il" target="_blank" rel="noopener">@hook.studio.il</a></span>
     <span class="mono">© 2026</span>
   </div>
 </footer>
@@ -2156,10 +2158,10 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
   const SEG = [
     { s: 0, e: 5, n: 'workshop_A.mov', fx: [['צבע', 'חם <bdi dir="ltr">+6</bdi> · ניגודיות <bdi dir="ltr">+12</bdi>'], ['כתוביות', 'כותרת שלב'], ['מסגור', '<bdi dir="ltr">16:9 → 9:16</bdi>']] },
     { s: 5, e: 9.5, n: 'ad_01.mp4', fx: [['הוק', 'שנייה וחצי ראשונות'], ['טקסט מודעה', '5 כותרות'], ['סיום', 'הנעה לוואטסאפ']] },
-    { s: 9.5, e: 14.5, n: 'hand_AA_KK.mov', fx: [['גרפיקת שידור', 'קלפים · קופה'], ['אחוזים', 'מחושבים מהיד'], ['סאונד', 'קלפים וצ׳יפים']] },
+    { s: 9.5, e: 14.5, n: 'barber_reel.mp4', fx: [['הוק', 'משפט אחד בפתיחה'], ['כתוביות', 'מילה אחרי מילה'], ['חיתוכים', 'על הקצב']] },
     { s: 14.5, e: DUR, n: 'workshop_B.mov', fx: [['זום', '<bdi dir="ltr">100 → 112%</bdi>'], ['כותרת', 'ליטוש'], ['ייצוב', 'בלי רעידות']] },
   ];
-  const V2 = [[0.3, 4.7, 'titles_steps'], [5.0, 9.4, 'ad_text'], [9.6, 14.4, 'HUD_broadcast'], [14.7, 18.3, 'title_polish']];
+  const V2 = [[0.3, 4.7, 'titles_steps'], [5.0, 9.4, 'ad_text'], [9.6, 14.4, 'hook_captions'], [14.7, 18.3, 'title_polish']];
   const tl = $('#tl');
   const pct = (t) => (t / DUR * 100) + '%';
   safe(() => {
@@ -2366,7 +2368,6 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
       cre: { kind: 'v', s: 0, e: 5, file: 'workshop_reel_9x16.mp4' },
       biz: { kind: 'v', s: 5, e: 9.5, file: 'ad_01_9x16.mp4' },
       yt: { kind: 'h', file: 'full_restore_16x9.mp4' },
-      pkr: { kind: 'v', s: 9.5, e: 14.5, file: 'hand_AA_KK_9x16.mp4' },
     };
     const rows = $$('.bin-row'), fr = $('#bvFrame'), vid = $('#bvVideo'), img = $('#bvImg'), yt = $('#bvYt'), pod = $('#bvPod'), name = $('#bvName'), btc = $('#bvTc');
     const view = $('.bin-view');
@@ -2469,7 +2470,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
   });
 
   /* ───── page timecode + bottom scrub ───── */
-  const SECS = [['top', 'פתיחה', '--v1'], ['raw', 'לפני ואחרי', '--v2'], ['cuts', 'חיתוכים', '--a1'], ['reels', 'דוגמאות', '--cc'], ['work', 'עבודות', '--v1'], ['tools', 'כלים', '--v2'], ['process', 'תהליך', '--a1'], ['offer', 'העריכה הראשונה', '--cc'], ['services', 'שירותים', '--a1'], ['contact', 'דברו איתי', '--v1']];
+  const SECS = [['top', 'פתיחה', '--v1'], ['raw', 'לפני ואחרי', '--v2'], ['cuts', 'חיתוכים', '--a1'], ['reels', 'דוגמאות', '--cc'], ['work', 'עבודות', '--v1'], ['tools', 'כלים', '--v2'], ['process', 'תהליך', '--a1'], ['offer', 'הראשון עליי', '--cc'], ['services', 'שירותים', '--a1'], ['contact', 'דברו איתי', '--v1']];
   const lane = $('#scrubLane'), scrub = $('.scrub'), pageTc = $('#pageTc'), scrubTc = $('#scrubTc');
   const btns = SECS.map(([id, label, c]) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.style.setProperty('--c', `var(${c})`); b.setAttribute('aria-label', 'קפיצה אל ' + label); b.addEventListener('click', () => document.getElementById(id).scrollIntoView({ behavior: RM ? 'auto' : 'smooth' })); lane.appendChild(b); return b; });
   // clips sit where each section sits in the document; the playhead is the "reading line",
@@ -2936,8 +2937,8 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
   const $ = (q, el = document) => el.querySelector(q), $$ = (q, el = document) => [...el.querySelectorAll(q)];
   const lb = $('#lb'); if (!lb) return;
   const V = $('#lbV'), stage = $('#lbStage'), bar = $('#lbBar'), time = $('#lbTime'), root = document.documentElement;
-  const CATN = { poker: 'פוקר · נו לימיט', comedy: 'סטנדאפ', barber: 'מספרות', food: 'אוכל ושפים', realestate: 'נדל״ן', podcast: 'פודקאסטים', biz: 'עסקים ומודעות', fitness: 'כושר', martial: 'אומנויות לחימה', dj: 'תקליטנים ואירועים', tattoo: 'קעקועים', dog: 'אילוף כלבים' };
-  const guessCat = (src) => /\/(ad\d|sax|mc\d)/.test(src) ? 'biz' : /\/(nl-|poker)/.test(src) ? 'poker' : /\/bama/.test(src) ? 'comedy' : /\/(sr\d|ly-)/.test(src) ? 'podcast' : /\/bh-/.test(src) ? 'barber' : '';
+  const CATN = { show: 'שיחות וראיונות', comedy: 'סטנדאפ', barber: 'מספרות', food: 'אוכל ושפים', realestate: 'נדל״ן', podcast: 'פודקאסטים', biz: 'עסקים ומודעות', fitness: 'כושר', martial: 'אומנויות לחימה', dj: 'תקליטנים ואירועים', tattoo: 'קעקועים', dog: 'אילוף כלבים' };
+  const guessCat = (src) => /\/(ad\d|sax|mc\d)/.test(src) ? 'biz' : /\/nl-/.test(src) ? 'show' : /\/bama/.test(src) ? 'comedy' : /\/(sr\d|ly-)/.test(src) ? 'podcast' : /\/bh-/.test(src) ? 'barber' : '';
   // catalogue: unique sources, hero wall order first, then everything else on the page
   const items = [], bySrc = {};
   const add = (el) => {
@@ -3025,6 +3026,17 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
   const tick = () => { if (!lb.hidden && V.duration) { const k = V.currentTime / V.duration; if (!dragging) bar.style.setProperty('--p', k.toFixed(4)); bar.setAttribute('aria-valuenow', Math.round(k * 100)); time.textContent = fmt(V.currentTime) + ' / ' + fmt(V.duration); } requestAnimationFrame(tick); };
   requestAnimationFrame(tick);
 })();
+</script>
+<script>
+(() => { try {
+  const bins = document.querySelectorAll('.svc-bin'); if (!bins.length) return;
+  document.documentElement.classList.add('svc-js');
+  const showAll = () => bins.forEach(b => b.classList.add('on'));
+  if (!('IntersectionObserver' in window)) return showAll();
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } }), { threshold: .15 });
+  bins.forEach(b => io.observe(b));
+  setTimeout(() => { const r = document.getElementById('services'); if (r && r.getBoundingClientRect().top < innerHeight) showAll(); }, 2500);
+} catch (e) { document.querySelectorAll('.svc-bin').forEach(b => b.classList.add('on')); } })();
 </script>
 </body>
 </html>
