@@ -4,12 +4,29 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0D0F12">
-<meta name="description" content="HOOK STUDIO: עריכת וידאו לרילס, טיקטוק, יוטיוב ופודקאסטים. שולחים חומר, מקבלים סרטון.">
-<title>HOOK STUDIO | עריכת וידאו</title>
-<style>[hidden]{display:none!important}</style>
+<meta name="description" content="HOOK STUDIO: וידאו, דפי נחיתה, אתרים, מודעות ומערכות לעסקים וליוצרי תוכן. כותבים מה צריך, מקבלים הצעה ודוגמה.">
+<title>HOOK STUDIO | וידאו, אתרים ומערכות לעסקים</title>
+<style>[hidden]{display:none!important}
+/* ── services (7.11.2026) ── */
+.svc{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(12px,2vw,20px)}
+.svc-bin{position:relative; display:flex; flex-direction:column; background:var(--panel); border:1px solid var(--rule); border-radius:var(--r); overflow:hidden}
+.svc-bin::before{content:""; position:absolute; inset:0 0 auto 0; height:3px; background:var(--c)}
+.svc-bin > header{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 16px 10px; border-bottom:1px solid var(--rule); font:500 12px/1 var(--f-mono); letter-spacing:.08em; color:var(--muted); direction:ltr}
+.svc-bin > header b{color:var(--c); border:1px solid var(--c); padding:4px 7px; border-radius:2px; font:600 12px/1 var(--f-mono)}
+.svc-bin h3{margin:18px 18px 4px; font:400 clamp(34px,3.6vw,46px)/1 var(--f-display); letter-spacing:.01em}
+.svc-bin ul{list-style:none; margin:0; padding:4px 18px 14px}
+.svc-bin li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:12px; align-items:baseline; padding:10px 0; border-top:1px dashed var(--rule); font-size:clamp(16px,1.3vw,17px); line-height:1.45}
+.svc-bin li:first-child{border-top:0}
+.svc-bin li::before{content:""; width:7px; height:7px; background:var(--c); transform:rotate(45deg) translateY(-2px)}
+.svc-bin .eg{margin:auto 18px 16px; padding-top:10px; border-top:1px solid var(--rule); font:500 14px/1.5 var(--f-body); color:var(--muted)}
+.svc-bin .eg a{color:var(--accent); text-decoration:none; border-bottom:1px solid currentColor}
+.svc-cta{margin-top:clamp(16px,2.6vw,26px); display:flex; flex-wrap:wrap; gap:14px 20px; align-items:center; justify-content:space-between; padding:16px 18px; background:var(--panel); border:1px solid var(--rule); border-radius:var(--r)}
+.svc-cta p{margin:0; color:var(--muted); font-size:clamp(16px,1.3vw,18px); max-width:34em}
+@media (max-width:760px){ .svc{grid-template-columns:1fr} .svc-cta .btn{width:100%; justify-content:center} }
+</style>
 <meta property="og:type" content="website">
-<meta property="og:title" content="HOOK STUDIO | עריכת וידאו לעסקים">
-<meta property="og:description" content="רילס, טיקטוק ושורטס מוכנים להעלאה. הסרטון הראשון עליי.">
+<meta property="og:title" content="HOOK STUDIO | וידאו, דפי נחיתה ומערכות לעסקים">
+<meta property="og:description" content="רילס, דפי נחיתה, אתרים, מודעות ומערכות תורים. הריל הראשון עליי.">
 <meta property="og:url" content="https://stav-poker-edits.vercel.app/edits/">
 <meta property="og:image" content="https://stav-poker-edits.vercel.app/edits/assets/og-hook.jpg">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
@@ -1115,6 +1132,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
     <a href="#work">עבודות</a>
     <a href="#tools">מה נכנס לסרטון</a>
     <a href="#process">איך זה עובד</a>
+    <a href="#services">כל השירותים</a>
   </nav>
   <div class="top-tc" aria-hidden="true"><span class="rec"></span><b id="pageTc">00:00:00:00</b></div>
   <a class="btn primary sm mag" href="#contact">שלחו חומר</a>
@@ -1979,6 +1997,67 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
   <div class="marq-row" data-dir="1"><span><b>שולחים חומר.</b><i></i><b class="o">מקבלים סרטון.</b><i></i><b class="c">רילס</b><i></i><b class="o">טיקטוק</b><i></i><b>יוטיוב</b><i></i><b class="o">פודקאסטים</b><i></i></span></div>
   <div class="marq-row" data-dir="-1"><span><b class="o">כתוביות</b><i></i><b>זומים</b><i></i><b class="o">סאונד נקי</b><i></i><b class="c">הוקים</b><i></i><b class="o">גרפיקה</b><i></i><b>צבע</b><i></i></span></div>
 </div>
+<!-- ───────── SERVICES ───────── -->
+<section class="sec wrap" id="services" data-scene>
+  <header class="sec-h" data-cut>
+    <p class="tcm"><i></i><span data-tc="services">00:00:00:00</span> · כל השירותים</p>
+    <h2>לא רק עריכה. <em>כל מה שעסק צריך כדי להביא לקוחות מהאונליין.</em></h2>
+    <p>וידאו, דפי נחיתה ואתרים, פרסום ומערכות, במקום אחד ומול אדם אחד. כותבים לי מה צריך, ומקבלים הצעה ודוגמה.</p>
+  </header>
+  <div class="svc">
+    <article class="svc-bin" style="--c:var(--v1)">
+      <header><b>V1</b><span>WEB</span></header>
+      <h3>דפי נחיתה ואתרים</h3>
+      <ul>
+        <li>דף נחיתה שמביא פניות, באוויר תוך 48 שעות</li>
+        <li>אתר לעסק: שירותים, גלריה, ביקורות וכפתור וואטסאפ</li>
+        <li>חנות אונליין למוצרים</li>
+        <li>כרטיס ביקור דיגיטלי ותפריט עם QR</li>
+        <li>פרופיל עסק בגוגל: הקמה ושדרוג</li>
+      </ul>
+      <p class="eg">אתרים שבניתי: <a href="https://mc-mi.com" target="_blank" rel="noopener">mc-mi.com</a> · <a href="https://lunejewelry.pages.dev" target="_blank" rel="noopener">LUNÉ</a></p>
+    </article>
+    <article class="svc-bin" style="--c:var(--v2)">
+      <header><b>V2</b><span>VIDEO</span></header>
+      <h3>וידאו</h3>
+      <ul>
+        <li>רילס, טיקטוק ושורטס מוכנים להעלאה</li>
+        <li>קטעים קצרים מפודקאסטים וטריילר לפרק</li>
+        <li>סרטון תדמית לעסק, גם מתמונות שכבר יש לכם</li>
+        <li>מודעות וידאו עם קריינות</li>
+        <li>כתוביות בעברית ותרגום לאנגלית</li>
+      </ul>
+      <p class="eg"><a href="#reels">לדוגמאות למעלה</a></p>
+    </article>
+    <article class="svc-bin" style="--c:var(--a1)">
+      <header><b>A1</b><span>ADS · DESIGN</span></header>
+      <h3>פרסום ועיצוב</h3>
+      <ul>
+        <li>חבילת מודעות לפייסבוק ואינסטגרם: תמונות וסרטון</li>
+        <li>עיצוב פוסטים וסטוריז בשפה של המותג</li>
+        <li>לוגו ומיתוג בסיסי</li>
+        <li>שדרוג תמונות מוצר לחנות ולקטלוג</li>
+        <li>תכנון תוכן לחודש שלם</li>
+      </ul>
+    </article>
+    <article class="svc-bin" style="--c:var(--cc)">
+      <header><b>A2</b><span>SYSTEMS</span></header>
+      <h3>מערכות ואוטומציה</h3>
+      <ul>
+        <li>זימון תורים אונליין ללקוחות, ישר מהנייד</li>
+        <li>מענה אוטומטי בוואטסאפ לשאלות שחוזרות</li>
+        <li>טופס פניות שמגיע ישר לוואטסאפ או למייל</li>
+        <li>תזכורות אוטומטיות ללקוחות לפני תור</li>
+        <li>מערכת פשוטה לניהול לקוחות ופניות</li>
+      </ul>
+    </article>
+  </div>
+  <div class="svc-cta">
+    <p>לא בטוחים מה צריך? כתבו לי מה העסק עושה, ואחזור עם הצעה אחת ברורה.</p>
+    <a class="btn primary mag" href="https://wa.me/972535255705?text=%D7%94%D7%99%D7%99%20%D7%A1%D7%AA%D7%99%D7%95%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%9C%20%D7%94%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D" target="_blank" rel="noopener">ספרו לי מה צריך</a>
+  </div>
+</section>
+
 <!-- ───────── CONTACT ───────── -->
 <section class="sec wrap" id="contact" data-scene>
   <div class="contact">
@@ -2006,7 +2085,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
   <div class="barsline" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <div class="wrap foot-row">
     <a class="logo" href="#top" aria-label="HOOK STUDIO"><span>HOOK</span><i></i><span>STUDIO</span></a>
-    <span>עריכת וידאו לרילס, טיקטוק, יוטיוב ופודקאסטים.</span>
+    <span>וידאו, דפי נחיתה, אתרים, מודעות ומערכות לעסקים וליוצרים.</span>
     <span>עורך גם ידיים בפוקר: <a href="https://stav-poker-edits.vercel.app" target="_blank" rel="noopener">Stav Poker Edits</a></span>
     <span class="mono">© 2026</span>
   </div>
@@ -2390,7 +2469,7 @@ h2 em .kw,h2 em:not(:has(.kw)),.grad{background:linear-gradient(95deg,#3DEBFF,#5
   });
 
   /* ───── page timecode + bottom scrub ───── */
-  const SECS = [['top', 'פתיחה', '--v1'], ['raw', 'לפני ואחרי', '--v2'], ['cuts', 'חיתוכים', '--a1'], ['reels', 'דוגמאות', '--cc'], ['work', 'עבודות', '--v1'], ['tools', 'כלים', '--v2'], ['process', 'תהליך', '--a1'], ['offer', 'העריכה הראשונה', '--cc'], ['contact', 'דברו איתי', '--v1']];
+  const SECS = [['top', 'פתיחה', '--v1'], ['raw', 'לפני ואחרי', '--v2'], ['cuts', 'חיתוכים', '--a1'], ['reels', 'דוגמאות', '--cc'], ['work', 'עבודות', '--v1'], ['tools', 'כלים', '--v2'], ['process', 'תהליך', '--a1'], ['offer', 'העריכה הראשונה', '--cc'], ['services', 'שירותים', '--a1'], ['contact', 'דברו איתי', '--v1']];
   const lane = $('#scrubLane'), scrub = $('.scrub'), pageTc = $('#pageTc'), scrubTc = $('#scrubTc');
   const btns = SECS.map(([id, label, c]) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.style.setProperty('--c', `var(${c})`); b.setAttribute('aria-label', 'קפיצה אל ' + label); b.addEventListener('click', () => document.getElementById(id).scrollIntoView({ behavior: RM ? 'auto' : 'smooth' })); lane.appendChild(b); return b; });
   // clips sit where each section sits in the document; the playhead is the "reading line",
