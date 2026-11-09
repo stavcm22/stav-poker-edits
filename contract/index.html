@@ -334,6 +334,7 @@ details.set .body { padding-top: 12px; }
       <label class="check full"><input id="withEscort" type="checkbox" checked> כולל ליווי לאולם</label>
       <label class="f money">מקדמה <input id="dep" type="number" inputmode="numeric" min="0" step="50"></label>
       <label class="f">תאריך תשלום המקדמה <input id="depDate" type="date"></label>
+      <label class="f full">ביטול בהחזר מלא עד <span class="sub">(ימים לפני החתונה. ביטול מאוחר יותר = תשלום מלא)</span><input id="cancelDays" type="number" inputmode="numeric" min="1" step="1"></label>
     </div>
     <div class="total"><span>סה״כ לתשלום</span><b id="totalOut">0 ₪</b></div>
   </section>
@@ -469,6 +470,7 @@ details.set .body { padding-top: 12px; }
           <label class="f money">פיקדון <input id="dPik" type="number" inputmode="numeric"></label>
           <label class="f money">מלווה ללא תוספות <input id="dM1" type="number" inputmode="numeric"></label>
           <label class="f money">מלווה עם תוספות <input id="dM2" type="number" inputmode="numeric"></label>
+          <label class="f">ימי ביטול לפני החתונה <input id="dCancel" type="number" inputmode="numeric" min="1"></label>
         </div>
         <p class="hint" style="margin-top:10px">ההגדרות נשמרות אוטומטית במכשיר.</p>
       </div>
@@ -577,7 +579,7 @@ const BUILTIN_SIG = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMQAAABZCAYAA
 const DEFAULT_SETTINGS = {
   name: "שיראל טויטו", addr: "גורן", phone: "0542608049",
   phoneDisplay: "+972 54-260-8049", ig: "Shireltwito.hair_",
-  dP1: 2000, dP2: 1400, dDep: 300, dPik: 500, dM1: 550, dM2: 750,
+  dP1: 2000, dP2: 1400, dDep: 300, dPik: 500, dM1: 550, dM2: 750, dCancel: 60,
   msgSign: "Shirel hairstyle 💕", sig: ""
 };
 const LS = { settings: "st_settings_v1", draft: "st_draft_v1", saved: "st_saved_v1", quote: "st_quote_v1" };
@@ -637,7 +639,8 @@ function readForm() {
     eventDate: $("eventDate").value, signDate: $("signDate").value,
     p1: num($("p1").value), p2: num($("p2").value), withEscort: $("withEscort").checked,
     dep: num($("dep").value), depDate: $("depDate").value,
-    pik: num($("pik").value), m1: num($("m1").value), m2: num($("m2").value)
+    pik: num($("pik").value), m1: num($("m1").value), m2: num($("m2").value),
+    cancelDays: Math.max(1, Math.round(num($("cancelDays").value))) || settings.dCancel || 60
   };
 }
 function num(v) { const n = parseFloat(v); return isFinite(n) ? n : 0; }
@@ -648,6 +651,7 @@ function writeForm(d) {
   $("p1").value = d.p1 ?? settings.dP1; $("p2").value = d.p2 ?? settings.dP2; $("withEscort").checked = d.withEscort !== false;
   $("dep").value = d.dep ?? settings.dDep; $("depDate").value = d.depDate || todayISO();
   $("pik").value = d.pik ?? settings.dPik; $("m1").value = d.m1 ?? settings.dM1; $("m2").value = d.m2 ?? settings.dM2;
+  $("cancelDays").value = d.cancelDays ?? settings.dCancel ?? 60;
 }
 
 /* ---------- contract HTML blocks ---------- */
@@ -656,6 +660,7 @@ function money(v) { return fill(v !== "" && v != null ? `${fmtMoney(v)} ₪` : "
 
 function contractBlocks(d, opts = {}) {
   const t = total(d);
+  const cd = String(d.cancelDays || 60);
   const escortVal = d.withEscort ? money(d.p2) : fill("לא סוכם", "sm");
   const b = [];
   b.push(`<div class="blk"><h1 class="c-title">חוזה עבודה | שירותי עיצוב שיער כלה</h1>
@@ -681,7 +686,7 @@ function contractBlocks(d, opts = {}) {
     <li class="b">סה"כ לתשלום: ${money(t)}</li></ul>
     <p>הסכום הכולל כולל את עיצוב השיער ביום האירוע, הגעה למקום ההתארגנות, שימוש בתוספות שיער (בכפוף להחזרתן), וליווי – אם הוזמן.</p>
     <p>3.2 תשלום המקדמה יבוצע בתאריך ${fill(fmtDate(d.depDate), "sm")}, בסך של ${money(d.dep)}.</p>
-    <p>3.3 המקדמה ניתנת להחזר רק במקרה של ביטול שייעשה בתוך 14 ימים ממועד תשלום המקדמה. ביטול לאחר 14 ימים – המקדמה לא תוחזר (ראה סעיף 7).</p>
+    <p>3.3 ביטול ההתקשרות והחזר כספים ייעשו בהתאם לסעיף 7 להלן.</p>
     <p>3.4 יתרת התשלום תבוצע במועד התסרוקת הראשונה ביום החתונה, בכל אמצעי תשלום שיתואם מראש (מזומן, העברה בנקאית, ביט או פייבוקס).</p></div><hr class="c-rule">`);
   b.push(`<div class="blk c-sec"><h3>4. תוספות שיער – תנאי שימוש והחזרה</h3>
     <p>4.1 במידת הצורך ייעשה שימוש בתוספות שיער על מנת להגיע לתוצאה הרצויה.</p>
@@ -702,10 +707,10 @@ function contractBlocks(d, opts = {}) {
     <p>6.3 המעצב/ת לא מתחייב/ת לספק שירות למלוות שלא תואמו מראש.</p>
     <p>6.4 תשלום עבור המלוות יבוצע ביום האירוע, במזומן / העברה / אפליקציה.</p></div><hr class="c-rule">`);
   b.push(`<div class="blk c-sec"><h3>7. ביטול ההתקשרות</h3>
-    <p>7.1 הלקוחה רשאית לבטל את השירות ולקבל החזר מלא של המקדמה, ובלבד שהביטול בוצע תוך 14 ימים ממועד התשלום.</p>
-    <p>7.2 ביטול לאחר 14 ימים – המקדמה לא תוחזר.</p>
-    <p>7.3 ביטול ההתקשרות על ידי הלקוחה בתוך 14 ימים לפני מועד החתונה יחייב בתשלום מלא, גם אם השירות לא ניתן בפועל. הסכום משקף פיצוי מוסכם מראש בגין התחייבות למועד ואובדן הכנסה.</p>
-    <p>סעיף זה לא יחול במקרה של ביטול עקב כוח עליון מצד המעצב/ת, כמפורט בסעיף 8.</p></div><hr class="c-rule">`);
+    <p>7.1 הלקוחה רשאית לבטל את ההתקשרות בהודעה בכתב למעצב/ת (לרבות בוואטסאפ).</p>
+    <p>7.2 ביטול שייעשה עד ${fill(cd, "sm")} ימים לפני מועד החתונה יזכה את הלקוחה בהחזר מלא של כל הסכומים ששולמו, לרבות המקדמה, בתוך 14 ימים ממועד ההודעה על הביטול.</p>
+    <p>7.3 ביטול שייעשה בתוך ${fill(cd, "sm")} הימים שלפני מועד החתונה יחייב את הלקוחה בתשלום מלא של הסכום הכולל, גם אם השירות לא ניתן בפועל. הסכום משקף פיצוי מוסכם מראש בגין שריון המועד ואובדן הכנסה.</p>
+    <p>7.4 סעיף זה לא יחול במקרה של ביטול עקב כוח עליון מצד המעצב/ת, כמפורט בסעיף 8.</p></div><hr class="c-rule">`);
   b.push(`<div class="blk c-sec"><h3>8. כוח עליון ומחליף/ה</h3>
     <p>8.1 במקרה בו המעצב/ת לא יוכל לספק את השירותים עקב נסיבות של כוח עליון – לרבות אך לא רק: מחלה, תאונה, מצב בטחוני, או כל נסיבה שאינה בשליטתו/ה – יפעל המעצב/ת ככל הניתן לספק ללקוחה שירות מקצועי חלופי באמצעות אדם מטעמו/ה.</p>
     <p>8.2 במידה ולא ניתן יהיה לספק שירות חלופי, יושב ללקוחה הסכום המלא ששולם, ולא תעמוד לה כל דרישה או טענה נוספת.</p></div><hr class="c-rule">`);
@@ -942,7 +947,7 @@ function makePad(el) {
 
 /* ---------- settings ---------- */
 function bindSettings() {
-  const map = { sName: "name", sAddr: "addr", sPhone: "phone", sPhoneDisplay: "phoneDisplay", sIg: "ig", sMsgSign: "msgSign", dP1: "dP1", dP2: "dP2", dDep: "dDep", dPik: "dPik", dM1: "dM1", dM2: "dM2" };
+  const map = { sName: "name", sAddr: "addr", sPhone: "phone", sPhoneDisplay: "phoneDisplay", sIg: "ig", sMsgSign: "msgSign", dP1: "dP1", dP2: "dP2", dDep: "dDep", dPik: "dPik", dM1: "dM1", dM2: "dM2", dCancel: "dCancel" };
   Object.entries(map).forEach(([id, k]) => {
     $(id).value = settings[k];
     $(id).addEventListener("input", () => { settings[k] = $(id).type === "number" ? num($(id).value) : $(id).value.trim(); saveJSON(LS.settings, settings); refreshSoon(); });
@@ -960,7 +965,7 @@ function initApp() {
   const draft = loadJSON(LS.draft, null);
   writeForm(draft || {});
   if (!draft) { $("signDate").value = todayISO(); $("depDate").value = todayISO(); }
-  ["cName", "cPhone", "cAddr", "eventDate", "signDate", "p1", "p2", "withEscort", "dep", "depDate", "pik", "m1", "m2"].forEach(id => { $(id).addEventListener("input", refreshSoon); $(id).addEventListener("change", refreshSoon); });
+  ["cName", "cPhone", "cAddr", "eventDate", "signDate", "p1", "p2", "withEscort", "dep", "depDate", "pik", "m1", "m2", "cancelDays"].forEach(id => { $(id).addEventListener("input", refreshSoon); $(id).addEventListener("change", refreshSoon); });
   ["cName", "cPhone"].forEach(id => $(id).addEventListener("input", () => $(id).classList.remove("err")));
   $("btnSend").onclick = () => sendToClient($("btnSend"));
   $("btnSend2").onclick = () => sendToClient($("btnSend2"));
